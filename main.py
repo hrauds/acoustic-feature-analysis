@@ -4,7 +4,8 @@ import logging
 
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QPushButton, QLabel, QFileDialog,
-    QVBoxLayout, QMessageBox, QListWidget, QAbstractItemView, QSplitter, QListWidgetItem
+    QVBoxLayout, QMessageBox, QListWidget, QAbstractItemView, QSplitter, QListWidgetItem, QTableView, QTableWidgetItem,
+    QTableWidget
 )
 from PyQt5.QtCore import Qt
 from matplotlib import patches
@@ -35,16 +36,16 @@ class OpenSmileApp(QWidget):
 
     def init_ui(self):
         self.setWindowTitle("OpenSMILE GeMAPS Feature Extractor")
-        self.setGeometry(100, 100, 1000, 600)
+        self.setGeometry(100, 100, 1200, 600)
 
-        # labels, buttons
+        # Upload
         self.label = QLabel("Upload audio files:", self)
         self.label.setAlignment(Qt.AlignCenter)
 
         self.upload_btn = QPushButton("Upload Files", self)
         self.upload_btn.clicked.connect(self.upload_files)
 
-        # list extracted features
+        # List extracted features
         self.file_list_widget = QListWidget(self)
         self.file_list_widget.setSelectionMode(QAbstractItemView.MultiSelection)
 
@@ -54,6 +55,7 @@ class OpenSmileApp(QWidget):
         self.feature_list = QListWidget(self)
         self.feature_list.setSelectionMode(QAbstractItemView.MultiSelection)
 
+        # Buttons for different visualizations
         self.vowel_chart_btn = QPushButton("Vowel Chart")
         self.vowel_chart_btn.clicked.connect(self.extract_formants)
 
@@ -66,11 +68,10 @@ class OpenSmileApp(QWidget):
         self.boxplot_btn = QPushButton("Boxplot")
         self.boxplot_btn.clicked.connect(self.visualize_boxplot)
 
-        # visualization canvas
+        # Visualization canvas
         self.canvas = FigureCanvas(Figure())
 
-        splitter = QSplitter(Qt.Vertical)
-
+        # Control panel layout
         control_panel = QWidget()
         control_layout = QVBoxLayout(control_panel)
         control_layout.addWidget(self.label)
@@ -84,17 +85,41 @@ class OpenSmileApp(QWidget):
         control_layout.addWidget(self.histogram_btn)
         control_layout.addWidget(self.boxplot_btn)
 
+        # Visualization panel and data panel split
+        vis_data_splitter = QSplitter(Qt.Horizontal)
+
+        # Visualization panel
         visualization_panel = QWidget()
         visualization_layout = QVBoxLayout(visualization_panel)
         visualization_layout.addWidget(self.canvas)
 
-        splitter.addWidget(control_panel)
-        splitter.addWidget(visualization_panel)
-        splitter.setStretchFactor(0, 0)
-        splitter.setStretchFactor(1, 1)
+        # Data tables panel
+        self.raw_data_table = QTableWidget(self)
+        self.normalized_data_table = QTableWidget(self)
+        raw_data_label = QLabel("Raw Data", self)
+        normalized_data_label = QLabel("Normalized Data", self)
+        data_tables_panel = QWidget()
+        data_tables_layout = QVBoxLayout(data_tables_panel)
+        data_tables_layout.addWidget(raw_data_label)
+        data_tables_layout.addWidget(self.raw_data_table)
+        data_tables_layout.addWidget(normalized_data_label)
+        data_tables_layout.addWidget(self.normalized_data_table)
+
+        # Visualization and data panels split
+        vis_data_splitter.addWidget(visualization_panel)
+        vis_data_splitter.addWidget(data_tables_panel)
+        vis_data_splitter.setStretchFactor(0, 2)
+        vis_data_splitter.setStretchFactor(1, 1)
+
+        # Main layout
+        main_splitter = QSplitter(Qt.Vertical)
+        main_splitter.addWidget(control_panel)
+        main_splitter.addWidget(vis_data_splitter)
+        main_splitter.setStretchFactor(0, 0)
+        main_splitter.setStretchFactor(1, 1)
 
         main_layout = QVBoxLayout()
-        main_layout.addWidget(splitter)
+        main_layout.addWidget(main_splitter)
         self.setLayout(main_layout)
 
     def upload_files(self):
@@ -250,7 +275,6 @@ class OpenSmileApp(QWidget):
 
         return features_df
 
-
     def visualize_vowel_chart(self):
         if not self.formant_dict:
             QMessageBox.warning(self, 'Error', "Formant data is missing.")
@@ -279,7 +303,7 @@ class OpenSmileApp(QWidget):
             for _, row in norm_formant_df.iterrows():
                 ax.text(
                     row['F2'] + 0.1, row['F1'], row['Vowel'],
-                    horizontalalignment = 'left', fontsize=12, color='black', fontweight='bold'
+                    horizontalalignment='left', fontsize=12, color='black', fontweight='bold'
                 )
 
         ax.invert_xaxis()
@@ -287,10 +311,17 @@ class OpenSmileApp(QWidget):
 
         ax.set_xlabel("F2 (Hz)")
         ax.set_ylabel("F1 (Hz)")
-
         ax.set_title("Vowel Chart")
 
         self.canvas.draw()
+
+        self.create_table(formant_df[['Time', 'F1', 'F2', 'Vowel']], self.raw_data_table)
+        self.create_table(norm_formant_df[['Time', 'zsc_F1', 'zsc_F2', 'Vowel']], self.normalized_data_table)
+
+        print("Raw Data:")
+        print(formant_df[['Time', 'F1', 'F2', 'Vowel']])
+        print("Normalized Data:")
+        print(norm_formant_df[['Time', 'zsc_F1', 'zsc_F2', 'Vowel']])
 
     def plot_ellipse(self, x_data, y_data, ax, color='blue'):
         mean_x = np.mean(x_data)
@@ -415,6 +446,17 @@ class OpenSmileApp(QWidget):
         ax.set_title(f'{selected_feature} Boxplot Comparison')
 
         self.canvas.draw()
+
+    def create_table(self, dataframe, table_widget):
+        table_widget.setRowCount(len(dataframe))
+        table_widget.setColumnCount(len(dataframe.columns))
+
+        table_widget.setHorizontalHeaderLabels(dataframe.columns)
+
+        for row in range(len(dataframe)):
+            for col in range(len(dataframe.columns)):
+                value = str(dataframe.iat[row, col])
+                table_widget.setItem(row, col, QTableWidgetItem(value))
 
 
 if __name__ == '__main__':
