@@ -1,3 +1,4 @@
+import math
 import sys
 import os
 import logging
@@ -15,8 +16,9 @@ import opensmile
 import parselmouth
 import numpy as np
 import pandas as pd
-import matplotlib as plt
 import seaborn as sns
+import math
+
 
 
 class OpenSmileApp(QWidget):
@@ -131,9 +133,9 @@ class OpenSmileApp(QWidget):
             self.selected_files = files
             self.file_list_widget.clear()
             for f in files:
-                item = QListWidgetItem(os.path.basename(f))
-                item.setData(Qt.UserRole, f)
-                self.file_list_widget.addItem(item)
+                file = QListWidgetItem(os.path.basename(f))
+                file.setData(Qt.UserRole, f)
+                self.file_list_widget.addItem(file)
 
             self.extract_features()
         else:
@@ -146,7 +148,6 @@ class OpenSmileApp(QWidget):
     def extract_features(self):
         self.features_dict = {}
         self.feature_list.clear()
-        print(self.features_dict.keys())
 
         try:
             for f in self.selected_files:
@@ -158,8 +159,8 @@ class OpenSmileApp(QWidget):
             all_features = set()
             for features_df in self.features_dict.values():
                 all_features.update(features_df.columns.tolist())
-                print(features_df.head())
             self.feature_list.addItems(sorted(all_features))
+            print()
 
             QMessageBox.information(self, 'Success', "Feature extraction completed.")
         except Exception as e:
@@ -179,16 +180,16 @@ class OpenSmileApp(QWidget):
             return 'o'
 
     def extract_formants(self):
-        selected_items = self.file_list_widget.selectedItems()
-        if not selected_items:
+        selected_files = self.file_list_widget.selectedItems()
+        if not selected_files:
             QMessageBox.warning(self, 'Error', "Please select files to process.")
             return
 
         self.formant_dict = {}
 
         try:
-            for item in selected_items:
-                file_path = item.data(Qt.UserRole)
+            for file in selected_files:
+                file_path = file.data(Qt.UserRole)
 
                 f1_list, f2_list, times = self.get_formants(file_path)
 
@@ -270,9 +271,6 @@ class OpenSmileApp(QWidget):
 
         # Normalize formants using Lobanov normalization
         features_df = self.Lobify(features_df, formants)
-
-        print(features_df[['F1', 'F2', 'zsc_F1', 'zsc_F2']].head())
-
         return features_df
 
     def visualize_vowel_chart(self):
@@ -318,11 +316,6 @@ class OpenSmileApp(QWidget):
         self.create_table(formant_df[['Time', 'F1', 'F2', 'Vowel']], self.raw_data_table)
         self.create_table(norm_formant_df[['Time', 'zsc_F1', 'zsc_F2', 'Vowel']], self.normalized_data_table)
 
-        print("Raw Data:")
-        print(formant_df[['Time', 'F1', 'F2', 'Vowel']])
-        print("Normalized Data:")
-        print(norm_formant_df[['Time', 'zsc_F1', 'zsc_F2', 'Vowel']])
-
     def plot_ellipse(self, x_data, y_data, ax, color='blue'):
         mean_x = np.mean(x_data)
         mean_y = np.mean(y_data)
@@ -336,118 +329,166 @@ class OpenSmileApp(QWidget):
         ax.add_patch(ellipse)
 
     def visualize_time_line(self):
-        if not self.features_dict:
-            QMessageBox.warning(self, 'Error', "Feature data is missing.")
+        if not self.features_dict or not self.file_list_widget.selectedItems() or not self.feature_list.selectedItems():
+            QMessageBox.warning(self, 'Error', "Please select files and features to visualize.")
             return
 
         selected_features = [item.text() for item in self.feature_list.selectedItems()]
-        if not selected_features:
-            QMessageBox.warning(self, 'Error', "Please select feature(s) to visualize.")
-            return
-
-        selected_items = self.file_list_widget.selectedItems()
-        if not selected_items:
-            QMessageBox.warning(self, 'Error', "Please select files to visualize.")
-            return
+        selected_files = self.file_list_widget.selectedItems()
 
         self.canvas.figure.clear()
         ax = self.canvas.figure.add_subplot(111)
-
         colors = ['blue', 'green', 'red', 'purple', 'orange', 'brown', 'pink', 'gray']
 
-        color_index = 0
+        all_table_data = []
 
-        for item in selected_items:
-            speaker_label = os.path.basename(item.data(Qt.UserRole))
+        for idx, file in enumerate(selected_files):
+            speaker_label = os.path.basename(file.data(Qt.UserRole))
             features_df = self.features_dict.get(speaker_label)
-            print(features_df.head())
+
             if features_df is None:
                 continue
+
+            time_index = features_df.index.get_level_values('start').total_seconds()
+            speaker_data = pd.DataFrame({'Time': time_index})
+
             for feature in selected_features:
-                if feature not in features_df.columns:
-                    continue
+                if feature in features_df.columns:
+                    ax.plot(time_index, features_df[feature].values, label=f"{speaker_label} - {feature}",
+                            color=colors[idx % len(colors)])
 
-                if 'start' in features_df.index.names:
-                    time_index = features_df.index.get_level_values('start').total_seconds()
-                elif 'frameTime' in features_df.index.names:
-                    time_index = features_df.index.get_level_values('frameTime')
-                else:
-                    time_index = np.arange(len(features_df))
+                    speaker_data[f'{feature} - {speaker_label}'] = features_df[feature].values
 
-                values = features_df[feature].values.flatten()
-                ax.plot(time_index, values, label=f"{speaker_label} - {feature}",
-                        color=colors[color_index % len(colors)])
-                color_index += 1
+            all_table_data.append(speaker_data)
 
         ax.set_title("Selected Features Over Time")
         ax.set_xlabel("Time (seconds)")
         ax.set_ylabel("Feature Value")
         ax.legend()
-
         self.canvas.draw()
+
+        if all_table_data:
+            combined_data = pd.concat(all_table_data, axis=1)
+            combined_data = combined_data.loc[:, ~combined_data.columns.duplicated()]
+            self.create_table(combined_data, self.raw_data_table)
 
     def visualize_histogram(self):
         if not self.features_dict:
             QMessageBox.warning(self, 'Error', "Feature data is missing.")
             return
 
-        selected_items = self.feature_list.selectedItems()
-        if not selected_items or len(selected_items) != 1:
-            QMessageBox.warning(self, 'Error', "Please select one feature for histogram.")
+        selected_features = self.feature_list.selectedItems()
+        if not selected_features or len(selected_features) != 1:
+            QMessageBox.warning(self, 'Error', "Please select one feature for the histogram.")
             return
 
-        selected_feature = selected_items[0].text()
+        selected_feature = selected_features[0].text()
+
+        all_values = [features_df[selected_feature].values.flatten()
+                      for features_df in self.features_dict.values()
+                      if selected_feature in features_df.columns]
+
+        if not all_values:
+            QMessageBox.warning(self, 'Error', "Selected feature not found in the data.")
+            return
+
+        all_values = np.concatenate(all_values)
+
+        # Calculate the number of bins dynamically using Sturges' rule
+        num_bins = int(1 + math.log2(len(all_values))) if len(all_values) > 0 else 10
+        bins = np.linspace(all_values.min(), all_values.max(), num_bins + 1)
 
         self.canvas.figure.clear()
-        ax = self.canvas.figure.add_subplot(111)  # clears the current figure on the canvas
-        # adds a new subplot (ax) 111 means a single plot area (1 row, 1 column).
+        ax = self.canvas.figure.add_subplot(111)
 
-        colors = ['blue', 'green', 'red', 'purple', 'orange', 'brown', 'pink', 'gray']
+        all_speaker_data = {}
 
-        for idx, (speaker_label, features_df) in enumerate(self.features_dict.items()):
-            if selected_feature not in features_df.columns:
-                print(features_df.head())
-                continue
-            ax.hist(features_df[selected_feature].values.flatten(), bins=30, alpha=0.5,
-                    label=speaker_label, color=colors[idx % len(colors)])
+        for speaker_label, features_df in self.features_dict.items():
+            if selected_feature in features_df.columns:
+                feature_values = features_df[selected_feature].values.flatten()
+                ax.hist(feature_values, bins=bins, alpha=0.5, label=speaker_label)
 
-        ax.set_xlabel(selected_feature)
-        ax.set_ylabel('Frequency')
-        ax.set_title(f'{selected_feature} Histogram Comparison')
+                hist_values, _ = np.histogram(feature_values, bins=bins)
+                all_speaker_data[speaker_label] = hist_values
+
+        ax.set_xlabel(f"{selected_feature}")
+        ax.set_ylabel("Frequency")
+        ax.set_title(f'{selected_feature} Histogram')
         ax.legend()
 
         self.canvas.draw()
+
+        bin_labels = []
+        for i in range(len(bins) - 1):
+            lower_bound = bins[i]
+            upper_bound = bins[i + 1]
+            label = f'{lower_bound: .2f} to {upper_bound: .2f}'
+            bin_labels.append(label)
+        table_data = pd.DataFrame.from_dict(all_speaker_data, orient='index', columns=bin_labels)
+
+        table_data.insert(0, 'Speaker', table_data.index)
+
+        self.create_table(table_data, self.raw_data_table)
 
     def visualize_boxplot(self):
         if not self.features_dict:
             QMessageBox.warning(self, 'Error', "Feature data is missing.")
             return
 
-        selected_items = self.feature_list.selectedItems()
-        if not selected_items or len(selected_items) != 1:
-            QMessageBox.warning(self, 'Error', "Please select one feature for boxplot.")
+        selected_files = self.feature_list.selectedItems()
+        if not selected_files or len(selected_files) != 1:
+            QMessageBox.warning(self, 'Error', "Please select one feature for the boxplot.")
             return
 
-        selected_feature = selected_items[0].text()
+        selected_feature = selected_files[0].text()
 
         self.canvas.figure.clear()
+        self.canvas.figure.set_size_inches(10, 8)
         ax = self.canvas.figure.add_subplot(111)
 
         data = []
         labels = []
+        boxplot_table_data = []
+
         for speaker_label, features_df in self.features_dict.items():
-            print(features_df.head())
             if selected_feature in features_df.columns:
-                data.append(features_df[selected_feature].dropna().values.flatten())
-                labels.append(speaker_label)
+                feature_values = features_df[selected_feature].dropna().values.flatten()
+                if len(feature_values) > 0:
+                    data.append(feature_values)
+                    labels.append(speaker_label)
+                    summary_stats = {
+                        'Speaker': speaker_label,
+                        'Min': np.min(feature_values),
+                        'Q1': np.percentile(feature_values, 25),
+                        'Median': np.median(feature_values),
+                        'Q3': np.percentile(feature_values, 75),
+                        'Max': np.max(feature_values)
+                    }
+                    boxplot_table_data.append(summary_stats)
 
-        ax.boxplot(data, labels=labels, vert=True)
-        ax.set_ylabel(selected_feature)
-        ax.set_title(f'{selected_feature} Boxplot Comparison')
+        if not data:
+            QMessageBox.warning(self, 'Error', "No data available for the selected feature.")
+            return
 
+        ax.boxplot(data, labels=labels, vert=True, patch_artist=True, whis=2.0,
+                   boxprops=dict(facecolor='lightblue', color='blue'),
+                   medianprops=dict(color='red'))
+        ax.set_ylabel(f'{selected_feature}')
+        ax.set_xlabel('Speakers')
+        ax.set_title(f'{selected_feature} Boxplot')
+        ax.grid(True)
+
+        self.canvas.figure.tight_layout(pad=3.0)  # pad for extra space
         self.canvas.draw()
 
+        summary_table = pd.DataFrame(boxplot_table_data)
+        summary_table = summary_table[['Speaker', 'Min', 'Q1', 'Median', 'Q3', 'Max']]
+        self.create_table(summary_table, self.raw_data_table)
+
     def create_table(self, dataframe, table_widget):
+        self.raw_data_table.clearContents()
+        self.normalized_data_table.clearContents()
+
         table_widget.setRowCount(len(dataframe))
         table_widget.setColumnCount(len(dataframe.columns))
 
