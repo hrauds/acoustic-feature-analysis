@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt
 from matplotlib import patches
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas, NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 import opensmile
 import parselmouth
@@ -18,7 +18,6 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import math
-
 
 
 class OpenSmileApp(QWidget):
@@ -70,6 +69,9 @@ class OpenSmileApp(QWidget):
         self.boxplot_btn = QPushButton("Boxplot")
         self.boxplot_btn.clicked.connect(self.visualize_boxplot)
 
+        self.radar_btn = QPushButton("Radar")
+        self.radar_btn.clicked.connect(self.visualize_radar)
+
         # Visualization canvas
         self.canvas = FigureCanvas(Figure())
 
@@ -86,6 +88,8 @@ class OpenSmileApp(QWidget):
         control_layout.addWidget(self.time_line_btn)
         control_layout.addWidget(self.histogram_btn)
         control_layout.addWidget(self.boxplot_btn)
+        control_layout.addWidget(self.radar_btn)
+
 
         # Visualization panel and data panel split
         vis_data_splitter = QSplitter(Qt.Horizontal)
@@ -147,7 +151,6 @@ class OpenSmileApp(QWidget):
 
     def extract_features(self):
         self.features_dict = {}
-        self.feature_list.clear()
 
         try:
             for f in self.selected_files:
@@ -278,13 +281,16 @@ class OpenSmileApp(QWidget):
             QMessageBox.warning(self, 'Error', "Formant data is missing.")
             return
 
-        self.canvas.figure.clear()
+        self.clear_visualisation()
 
         sns.set(style='ticks', context='notebook')
 
         ax = self.canvas.figure.add_subplot(111)
 
         speaker_colors = sns.color_palette("husl", len(self.formant_dict))
+
+        table_data_raw = []
+        table_data_normalized = []
 
         for speaker_idx, (speaker_label, formant_df) in enumerate(self.formant_dict.items()):
             norm_formant_df = self.normalize_vowels(formant_df)
@@ -304,6 +310,12 @@ class OpenSmileApp(QWidget):
                     horizontalalignment='left', fontsize=12, color='black', fontweight='bold'
                 )
 
+            for idx, row in formant_df.iterrows():
+                table_data_raw.append([speaker_label, row['F1'], row['F2'], row['Vowel']])
+
+            for idx, row in norm_formant_df.iterrows():
+                table_data_normalized.append([speaker_label, row['zsc_F1'], row['zsc_F2'], row['Vowel']])
+
         ax.invert_xaxis()
         ax.invert_yaxis()
 
@@ -313,8 +325,12 @@ class OpenSmileApp(QWidget):
 
         self.canvas.draw()
 
-        self.create_table(formant_df[['Time', 'F1', 'F2', 'Vowel']], self.raw_data_table)
-        self.create_table(norm_formant_df[['Time', 'zsc_F1', 'zsc_F2', 'Vowel']], self.normalized_data_table)
+        raw_data_df = pd.DataFrame(table_data_raw, columns=['Speaker', 'F1', 'F2', 'Vowel'])
+
+        normalized_data_df = pd.DataFrame(table_data_normalized, columns=['Speaker', 'zsc_F1', 'zsc_F2', 'Vowel'])
+
+        self.create_table(raw_data_df, self.raw_data_table)
+        self.create_table(normalized_data_df, self.normalized_data_table)
 
     def plot_ellipse(self, x_data, y_data, ax, color='blue'):
         mean_x = np.mean(x_data)
@@ -333,10 +349,11 @@ class OpenSmileApp(QWidget):
             QMessageBox.warning(self, 'Error', "Please select files and features to visualize.")
             return
 
+        self.clear_visualisation()
+
         selected_features = [item.text() for item in self.feature_list.selectedItems()]
         selected_files = self.file_list_widget.selectedItems()
 
-        self.canvas.figure.clear()
         ax = self.canvas.figure.add_subplot(111)
         colors = ['blue', 'green', 'red', 'purple', 'orange', 'brown', 'pink', 'gray']
 
@@ -361,7 +378,7 @@ class OpenSmileApp(QWidget):
 
             all_table_data.append(speaker_data)
 
-        ax.set_title("Selected Features Over Time")
+        ax.set_title("Selected Features Time-Series")
         ax.set_xlabel("Time (seconds)")
         ax.set_ylabel("Feature Value")
         ax.legend()
@@ -382,6 +399,8 @@ class OpenSmileApp(QWidget):
             QMessageBox.warning(self, 'Error', "Please select one feature for the histogram.")
             return
 
+        self.clear_visualisation()
+
         selected_feature = selected_features[0].text()
 
         all_values = [features_df[selected_feature].values.flatten()
@@ -398,7 +417,6 @@ class OpenSmileApp(QWidget):
         num_bins = int(1 + math.log2(len(all_values))) if len(all_values) > 0 else 10
         bins = np.linspace(all_values.min(), all_values.max(), num_bins + 1)
 
-        self.canvas.figure.clear()
         ax = self.canvas.figure.add_subplot(111)
 
         all_speaker_data = {}
@@ -422,7 +440,7 @@ class OpenSmileApp(QWidget):
         for i in range(len(bins) - 1):
             lower_bound = bins[i]
             upper_bound = bins[i + 1]
-            label = f'{lower_bound: .2f} to {upper_bound: .2f}'
+            label = f'{lower_bound:.2f} to {upper_bound:.2f}'
             bin_labels.append(label)
         table_data = pd.DataFrame.from_dict(all_speaker_data, orient='index', columns=bin_labels)
 
@@ -440,9 +458,10 @@ class OpenSmileApp(QWidget):
             QMessageBox.warning(self, 'Error', "Please select one feature for the boxplot.")
             return
 
+        self.clear_visualisation()
+
         selected_feature = selected_files[0].text()
 
-        self.canvas.figure.clear()
         self.canvas.figure.set_size_inches(10, 8)
         ax = self.canvas.figure.add_subplot(111)
 
@@ -470,7 +489,7 @@ class OpenSmileApp(QWidget):
             QMessageBox.warning(self, 'Error', "No data available for the selected feature.")
             return
 
-        ax.boxplot(data, labels=labels, vert=True, patch_artist=True, whis=2.0,
+        ax.boxplot(data, tick_labels=labels, vert=True, patch_artist=True, whis=2.0,
                    boxprops=dict(facecolor='lightblue', color='blue'),
                    medianprops=dict(color='red'))
         ax.set_ylabel(f'{selected_feature}')
@@ -485,9 +504,71 @@ class OpenSmileApp(QWidget):
         summary_table = summary_table[['Speaker', 'Min', 'Q1', 'Median', 'Q3', 'Max']]
         self.create_table(summary_table, self.raw_data_table)
 
+    def min_max_normalize(self, df, features):
+        """Normalize the selected features to a range of 0-1."""
+        return (df[features] - df[features].min()) / (df[features].max() - df[features].min())
+
+    def visualize_radar(self):
+        if not self.features_dict:
+            QMessageBox.warning(self, 'Error', "Feature data is missing.")
+            return
+
+        selected_features = [item.text() for item in self.feature_list.selectedItems()]
+        if not selected_features:
+            QMessageBox.warning(self, 'Error', "Please select features for the radar chart.")
+            return
+
+        self.clear_visualisation()
+
+        all_speaker_data_normalized = []
+        all_speaker_data_original = []
+        speaker_labels = []
+
+        for speaker_label, features_df in self.features_dict.items():
+            if all(feature in features_df.columns for feature in selected_features):
+                original_features = features_df[selected_features].mean(axis=0)
+                all_speaker_data_original.append(original_features)
+
+                normalized_features = self.min_max_normalize(features_df, selected_features).mean(axis=0)
+                all_speaker_data_normalized.append(normalized_features)
+
+                speaker_labels.append(speaker_label)
+
+        if not all_speaker_data_normalized:
+            QMessageBox.warning(self, 'Error', "No data available for the selected features.")
+            return
+
+        radar_df_normalized = pd.DataFrame(all_speaker_data_normalized, columns=selected_features, index=speaker_labels)
+        radar_df_original = pd.DataFrame(all_speaker_data_original, columns=selected_features, index=speaker_labels)
+
+        radar_df_normalized.insert(0, 'Speaker', speaker_labels)
+        radar_df_original.insert(0, 'Speaker', speaker_labels)
+
+        num_vars = len(selected_features)
+        angles = [n / float(num_vars) * 2 * math.pi for n in range(num_vars)]
+        angles += angles[:1]
+
+        ax = self.canvas.figure.add_subplot(111, polar=True)
+
+        for idx, (index, row) in enumerate(radar_df_normalized.iterrows()):
+            values = row.values[1:].flatten().tolist()
+            values += values[:1]
+
+            ax.plot(angles, values, label=row['Speaker'], linewidth=2)
+            ax.fill(angles, values, alpha=0.25)
+
+        ax.set_xticks(angles[:-1])
+        ax.set_xticklabels(selected_features)
+
+        ax.set_title("Radar Chart")
+        ax.legend(loc='upper right', bbox_to_anchor=(1.1, 1.1))
+
+        self.canvas.draw()
+
+        self.create_table(radar_df_original, self.raw_data_table)
+        self.create_table(radar_df_normalized, self.normalized_data_table)
+
     def create_table(self, dataframe, table_widget):
-        self.raw_data_table.clearContents()
-        self.normalized_data_table.clearContents()
 
         table_widget.setRowCount(len(dataframe))
         table_widget.setColumnCount(len(dataframe.columns))
@@ -498,6 +579,16 @@ class OpenSmileApp(QWidget):
             for col in range(len(dataframe.columns)):
                 value = str(dataframe.iat[row, col])
                 table_widget.setItem(row, col, QTableWidgetItem(value))
+
+    def clear_visualisation(self):
+        self.canvas.figure.clear()
+
+        self.raw_data_table.clearContents()
+        self.raw_data_table.setRowCount(0)
+        self.raw_data_table.setColumnCount(0)
+        self.normalized_data_table.clearContents()
+        self.normalized_data_table.setRowCount(0)
+        self.normalized_data_table.setColumnCount(0)
 
 
 if __name__ == '__main__':
