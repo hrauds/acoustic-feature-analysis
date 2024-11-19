@@ -9,7 +9,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 from src.opensmile_features import OpenSmileFeatures
-from src.visualization import Visualization
+from src.ui.visualization import Visualization
 from src.formant_analysis import FormantAnalysis
 from src.database import Database
 
