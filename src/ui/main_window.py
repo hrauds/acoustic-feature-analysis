@@ -1,45 +1,42 @@
-import os
 from PyQt5.QtWidgets import (
     QWidget, QPushButton, QLabel, QFileDialog, QVBoxLayout,
     QMessageBox, QListWidget, QAbstractItemView, QSplitter,
-    QListWidgetItem, QTableWidget, QTableWidgetItem
+    QTableWidget, QTableWidgetItem, QListWidgetItem
 )
 from PyQt5.QtCore import Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
-from src.opensmile_features import OpenSmileFeatures
 from src.ui.visualization import Visualization
-from src.formant_analysis import FormantAnalysis
 from src.database import Database
+from src.speech_importer import SpeechImporter
 
 
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.selected_files = []
-        self.features_dict = {}
-        self.formant_dict = {}
-        self.opensmile_features = OpenSmileFeatures()
         self.visualization = Visualization()
-        self.formant_analysis = FormantAnalysis()
         self.init_ui()
         self.database = Database()
+        self.speech_importer = SpeechImporter()
+
+        self.load_existing_recordings()
 
     def init_ui(self):
-        self.setWindowTitle("OpenSMILE GeMAPS Feature Extractor")
+        self.setWindowTitle("Speech Analysis Application")
         self.setGeometry(100, 100, 1200, 600)
 
         # Upload
-        self.label = QLabel("Upload audio files:", self)
+        self.label = QLabel("Upload audio and TextGrid files:", self)
         self.label.setAlignment(Qt.AlignCenter)
 
-        self.upload_btn = QPushButton("Upload Files", self)
+        self.upload_btn = QPushButton("Import Files", self)
         self.upload_btn.clicked.connect(self.upload_files)
 
-        # List extracted features
+        # List imported files
         self.file_list_widget = QListWidget(self)
         self.file_list_widget.setSelectionMode(QAbstractItemView.MultiSelection)
+        self.file_list_widget.itemSelectionChanged.connect(self.on_recording_selection_changed)
 
         self.feature_label = QLabel("Available Features:", self)
         self.feature_label.setAlignment(Qt.AlignCenter)
@@ -49,7 +46,7 @@ class MainWindow(QWidget):
 
         # Buttons for different visualizations
         self.vowel_chart_btn = QPushButton("Vowel Chart")
-        self.vowel_chart_btn.clicked.connect(self.extract_formants)
+        # self.vowel_chart_btn.clicked.connect(self.extract_formants)
 
         self.time_line_btn = QPushButton("Time Line Graph")
         self.time_line_btn.clicked.connect(self.visualize_time_line)
@@ -69,9 +66,10 @@ class MainWindow(QWidget):
         # Control panel layout
         control_panel = QWidget()
         control_layout = QVBoxLayout(control_panel)
+
         control_layout.addWidget(self.label)
         control_layout.addWidget(self.upload_btn)
-        control_layout.addWidget(QLabel("Selected Files:"))
+        control_layout.addWidget(QLabel("Available Recordings:"))
         control_layout.addWidget(self.file_list_widget)
         control_layout.addWidget(self.feature_label)
         control_layout.addWidget(self.feature_list)
@@ -118,90 +116,81 @@ class MainWindow(QWidget):
         main_layout.addWidget(main_splitter)
         self.setLayout(main_layout)
 
+    def load_existing_recordings(self):
+        """
+        Load existing recordings from the database and display them in the file list widget.
+        """
+        self.file_list_widget.clear()
+        try:
+            recordings = self.database.get_all_recordings()
+            for recording_id in recordings:
+                file_item = QListWidgetItem(recording_id)
+                self.file_list_widget.addItem(file_item)
+        except Exception as e:
+            QMessageBox.critical(self, 'Error', f"Failed to load recordings from database: {str(e)}")
+
     def upload_files(self):
         files, _ = QFileDialog.getOpenFileNames(
-            self, "Select Audio Files", "", "Audio Files (*.wav);;All Files (*)"
+            self, "Select Audio and TextGrid Files", "", "Audio and TextGrid Files (*.wav *.TextGrid);;All Files (*)"
         )
 
         if files:
-            self.selected_files = files
-            self.file_list_widget.clear()
-            for f in files:
-                file_item = QListWidgetItem(os.path.basename(f))
-                file_item.setData(Qt.UserRole, f)
-                self.file_list_widget.addItem(file_item)
+            try:
+                # Pass the list of files to SpeechImporter
+                missing_pairs = self.speech_importer.import_files(files)
 
-            self.extract_features()
+                # Reload the recordings list
+                self.load_existing_recordings()
+
+                if missing_pairs:
+                    QMessageBox.warning(
+                        self,
+                        'Warning',
+                        f"The following files are missing their pairs: {', '.join(missing_pairs)}"
+                    )
+
+                QMessageBox.information(self, 'Success', "File import completed.")
+            except Exception as e:
+                QMessageBox.critical(self, 'Error', f"File import failed: {str(e)}")
         else:
-            self.selected_files = []
-            self.file_list_widget.clear()
+            QMessageBox.information(self, 'Info', "No files selected for import.")
+
+    def on_recording_selection_changed(self):
+        selected_items = self.file_list_widget.selectedItems()
+        if selected_items:
+            recording_ids = [item.text() for item in selected_items]
+            self.features_dict = self.database.get_features_for_recordings(recording_ids)
+            self.update_feature_list()
+        else:
+            self.features_dict = {}
             self.feature_list.clear()
-            self.features_dict.clear()
-            self.formant_dict.clear()
 
-    def extract_features(self):
-        self.features_dict = {}
-        try:
-            for f in self.selected_files:
-                features = self.opensmile_features.process_file(f)
-                speaker_label = os.path.basename(f)
-                self.features_dict[speaker_label] = features
-
-            all_features = set()
-            for features_df in self.features_dict.values():
-                all_features.update(features_df.columns.tolist())
-            self.feature_list.addItems(sorted(all_features))
-
-            QMessageBox.information(self, 'Success', "Feature extraction completed.")
-        except Exception as e:
-            QMessageBox.critical(self, 'Error', f"Feature extraction failed: {str(e)}")
-
-    def extract_formants(self):
-        selected_files = self.file_list_widget.selectedItems()
-        if not selected_files:
-            QMessageBox.warning(self, 'Error', "Please select files to process.")
-            return
-
-        self.formant_dict = {}
-        try:
-            for file_item in selected_files:
-                file_path = file_item.data(Qt.UserRole)
-                speaker_label = os.path.basename(file_path)
-                formant_df = self.formant_analysis.extract_formants(file_path)
-                self.formant_dict[speaker_label] = formant_df
-
-            self.visualize_vowel_chart()
-        except Exception as e:
-            QMessageBox.critical(self, 'Error', f"Formant extraction failed: {str(e)}")
-
-    def visualize_vowel_chart(self):
-        if not self.formant_dict:
-            QMessageBox.warning(self, 'Error', "Formant data is missing.")
-            return
-
-        self.clear_visualisation()
-        ax = self.canvas.figure.add_subplot(111)
-
-        table_data_raw, table_data_normalized = self.visualization.plot_vowel_chart(
-            ax, self.formant_dict
-        )
-        self.canvas.draw()
-
-        self.create_table(table_data_raw, self.raw_data_table)
-        self.create_table(table_data_normalized, self.normalized_data_table)
+    def update_feature_list(self):
+        """
+        Update the feature list based on the fetched features.
+        """
+        all_features = set()
+        for features_list in self.features_dict.values():
+            for feature_dict in features_list:
+                all_features.update(feature_dict.keys())
+        # Remove unnecessary keys
+        unnecessary_keys = {'_id', 'recording_id', 'interval_type', 'start', 'end', 'text'}
+        all_features -= unnecessary_keys
+        self.feature_list.clear()
+        self.feature_list.addItems(sorted(all_features))
 
     def visualize_time_line(self):
         selected_features = [item.text() for item in self.feature_list.selectedItems()]
-        selected_files = self.file_list_widget.selectedItems()
-        if not self.features_dict or not selected_files or not selected_features:
-            QMessageBox.warning(self, 'Error', "Please select files and features to visualize.")
+        if not self.features_dict or not selected_features:
+            QMessageBox.warning(self, 'Error', "Please select recordings and features to visualize.")
             return
 
         self.clear_visualisation()
         ax = self.canvas.figure.add_subplot(111)
 
+        # Call the visualization method with database features
         all_table_data = self.visualization.plot_time_series(
-            ax, self.features_dict, selected_files, selected_features
+            ax, self.features_dict, selected_features
         )
         self.canvas.draw()
 
@@ -209,17 +198,14 @@ class MainWindow(QWidget):
             self.create_table(all_table_data, self.raw_data_table)
 
     def visualize_histogram(self):
-        if not self.features_dict:
-            QMessageBox.warning(self, 'Error', "Feature data is missing.")
+        selected_features = self.feature_list.selectedItems()
+        if not self.features_dict or not selected_features or len(selected_features) != 1:
+            QMessageBox.warning(self, 'Error', "Please select one feature to visualize.")
             return
 
-        selected_features = self.feature_list.selectedItems()
-        if not selected_features or len(selected_features) != 1:
-            QMessageBox.warning(self, 'Error', "Please select one feature for the histogram.")
-            return
+        selected_feature = selected_features[0].text()
 
         self.clear_visualisation()
-        selected_feature = selected_features[0].text()
         ax = self.canvas.figure.add_subplot(111)
 
         table_data = self.visualization.plot_histogram(
@@ -231,17 +217,14 @@ class MainWindow(QWidget):
             self.create_table(table_data, self.raw_data_table)
 
     def visualize_boxplot(self):
-        if not self.features_dict:
-            QMessageBox.warning(self, 'Error', "Feature data is missing.")
+        selected_features = self.feature_list.selectedItems()
+        if not self.features_dict or not selected_features or len(selected_features) != 1:
+            QMessageBox.warning(self, 'Error', "Please select one feature to visualize.")
             return
 
-        selected_features = self.feature_list.selectedItems()
-        if not selected_features or len(selected_features) != 1:
-            QMessageBox.warning(self, 'Error', "Please select one feature for the boxplot.")
-            return
+        selected_feature = selected_features[0].text()
 
         self.clear_visualisation()
-        selected_feature = selected_features[0].text()
         ax = self.canvas.figure.add_subplot(111)
 
         summary_table = self.visualization.plot_boxplot(
@@ -253,13 +236,9 @@ class MainWindow(QWidget):
             self.create_table(summary_table, self.raw_data_table)
 
     def visualize_radar(self):
-        if not self.features_dict:
-            QMessageBox.warning(self, 'Error', "Feature data is missing.")
-            return
-
         selected_features = [item.text() for item in self.feature_list.selectedItems()]
-        if not selected_features:
-            QMessageBox.warning(self, 'Error', "Please select features for the radar chart.")
+        if not self.features_dict or not selected_features:
+            QMessageBox.warning(self, 'Error', "Please select recordings and features to visualize.")
             return
 
         self.clear_visualisation()
@@ -276,6 +255,13 @@ class MainWindow(QWidget):
             self.create_table(radar_df_normalized, self.normalized_data_table)
 
     def create_table(self, dataframe, table_widget):
+        table_widget.clearContents()
+        table_widget.setRowCount(0)
+        table_widget.setColumnCount(0)
+
+        if dataframe.empty:
+            return
+
         table_widget.setRowCount(len(dataframe))
         table_widget.setColumnCount(len(dataframe.columns))
         table_widget.setHorizontalHeaderLabels(dataframe.columns)
@@ -293,3 +279,4 @@ class MainWindow(QWidget):
         self.normalized_data_table.clearContents()
         self.normalized_data_table.setRowCount(0)
         self.normalized_data_table.setColumnCount(0)
+        self.canvas.draw()
