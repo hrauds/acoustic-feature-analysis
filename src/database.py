@@ -77,9 +77,9 @@ class Database:
             logging.error(f"Failed to insert features: {e}")
             raise e
 
-    def fetch_recording_by_id(self, recording_id):
+    def get_recording_by_id(self, recording_id):
         """
-        Fetch a recording's metadata by its ID.
+        Get recording's metadata by its ID.
         Returns:
             dict or None: The recording document if found, else None.
         """
@@ -96,7 +96,7 @@ class Database:
 
     def get_all_recordings(self):
         """
-        Retrieve all recording IDs from the database.
+        Get all recording IDs from the database.
         """
         try:
             recordings = self.recordings_col.find({}, {"_id": 1})
@@ -107,21 +107,30 @@ class Database:
             logging.error(f"Failed to retrieve recordings: {e}")
             raise e
 
-    def get_features_for_recordings(self, recording_ids):
+    def get_features_for_recordings(self, recording_ids, analysis_level='recording'):
         """
-        Fetch features from the database for the given recording IDs.
+        Get features for the given recording IDs.
         """
         features_dict = {}
         try:
             for recording_id in recording_ids:
-                features_cursor = self.features_col.find({"recording_id": recording_id})
+                # query based on analysis_level
+                query = {"recording_id": recording_id}
+                if analysis_level in ['phoneme', 'word']:
+                    query["interval_type"] = analysis_level
+
+                # get features matching the query
+                features_cursor = self.features_col.find(query)
                 features = list(features_cursor)
+
                 if features:
                     features_dict[recording_id] = features
-                    logging.info(f"Fetched {len(features)} features for recording '{recording_id}'.")
+                    logging.info(f"Fetched {len(features)} '{analysis_level}' features for recording '{recording_id}'.")
                 else:
-                    logging.warning(f"No features found for recording '{recording_id}'.")
+                    logging.warning(f"No '{analysis_level}' features found for recording '{recording_id}'.")
+
             return features_dict
+
         except errors.PyMongoError as e:
             logging.error(f"Failed to fetch features: {e}")
             raise e
