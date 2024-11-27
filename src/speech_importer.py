@@ -49,7 +49,7 @@ class SpeechImporter:
         speaker_label = file_name.split("_")[-1]
 
         # Check if the recording already exists in the database
-        if self.db.fetch_recording_by_id(file_name):
+        if self.db.get_recording_by_id(file_name):
             logging.info(f"Recording '{file_name}' already exists in the database.")
             return
 
