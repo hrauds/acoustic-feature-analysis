@@ -10,7 +10,8 @@ from src.database import Database
 # Labels to exclude during processing
 EXCLUDED_LABELS = {"<sil>", "SIL", ".sil", ".noise", ""}
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)  # Set to DEBUG for detailed logs
+
 
 class SpeechImporter:
     def __init__(self, textgrid_dir=TEXTGRID_DIR, audio_dir=AUDIO_DIR):
@@ -31,95 +32,138 @@ class SpeechImporter:
         Returns:
             list: Cleaned intervals.
         """
-        cleaned_intervals = [
-            interval for interval in intervals
-            if interval["text"].strip() not in EXCLUDED_LABELS
-        ]
-        return cleaned_intervals
+        return [interval for interval in intervals if interval["text"].strip() not in EXCLUDED_LABELS]
+
+    @staticmethod
+    def slice_features(features, intervals):
+        """
+        Extract features for specific intervals from the feature DataFrame.
+
+        Args:
+            features (pd.DataFrame): Frame-level features for the entire file.
+            intervals (list[dict]): List of intervals with start, end, and text.
+
+        Returns:
+            list[dict]: List of interval features with 'mean' and frame-level data.
+        """
+        sliced_features = []
+
+        for interval in intervals:
+            start, end, text = interval["start"], interval["end"], interval["text"]
+
+            # Extract data within the interval
+            interval_data = features[(features.index >= start) & (features.index < end)]
+
+            if interval_data.empty:
+                logging.warning(f"No features found for interval '{text}' ({start:.3f} - {end:.3f})")
+                continue
+
+            sliced_features.append({
+                "text": text,
+                "start": start,
+                "end": end,
+                "mean": interval_data.mean().to_dict(),  # Mean feature values
+                "intervals": interval_data.to_dict(orient="records")  # Frame-level values
+            })
+
+        return sliced_features
 
     def process_single_recording(self, textgrid_path, audio_path=None):
         """
         Parses intervals, cleans labels, extracts features, and stores data in the database.
-
-        Args:
-            textgrid_path (str): Path to the TextGrid file.
-            audio_path (str, optional): Path to the audio file. If not provided, it's derived from the TextGrid filename.
         """
         file_name = os.path.basename(textgrid_path).replace(".TextGrid", "")
-        speaker_label = file_name.split("_")[-1]
-
-        # Check if the recording already exists in the database
-        if self.db.get_recording_by_id(file_name):
-            logging.info(f"Recording '{file_name}' already exists in the database.")
-            return
 
         if not audio_path:
             audio_path = os.path.join(self.audio_dir, file_name + ".wav")
 
-        # Parse the TextGrid
+        if self.db.recording_exists(file_name):
+            return
+
         try:
             intervals = self.parser.parse_textgrid(textgrid_path)
         except ValueError as e:
             logging.error(f"Skipping '{textgrid_path}': {e}")
             return
 
-        # Clean intervals
         words = self.clean_intervals(intervals.get("words", []))
         phonemes = self.clean_intervals(intervals.get("phonemes", []))
 
-        # Extract audio features
+        if not words or not phonemes:
+            logging.warning(f"TextGrid '{textgrid_path}' is missing 'words' or 'phonemes' tiers.")
+            return
+
         try:
             features = self.feature_extractor.process_file(audio_path)
-            word_features = self.feature_extractor.extract_features_by_interval(features, words)
-            phoneme_features = self.feature_extractor.extract_features_by_interval(features, phonemes)
+            self.insert_recording(file_name, features, words)
+            word_docs = self.insert_words(file_name, features, words)
+            self.insert_phonemes(file_name, features, phonemes, word_docs)
+            logging.info(f"Recording '{file_name}' processed.")
         except Exception as e:
             logging.error(f"Error processing audio file '{audio_path}': {e}")
+
+    def insert_recording(self, file_name, features, words):
+        """
+        Insert recording-level data into the database.
+        """
+        recording_duration = max(word["end"] for word in words)
+        recording_interval = [{"start": 0.0, "end": recording_duration, "text": "recording"}]
+        recording_features = self.slice_features(features, recording_interval)
+
+        if not recording_features:
+            logging.error(f"No features extracted for recording '{file_name}'. Skipping insertion.")
             return
 
-        # Insert recording data into the database
-        try:
-            duration = features.index.get_level_values('end').max().total_seconds()
-            recording_data = {
-                "_id": file_name,
-                "file_name": os.path.basename(audio_path),
-                "speaker_label": speaker_label,
-                "duration": duration,
-                "intervals": {
-                    "words": words,
-                    "phonemes": phonemes,
-                },
-                "word_count": len(words),
-                "phoneme_count": len(phonemes),
+        recording_doc = {
+            "recording_id": file_name,
+            "start": 0.0,
+            "end": recording_duration,
+            "duration": recording_duration,
+            "features": {"mean": recording_features[0]["mean"]}
+        }
+
+        self.db.insert_recordings([recording_doc])
+
+    def insert_words(self, file_name, features, words):
+        """
+        Insert word-level data into the database.
+        """
+        word_features = self.slice_features(features, words)
+        word_docs = [
+            {
+                "recording_id": file_name,
+                "text": word["text"],
+                "start": word["start"],
+                "end": word["end"],
+                "duration": word["end"] - word["start"],
+                "features": {"mean": word_feature["mean"]}
             }
-            self.db.insert_recording(recording_data)
-        except Exception as e:
-            logging.error(f"Error inserting recording '{file_name}' into database: {e}")
-            return
+            for word, word_feature in zip(words, word_features)
+        ]
+        self.db.insert_words(word_docs)
+        return word_docs
 
-        # Prepare feature records
-        feature_records = []
-        for word in word_features:
-            feature_records.append({
-                "_id": f"{file_name}_word_{word['start']:.3f}",
+    def insert_phonemes(self, file_name, features, phonemes, word_docs):
+        """
+        Insert phoneme-level data into the database.
+        """
+        phoneme_features = self.slice_features(features, phonemes)
+        phoneme_docs = [
+            {
                 "recording_id": file_name,
-                "interval_type": "word",
-                **word
-            })
-
-        for phoneme in phoneme_features:
-            feature_records.append({
-                "_id": f"{file_name}_phoneme_{phoneme['start']:.3f}",
-                "recording_id": file_name,
-                "interval_type": "phoneme",
-                **phoneme
-            })
-
-        # Insert features into the database
-        try:
-            self.db.insert_features(feature_records)
-            logging.info(f"Successfully processed and inserted recording '{file_name}'.")
-        except Exception as e:
-            logging.error(f"Error inserting features for recording '{file_name}': {e}")
+                "word_id": next((word["_id"] for word in word_docs if word["start"] <= phoneme["start"] < word["end"]), None),
+                "text": phoneme["text"],
+                "start": phoneme["start"],
+                "end": phoneme["end"],
+                "duration": phoneme["end"] - phoneme["start"],
+                "features": {
+                    "mean": phoneme_feature["mean"],
+                    "intervals": phoneme_feature["intervals"]
+                }
+            }
+            for phoneme, phoneme_feature in zip(phonemes, phoneme_features)
+        ]
+        self.db.insert_phonemes(phoneme_docs)
 
     def import_files(self, files):
         """
@@ -129,12 +173,15 @@ class SpeechImporter:
             files (list): List of file paths selected by the user.
 
         Returns:
-            list: List of base names of files that are missing pairs.
+            list: List of base names for which valid pairs were not found.
         """
         file_pairs = {}
+
         for file_path in files:
-            base_name = os.path.splitext(os.path.basename(file_path))[0]
-            ext = os.path.splitext(file_path)[1].lower()
+            base_name, ext = os.path.splitext(os.path.basename(file_path))
+            base_name = base_name.strip().lower()
+            ext = ext.lower()
+
             if base_name not in file_pairs:
                 file_pairs[base_name] = {}
             if ext == '.wav':
@@ -144,26 +191,25 @@ class SpeechImporter:
 
         missing_pairs = []
         for base_name, paths in file_pairs.items():
-            if 'audio' in paths and 'textgrid' in paths:
-                self.process_single_recording(paths['textgrid'], paths['audio'])
+            audio_file = paths.get('audio')
+            textgrid_file = paths.get('textgrid')
+
+            if audio_file and textgrid_file:
+                logging.info(f"Processing pair: {base_name}")
+                self.process_single_recording(textgrid_file, audio_file)
             else:
                 missing_pairs.append(base_name)
-                logging.warning(f"Missing pair for base name '{base_name}'.")
+                if not audio_file:
+                    logging.warning(f"Missing audio file for base name '{base_name}'.")
+                if not textgrid_file:
+                    logging.warning(f"Missing TextGrid file for base name '{base_name}'.")
+
+        if missing_pairs:
+            logging.info(f"Total missing pairs: {len(missing_pairs)}")
+        else:
+            logging.info("All files processed successfully with valid pairs.")
 
         return missing_pairs
-
-    def process_all_recordings(self):
-        """
-        Process all TextGrid files in the directory and their corresponding audio files.
-        """
-        textgrid_paths = glob.glob(os.path.join(self.textgrid_dir, '*.TextGrid'))
-
-        if not textgrid_paths:
-            logging.warning("No TextGrid files found in the directory.")
-            return
-
-        for textgrid_path in tqdm(textgrid_paths, desc="Processing TextGrids"):
-            self.process_single_recording(textgrid_path)
 
     def close(self):
         """
