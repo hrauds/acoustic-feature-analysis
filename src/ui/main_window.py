@@ -28,7 +28,7 @@ class MainWindow(QWidget):
         self.setWindowTitle("Speech Analysis Application")
         self.setGeometry(100, 100, 1400, 700)
 
-        # Upload
+        # Upload Section
         self.label = QLabel("Upload audio and TextGrid files:", self)
         self.label.setAlignment(Qt.AlignCenter)
 
@@ -44,13 +44,16 @@ class MainWindow(QWidget):
         self.analysis_label = QLabel("Select Analysis Level:", self)
         self.analysis_label.setAlignment(Qt.AlignCenter)
 
-        self.phoneme_radio = QRadioButton("Phoneme")
+        # Added "Recording" radio button
+        self.recording_radio = QRadioButton("Recording")
         self.word_radio = QRadioButton("Word")
-        self.word_radio.setChecked(True)
+        self.phoneme_radio = QRadioButton("Phoneme")
+        self.recording_radio.setChecked(True)  # Default selection
 
         self.analysis_group = QButtonGroup(self)
-        self.analysis_group.addButton(self.phoneme_radio)
+        self.analysis_group.addButton(self.recording_radio)
         self.analysis_group.addButton(self.word_radio)
+        self.analysis_group.addButton(self.phoneme_radio)
         self.analysis_group.buttonClicked.connect(self.on_analysis_level_changed)
 
         # List specific items (words/phonemes)
@@ -101,8 +104,9 @@ class MainWindow(QWidget):
 
         # Analysis level selection
         control_layout.addWidget(self.analysis_label)
-        control_layout.addWidget(self.phoneme_radio)
+        control_layout.addWidget(self.recording_radio)
         control_layout.addWidget(self.word_radio)
+        control_layout.addWidget(self.phoneme_radio)
 
         # Feature and item selection
         control_layout.addWidget(self.item_label)
@@ -197,12 +201,19 @@ class MainWindow(QWidget):
         selected_items = self.file_list_widget.selectedItems()
         if selected_items:
             recording_ids = [item.text() for item in selected_items]
-            self.features = self.database.get_features_for_recordings(
-                recording_ids, self.get_selected_analysis_level()
-            )
+            analysis_level = self.get_selected_analysis_level()
+            print(f"Selected recording IDs: {recording_ids}")
+            print(f"Selected analysis level: {analysis_level}")
+
+            # Get features for the selected recordings and analysis level
+            self.features = self.database.get_features_for_recordings(recording_ids, analysis_level)
+            print(f"Fetched features: {self.features}")
+
+            # Update feature and item lists
             self.update_feature_list()
             self.update_item_list()
         else:
+            # Reset features and UI
             self.features = {}
             self.feature_list.clear()
             self.item_list.clear()
@@ -212,11 +223,21 @@ class MainWindow(QWidget):
 
     def on_analysis_level_changed(self):
         selected_items = self.file_list_widget.selectedItems()
+        analysis_level = self.get_selected_analysis_level()
+
+        if analysis_level == 'recording':
+            self.item_list.clear()
+            self.item_label.setVisible(False)
+            self.item_list.setVisible(False)
+        else:
+            self.item_label.setVisible(True)
+            self.item_list.setVisible(True)
+
         if selected_items:
             recording_ids = [item.text() for item in selected_items]
-            self.features = self.database.get_features_for_recordings(
-                recording_ids, self.get_selected_analysis_level()
-            )
+
+            self.features = self.database.get_features_for_recordings(recording_ids, analysis_level)
+
             self.update_feature_list()
             self.update_item_list()
         else:
@@ -231,7 +252,9 @@ class MainWindow(QWidget):
         """
         Returns the currently selected analysis level.
         """
-        if self.phoneme_radio.isChecked():
+        if self.recording_radio.isChecked():
+            return 'recording'
+        elif self.phoneme_radio.isChecked():
             return 'phoneme'
         else:
             return 'word'
@@ -241,52 +264,65 @@ class MainWindow(QWidget):
         Update the feature list based on the fetched features.
         """
         all_features = set()
+
         for features_list in self.features.values():
             for feature_dict in features_list:
-                all_features.update(feature_dict.keys())
-        # Remove unnecessary keys
-        unnecessary_keys = {'_id', 'recording_id', 'interval_type', 'start', 'end', 'text'}
-        all_features -= unnecessary_keys
+                if "mean" in feature_dict:
+                    all_features.update(feature_dict["mean"].keys())
+
+                # if "intervals" in feature_dict:
+
         self.feature_list.clear()
-        self.feature_list.addItems(sorted(all_features))
+        if all_features:
+            self.feature_list.addItems(all_features)
+            print(f"Feature list updated with {len(all_features)} features.")
+        else:
+            print("No features found to populate the feature list.")
 
     def update_item_list(self):
         """
         Update the item list (words/phonemes) based on the fetched features and selected analysis level.
         """
         analysis_level = self.get_selected_analysis_level()
-        items = set()
-        for features_list in self.features.values():
-            for feature_dict in features_list:
-                if analysis_level in ['phoneme', 'word']:
-                    # Assuming 'text' field contains the phoneme or word label
-                    item_text = feature_dict.get('text', '').strip()
-                    if item_text:
-                        # Display as "RecordingID - Item"
-                        recording_id = feature_dict.get('recording_id', 'Unknown')
-                        combined_text = f"{recording_id} - {item_text}"
-                        items.add(combined_text)
         self.item_list.clear()
-        self.item_list.addItems(sorted(items))
-        self.item_label.show()
-        self.item_list.show()
+
+        if analysis_level == 'recording':
+            self.item_label.hide()
+            self.item_list.hide()
+            return
+
+        items = set()
+        for recording_id, features_list in self.features.items():
+            for feature_dict in features_list:
+
+                item_text = feature_dict.get('text', '').strip()
+                if item_text:
+                    combined_text = f"{recording_id} - {item_text}"
+                    items.add(combined_text)
+
+        self.item_list.clear()
+        if items:
+            self.item_list.addItems(items)
+            self.item_label.show()
+            self.item_list.show()
+        else:
+            self.item_label.hide()
+            self.item_list.hide()
 
     def on_item_selection_changed(self):
         selected_items = self.item_list.selectedItems()
         if selected_items:
-            # Extract the word/phoneme part from "RecordingID - Item"
+            # Get item from: "RecordingID - Item"
             selected_texts = [item.text().split(' - ')[1] for item in selected_items]
 
-            # Filter features based on selected_texts
-            filtered_features = {}
-            for recording_id, features in self.features.items():
-                filtered = [feature for feature in features if feature.get('text', '').strip() in selected_texts]
-                if filtered:
-                    filtered_features[recording_id] = filtered
-            # Store the filtered features for visualization
-            self.filtered_features = filtered_features
+            # Filter features by selected items
+            self.filtered_features = {
+                recording_id: [
+                    feature for feature in features if feature.get('text', '').strip() in selected_texts
+                ]
+                for recording_id, features in self.features.items()
+            }
         else:
-            # If no items are selected, use all features
             self.filtered_features = self.features
 
     def visualize_time_line(self):
