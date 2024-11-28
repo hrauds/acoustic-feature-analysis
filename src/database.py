@@ -106,10 +106,8 @@ class Database:
         try:
             exists = self.recordings_col.find_one({"recording_id": recording_id}, {"_id": 1})
             if exists:
-                logging.info(f"Recording with ID '{recording_id}' exists.")
                 return True
             else:
-                logging.info(f"Recording with ID '{recording_id}' does not exist.")
                 return False
         except errors.PyMongoError as e:
             logging.error(f"Failed to check existence of recording with ID '{recording_id}': {e}")

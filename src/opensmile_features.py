@@ -1,6 +1,5 @@
 import opensmile
 import logging
-from pandas import Timedelta
 logging.basicConfig(level=logging.INFO)
 
 
@@ -20,45 +19,17 @@ class OpenSmileFeatures:
 
         Args:
             file_path (str): Path to the audio file.
+
         Returns:
-            pd.DataFrame: Features extracted for the entire audio.
+            pd.DataFrame: Features extracted for the entire audio with 'start' as index.
         """
-        return self.smile.process_file(file_path)
+        features = self.smile.process_file(file_path)
 
-    def extract_features_by_interval(self, features, intervals):
-        """
-        Extract features for each interval (e.g., word or phoneme).
+        features = features.reset_index(level='start')
+        features['start'] = features['start'].dt.total_seconds()
 
-        Args:
-            features (pd.DataFrame): Extracted features from the entire file.
-            intervals (list[dict]): List of intervals with start, end, and label information.
-        Returns:
-            list[dict]: List of features averaged for each interval.
-        """
-        interval_features = []
-        feature_start_index = features.index.get_level_values('start')
+        # Use 'start' as index for slicing
+        features.set_index('start', inplace=True)
 
-        for interval in intervals:
-            start_time = Timedelta(seconds=interval["start"])
-            end_time = Timedelta(seconds=interval["end"])
-
-            mask = (feature_start_index >= start_time) & (feature_start_index < end_time)
-            interval_data = features[mask]
-
-            if interval_data.empty:
-                logging.warning(f"No features found for interval {interval['text']} "
-                                f"({interval['start']} - {interval['end']})")
-                continue
-
-            # Compute mean features for the interval
-            avg_features = interval_data.mean().to_dict()
-
-            avg_features.update({
-                "text": interval["text"],
-                "start": interval["start"],
-                "end": interval["end"],
-                "duration": interval["duration"]
-            })
-            interval_features.append(avg_features)
-
-        return interval_features
+        # Return sorted DataFrame
+        return features.sort_index()
