@@ -1,7 +1,5 @@
 import os
-import glob
 import logging
-from tqdm import tqdm
 from src.textgrid_parser import TextGridParser
 from src.opensmile_features import OpenSmileFeatures
 from config import TEXTGRID_DIR, AUDIO_DIR
@@ -35,35 +33,66 @@ class SpeechImporter:
         return [interval for interval in intervals if interval["text"].strip() not in EXCLUDED_LABELS]
 
     @staticmethod
-    def slice_features(features, intervals):
+    def aggregate_features(interval_data, level):
         """
-        Extract features for specific intervals from the feature DataFrame.
+        Aggregate features by analysis level.
+
+        Args:
+            interval_data (pd.DataFrame): Frame-level data for an interval.
+            level (str): Analysis level ('phoneme', 'word', 'recording').
+
+        Returns:
+            pd.DataFrame or list[dict]: Down sampled frame data.
+        """
+        if level == 'phoneme':
+            # Keep all
+            return interval_data
+        elif level == 'word':
+            # Keep one per 50 ms
+            return interval_data.iloc[::5]
+        elif level == 'recording':
+            # Keep one per 200 ms
+            return interval_data.iloc[::20]
+
+    def slice_features(self, features, intervals, level):
+        """
+        Extract and aggregate features for specific intervals.
 
         Args:
             features (pd.DataFrame): Frame-level features for the entire file.
             intervals (list[dict]): List of intervals with start, end, and text.
+            level (str): Analysis level ('phoneme', 'word', 'recording').
 
         Returns:
-            list[dict]: List of interval features with 'mean' and frame-level data.
+            list[dict]: List of interval features with frame-level data.
         """
         sliced_features = []
 
         for interval in intervals:
             start, end, text = interval["start"], interval["end"], interval["text"]
 
-            # Extract data within the interval
-            interval_data = features[(features.index >= start) & (features.index < end)]
-
+            # Extract data for the interval
+            interval_data = features[(features.index >= start) & (features.index <= end)]
             if interval_data.empty:
                 logging.warning(f"No features found for interval '{text}' ({start:.3f} - {end:.3f})")
                 continue
 
+            # Aggregate features by analysis level
+            aggregated_data = self.aggregate_features(interval_data, level)
+            aggregated_data = aggregated_data.round(6).astype(float)
+
+            # Include timestamp in each frame
+            frame_values = aggregated_data.reset_index().round(6).astype(float).to_dict(orient='records')
+
+            # Compute mean values
+            mean_values = {key: round(value, 6) for key, value in interval_data.mean().to_dict().items()}
+
             sliced_features.append({
                 "text": text,
-                "start": start,
-                "end": end,
-                "mean": interval_data.mean().to_dict(),  # Mean feature values
-                "intervals": interval_data.to_dict(orient="records")  # Frame-level values
+                "start": round(float(start), 6),
+                "end": round(float(end), 6),
+                "mean": mean_values,
+                "frame_values": frame_values
             })
 
         return sliced_features
@@ -95,75 +124,74 @@ class SpeechImporter:
 
         try:
             features = self.feature_extractor.process_file(audio_path)
-            self.insert_recording(file_name, features, words)
-            word_docs = self.insert_words(file_name, features, words)
-            self.insert_phonemes(file_name, features, phonemes, word_docs)
+            self.insert_data(file_name, features, words, phonemes)
             logging.info(f"Recording '{file_name}' processed.")
         except Exception as e:
             logging.error(f"Error processing audio file '{audio_path}': {e}")
 
-    def insert_recording(self, file_name, features, words):
+    def insert_data(self, file_name, features, words, phonemes):
         """
-        Insert recording-level data into the database.
+        Insert recording, word and phoneme features into the database.
         """
+        # Recording-level data
         recording_duration = max(word["end"] for word in words)
         recording_interval = [{"start": 0.0, "end": recording_duration, "text": "recording"}]
-        recording_features = self.slice_features(features, recording_interval)
+        recording_features = self.slice_features(features, recording_interval, level="recording")
+        recording_docs = [
+            {
+                "recording_id": file_name,
+                "parent_id": None,
+                "text": "recording",
+                "start": 0.0,
+                "end": recording_duration,
+                "duration": recording_duration,
+                "features": {
+                    "mean": recording_features[0]["mean"],
+                    "frame_values": recording_features[0]["frame_values"]
+                }
+            }
+        ]
+        self.db.insert_data("recordings", recording_docs)
 
-        if not recording_features:
-            logging.error(f"No features extracted for recording '{file_name}'. Skipping insertion.")
-            return
-
-        recording_doc = {
-            "recording_id": file_name,
-            "start": 0.0,
-            "end": recording_duration,
-            "duration": recording_duration,
-            "features": {"mean": recording_features[0]["mean"]}
-        }
-
-        self.db.insert_recordings([recording_doc])
-
-    def insert_words(self, file_name, features, words):
-        """
-        Insert word-level data into the database.
-        """
-        word_features = self.slice_features(features, words)
+        word_features = self.slice_features(features, words, level="word")
         word_docs = [
             {
                 "recording_id": file_name,
-                "text": word["text"],
-                "start": word["start"],
-                "end": word["end"],
-                "duration": word["end"] - word["start"],
-                "features": {"mean": word_feature["mean"]}
+                "parent_id": None,
+                "text": word_feature["text"],
+                "start": word_feature["start"],
+                "end": word_feature["end"],
+                "duration": word_feature["end"] - word_feature["start"],
+                "features": {
+                    "mean": word_feature["mean"],
+                    "frame_values": word_feature["frame_values"]
+                }
             }
-            for word, word_feature in zip(words, word_features)
+            for word_feature in word_features
         ]
-        self.db.insert_words(word_docs)
-        return word_docs
+        self.db.insert_data("words", word_docs)
 
-    def insert_phonemes(self, file_name, features, phonemes, word_docs):
-        """
-        Insert phoneme-level data into the database.
-        """
-        phoneme_features = self.slice_features(features, phonemes)
+        phoneme_features = self.slice_features(features, phonemes, level="phoneme")
         phoneme_docs = [
             {
                 "recording_id": file_name,
-                "word_id": next((word["_id"] for word in word_docs if word["start"] <= phoneme["start"] < word["end"]), None),
-                "text": phoneme["text"],
-                "start": phoneme["start"],
-                "end": phoneme["end"],
-                "duration": phoneme["end"] - phoneme["start"],
+                "parent_id": next(
+                    (word_doc["_id"] for word_doc in word_docs if
+                     word_doc["start"] <= phoneme_feature["start"] < word_doc["end"]),
+                    None
+                ),
+                "text": phoneme_feature["text"],
+                "start": phoneme_feature["start"],
+                "end": phoneme_feature["end"],
+                "duration": phoneme_feature["end"] - phoneme_feature["start"],
                 "features": {
                     "mean": phoneme_feature["mean"],
-                    "intervals": phoneme_feature["intervals"]
+                    "frame_values": phoneme_feature["frame_values"]
                 }
             }
-            for phoneme, phoneme_feature in zip(phonemes, phoneme_features)
+            for phoneme_feature in phoneme_features
         ]
-        self.db.insert_phonemes(phoneme_docs)
+        self.db.insert_data("phonemes", phoneme_docs)
 
     def import_files(self, files):
         """
@@ -195,7 +223,6 @@ class SpeechImporter:
             textgrid_file = paths.get('textgrid')
 
             if audio_file and textgrid_file:
-                logging.info(f"Processing pair: {base_name}")
                 self.process_single_recording(textgrid_file, audio_file)
             else:
                 missing_pairs.append(base_name)

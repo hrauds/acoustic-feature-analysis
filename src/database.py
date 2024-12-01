@@ -21,62 +21,35 @@ class Database:
             logging.error(f"Failed to connect to MongoDB: {e}")
             raise e
 
-    def insert_recordings(self, recording_data_list):
+    def insert_data(self, collection_name, data_list):
         """
-        Insert multiple recordings into the recordings collection.
+        Insert documents into a phoneme, word or recording collection.
 
         Args:
-            recording_data_list (list): A list of recording documents.
+            collection_name (str): Name of the collection ('recordings', 'words', 'phonemes').
+            data_list (list): A list of documents to insert.
+
+        Raises:
+            ValueError: If the collection name or data list is invalid.
         """
-        if not recording_data_list or not isinstance(recording_data_list, list):
-            raise ValueError("Invalid recording data list.")
+        if not data_list or not isinstance(data_list, list):
+            raise ValueError("Invalid data list. Must be a non-empty list.")
+
+        if collection_name == 'recordings':
+            collection = self.db['recordings']
+        elif collection_name == 'words':
+            collection = self.db['words']
+        elif collection_name == 'phonemes':
+            collection = self.db['phonemes']
+        else:
+            raise ValueError(f"Invalid collection name: {collection_name}. Must be 'recordings', 'words', or 'phonemes'.")
 
         try:
-            self.recordings_col.insert_many(recording_data_list, ordered=False)
-            logging.info(f"Inserted {len(recording_data_list)} recordings.")
+            collection.insert_many(data_list, ordered=False)
         except errors.BulkWriteError as bwe:
-            logging.warning(f"Some recordings were not inserted: {bwe.details}")
+            logging.warning(f"Some documents were not inserted into '{collection_name}' collection: {bwe.details}")
         except errors.PyMongoError as e:
-            logging.error(f"Failed to insert recordings: {e}")
-            raise e
-
-    def insert_words(self, word_data_list):
-        """
-        Insert multiple words into the words collection.
-
-        Args:
-            word_data_list (list): A list of word documents.
-        """
-        if not word_data_list or not isinstance(word_data_list, list):
-            raise ValueError("Invalid word data list.")
-
-        try:
-            self.words_col.insert_many(word_data_list, ordered=False)
-            logging.info(f"Inserted {len(word_data_list)} words.")
-        except errors.BulkWriteError as bwe:
-            logging.warning(f"Some words were not inserted: {bwe.details}")
-        except errors.PyMongoError as e:
-            logging.error(f"Failed to insert words: {e}")
-            raise e
-
-    def insert_phonemes(self, phoneme_data_list):
-        """
-        Insert multiple phonemes into the phonemes collection.
-
-        Args:
-            phoneme_data_list (list): A list of phoneme documents.
-        """
-        if not phoneme_data_list or not isinstance(phoneme_data_list, list):
-            raise ValueError("Invalid phoneme data list.")
-
-        try:
-            self.phonemes_col.insert_many(phoneme_data_list, ordered=False)
-            logging.info(f"Inserted {len(phoneme_data_list)} phonemes.")
-        except errors.BulkWriteError as bwe:
-            logging.warning(f"Some phonemes were not inserted: {bwe.details}")
-        except errors.PyMongoError as e:
-            logging.error(f"Failed to insert phonemes: {e}")
-            raise e
+            logging.error(f"Failed to insert data into '{collection_name}' collection: {e}")
 
     def get_recording_by_id(self, recording_id):
         """
@@ -159,32 +132,19 @@ class Database:
                 features_list = list(cursor)
 
                 if features_list:
-                    if analysis_level == 'phoneme':
-                        # "mean" and "intervals"
-                        formatted_features = [
-                            {
-                                "text": feature.get("text"),
-                                "start": feature.get("start"),
-                                "end": feature.get("end"),
-                                "mean": feature.get("features", {}).get("mean"),
-                                "intervals": feature.get("features", {}).get("intervals"),
-                            }
-                            for feature in features_list
-                        ]
-                    else:
-                        # only "mean"
-                        formatted_features = [
-                            {
-                                "text": feature.get("text"),
-                                "start": feature.get("start"),
-                                "end": feature.get("end"),
-                                "mean": feature.get("features", {}).get("mean"),
-                            }
-                            for feature in features_list
-                        ]
+                    formatted_features = [
+                        {
+                            "text": feature.get("text"),
+                            "start": feature.get("start"),
+                            "end": feature.get("end"),
+                            "mean": feature.get("features", {}).get("mean"),
+                            "frame_values": feature.get("features", {}).get("frame_values"),
+                        }
+                        for feature in features_list
+                    ]
                     features[recording_id] = formatted_features
                     logging.info(
-                        f"Fetched {len(features_list)} features for recording '{recording_id}' at level '{analysis_level}'.")
+                        f"Fetched {len(features_list)} frame values for recording '{recording_id}' at level '{analysis_level}'.")
                 else:
                     logging.warning(f"No features found for recording '{recording_id}' at level '{analysis_level}'.")
 
