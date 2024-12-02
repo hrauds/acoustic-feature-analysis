@@ -202,16 +202,18 @@ class MainWindow(QWidget):
         if selected_items:
             recording_ids = [item.text() for item in selected_items]
             analysis_level = self.get_selected_analysis_level()
-            print(f"Selected recording IDs: {recording_ids}")
-            print(f"Selected analysis level: {analysis_level}")
 
             # Get features for the selected recordings and analysis level
             self.features = self.database.get_features_for_recordings(recording_ids, analysis_level)
-            print(f"Fetched features: {self.features}")
 
             # Update feature and item lists
             self.update_feature_list()
             self.update_item_list()
+
+            if analysis_level == 'recording':
+                self.filtered_features = self.features
+            else:
+                self.filtered_features = {}
         else:
             # Reset features and UI
             self.features = {}
@@ -222,21 +224,20 @@ class MainWindow(QWidget):
             self.filtered_features = {}
 
     def on_analysis_level_changed(self):
+        """
+        Update features and filtered_features when the analysis level changes.
+        """
         selected_items = self.file_list_widget.selectedItems()
         analysis_level = self.get_selected_analysis_level()
 
-        if analysis_level == 'recording':
-            self.item_list.clear()
-            self.item_label.setVisible(False)
-            self.item_list.setVisible(False)
-        else:
-            self.item_label.setVisible(True)
-            self.item_list.setVisible(True)
-
         if selected_items:
             recording_ids = [item.text() for item in selected_items]
-
             self.features = self.database.get_features_for_recordings(recording_ids, analysis_level)
+
+            if analysis_level == 'recording':
+                self.filtered_features = self.features
+            else:
+                self.filtered_features = {}
 
             self.update_feature_list()
             self.update_item_list()
@@ -270,12 +271,9 @@ class MainWindow(QWidget):
                 if "mean" in feature_dict:
                     all_features.update(feature_dict["mean"].keys())
 
-                # if "intervals" in feature_dict:
-
         self.feature_list.clear()
         if all_features:
             self.feature_list.addItems(all_features)
-            print(f"Feature list updated with {len(all_features)} features.")
         else:
             print("No features found to populate the feature list.")
 
@@ -310,95 +308,107 @@ class MainWindow(QWidget):
             self.item_list.hide()
 
     def on_item_selection_changed(self):
-        selected_items = self.item_list.selectedItems()
-        if selected_items:
-            # Get item from: "RecordingID - Item"
-            selected_texts = [item.text().split(' - ')[1] for item in selected_items]
+        """
+        Filter features based on selected items in the item list.
+        """
+        analysis_level = self.get_selected_analysis_level()
 
-            # Filter features by selected items
-            self.filtered_features = {
-                recording_id: [
-                    feature for feature in features if feature.get('text', '').strip() in selected_texts
-                ]
-                for recording_id, features in self.features.items()
-            }
-        else:
+        if analysis_level == 'recording':
+            # For recording-level, use all features without filtering by items
             self.filtered_features = self.features
+        else:
+            selected_items = self.item_list.selectedItems()
+            if selected_items:
+                selected_texts = [item.text().split(' - ')[1] for item in selected_items]
+                self.filtered_features = {
+                    recording_id: [
+                        feature for feature in features if feature.get("text", "").strip() in selected_texts
+                    ]
+                    for recording_id, features in self.features.items()
+                }
+            else:
+                self.filtered_features = {}
 
     def visualize_time_line(self):
-        selected_features = [item.text() for item in self.feature_list.selectedItems()]
-        if not self.features or not selected_features:
+        print("vii")
+        print(self.filtered_features)
+        if not self.filtered_features:
             QMessageBox.warning(self, 'Error', "Please select recordings and features to visualize.")
             return
 
         self.clear_visualisation()
         ax = self.canvas.figure.add_subplot(111)
 
-        # Call the visualization method with database features
-        all_table_data = self.visualization.plot_time_series(
-            ax, self.features, selected_features
-        )
+        # Call the visualization method
+        all_table_data = self.visualization.plot_time_series(ax, self.filtered_features)
         self.canvas.draw()
 
         if all_table_data is not None:
             self.create_table(all_table_data, self.raw_data_table)
 
     def visualize_histogram(self):
-        selected_features = self.feature_list.selectedItems()
-        if not self.features or not selected_features or len(selected_features) != 1:
+        feature_count = sum(len(features) for features in self.filtered_features.values())
+        if feature_count != 1:
             QMessageBox.warning(self, 'Error', "Please select one feature to visualize.")
             return
-
-        selected_feature = selected_features[0].text()
 
         self.clear_visualisation()
         ax = self.canvas.figure.add_subplot(111)
 
-        table_data = self.visualization.plot_histogram(
-            ax, self.features, selected_feature
-        )
+        # Call the visualization method
+        table_data = self.visualization.plot_histogram(ax, self.filtered_features)
         self.canvas.draw()
 
         if table_data is not None:
             self.create_table(table_data, self.raw_data_table)
 
     def visualize_boxplot(self):
-        selected_features = self.feature_list.selectedItems()
-        if not self.features or not selected_features or len(selected_features) != 1:
+        feature_count = sum(len(features) for features in self.filtered_features.values())
+        if feature_count != 1:
             QMessageBox.warning(self, 'Error', "Please select one feature to visualize.")
             return
-
-        selected_feature = selected_features[0].text()
 
         self.clear_visualisation()
         ax = self.canvas.figure.add_subplot(111)
 
-        summary_table = self.visualization.plot_boxplot(
-            ax, self.features, selected_feature
-        )
+        # Call the visualization method
+        summary_table = self.visualization.plot_boxplot(ax, self.filtered_features)
         self.canvas.draw()
 
         if summary_table is not None:
             self.create_table(summary_table, self.raw_data_table)
 
     def visualize_radar(self):
-        selected_features = [item.text() for item in self.feature_list.selectedItems()]
-        if not self.features or not selected_features:
+        if not self.filtered_features:
             QMessageBox.warning(self, 'Error', "Please select recordings and features to visualize.")
             return
 
         self.clear_visualisation()
         ax = self.canvas.figure.add_subplot(111, polar=True)
 
-        radar_df_original, radar_df_normalized = self.visualization.plot_radar_chart(
-            ax, self.features, selected_features
-        )
+        # Call the visualization method
+        radar_df_original, radar_df_normalized = self.visualization.plot_radar_chart(ax, self.filtered_features)
         self.canvas.draw()
 
         if radar_df_original is not None:
             self.create_table(radar_df_original, self.raw_data_table)
         if radar_df_normalized is not None:
             self.create_table(radar_df_normalized, self.normalized_data_table)
+
+    def visualize_vowel_chart(self):
+        if not self.filtered_features:
+            QMessageBox.warning(self, 'Error', "Please select recordings and features to visualize.")
+            return
+
+        self.clear_visualisation()
+        ax = self.canvas.figure.add_subplot(111)
+
+        # Call the visualization method
+        vowel_chart_data = self.visualization.plot_vowel_chart(ax, self.filtered_features)
+        self.canvas.draw()
+
+        if vowel_chart_data is not None:
+            self.create_table(vowel_chart_data, self.raw_data_table)
 
     def create_table(self, dataframe, table_widget):
         table_widget.clearContents()
@@ -426,3 +436,4 @@ class MainWindow(QWidget):
         self.normalized_data_table.setRowCount(0)
         self.normalized_data_table.setColumnCount(0)
         self.canvas.draw()
+
