@@ -1,5 +1,7 @@
 import os
 import logging
+import pickle
+
 from src.textgrid_parser import TextGridParser
 from src.opensmile_features import OpenSmileFeatures
 from config import TEXTGRID_DIR, AUDIO_DIR
@@ -8,7 +10,7 @@ from src.database import Database
 # Labels to exclude during processing
 EXCLUDED_LABELS = {"<sil>", "SIL", ".sil", ".noise", ""}
 
-logging.basicConfig(level=logging.DEBUG)  # Set to DEBUG for detailed logs
+logging.basicConfig(level=logging.DEBUG)
 
 
 class SpeechImporter:
@@ -33,69 +35,17 @@ class SpeechImporter:
         return [interval for interval in intervals if interval["text"].strip() not in EXCLUDED_LABELS]
 
     @staticmethod
-    def aggregate_features(interval_data, level):
+    def aggregate_features(interval_data):
         """
-        Aggregate features by analysis level.
+        Compute mean features for the interval.
 
         Args:
             interval_data (pd.DataFrame): Frame-level data for an interval.
-            level (str): Analysis level ('phoneme', 'word', 'recording').
 
         Returns:
-            pd.DataFrame or list[dict]: Down sampled frame data.
+            dict: Mean feature values.
         """
-        if level == 'phoneme':
-            # Keep all
-            return interval_data
-        elif level == 'word':
-            # Keep one per 50 ms
-            return interval_data.iloc[::5]
-        elif level == 'recording':
-            # Keep one per 200 ms
-            return interval_data.iloc[::20]
-
-    def slice_features(self, features, intervals, level):
-        """
-        Extract and aggregate features for specific intervals.
-
-        Args:
-            features (pd.DataFrame): Frame-level features for the entire file.
-            intervals (list[dict]): List of intervals with start, end, and text.
-            level (str): Analysis level ('phoneme', 'word', 'recording').
-
-        Returns:
-            list[dict]: List of interval features with frame-level data.
-        """
-        sliced_features = []
-
-        for interval in intervals:
-            start, end, text = interval["start"], interval["end"], interval["text"]
-
-            # Extract data for the interval
-            interval_data = features[(features.index >= start) & (features.index <= end)]
-            if interval_data.empty:
-                logging.warning(f"No features found for interval '{text}' ({start:.3f} - {end:.3f})")
-                continue
-
-            # Aggregate features by analysis level
-            aggregated_data = self.aggregate_features(interval_data, level)
-            aggregated_data = aggregated_data.round(6).astype(float)
-
-            # Include timestamp in each frame
-            frame_values = aggregated_data.reset_index().round(6).astype(float).to_dict(orient='records')
-
-            # Compute mean values
-            mean_values = {key: round(value, 6) for key, value in interval_data.mean().to_dict().items()}
-
-            sliced_features.append({
-                "text": text,
-                "start": round(float(start), 6),
-                "end": round(float(end), 6),
-                "mean": mean_values,
-                "frame_values": frame_values
-            })
-
-        return sliced_features
+        return {key: round(value, 6) for key, value in interval_data.mean().to_dict().items()}
 
     def process_single_recording(self, textgrid_path, audio_path=None):
         """
@@ -131,67 +81,82 @@ class SpeechImporter:
 
     def insert_data(self, file_name, features, words, phonemes):
         """
-        Insert recording, word and phoneme features into the database.
+        Insert recording, word, and phoneme features into the database.
         """
         # Recording-level data
         recording_duration = max(word["end"] for word in words)
-        recording_interval = [{"start": 0.0, "end": recording_duration, "text": "recording"}]
-        recording_features = self.slice_features(features, recording_interval, level="recording")
-        recording_docs = [
-            {
-                "recording_id": file_name,
-                "parent_id": None,
-                "text": "recording",
-                "start": 0.0,
-                "end": recording_duration,
-                "duration": recording_duration,
-                "features": {
-                    "mean": recording_features[0]["mean"],
-                    "frame_values": recording_features[0]["frame_values"]
-                }
-            }
-        ]
-        self.db.insert_data("recordings", recording_docs)
+        recording_mean = self.aggregate_features(features)
 
-        word_features = self.slice_features(features, words, level="word")
+        recording_doc = {
+            "recording_id": file_name,
+            "parent_id": None,
+            "text": "recording",
+            "start": 0.0,
+            "end": recording_duration,
+            "duration": recording_duration,
+            "features": {
+                "mean": recording_mean,
+                "frame_values": self.serialize_frame_features(features)  # Serialize all frames
+            }
+        }
+        self.db.insert_data("recordings", [recording_doc])
+
+        # Word-level data
         word_docs = [
             {
                 "recording_id": file_name,
                 "parent_id": None,
-                "text": word_feature["text"],
-                "start": word_feature["start"],
-                "end": word_feature["end"],
-                "duration": word_feature["end"] - word_feature["start"],
+                "text": word["text"],
+                "start": word["start"],
+                "end": word["end"],
+                "duration": word["end"] - word["start"],
                 "features": {
-                    "mean": word_feature["mean"],
-                    "frame_values": word_feature["frame_values"]
+                    "mean": self.aggregate_features(
+                        features[(features.index >= word["start"]) & (features.index <= word["end"])]
+                    )
                 }
             }
-            for word_feature in word_features
+            for word in words
         ]
         self.db.insert_data("words", word_docs)
 
-        phoneme_features = self.slice_features(features, phonemes, level="phoneme")
+        # Phoneme-level data
         phoneme_docs = [
             {
                 "recording_id": file_name,
                 "parent_id": next(
                     (word_doc["_id"] for word_doc in word_docs if
-                     word_doc["start"] <= phoneme_feature["start"] < word_doc["end"]),
+                     word_doc["start"] <= phoneme["start"] < word_doc["end"]),
                     None
                 ),
-                "text": phoneme_feature["text"],
-                "start": phoneme_feature["start"],
-                "end": phoneme_feature["end"],
-                "duration": phoneme_feature["end"] - phoneme_feature["start"],
+                "text": phoneme["text"],
+                "start": phoneme["start"],
+                "end": phoneme["end"],
+                "duration": phoneme["end"] - phoneme["start"],
                 "features": {
-                    "mean": phoneme_feature["mean"],
-                    "frame_values": phoneme_feature["frame_values"]
+                    "mean": self.aggregate_features(
+                        features[(features.index >= phoneme["start"]) & (features.index <= phoneme["end"])]
+                    )
                 }
             }
-            for phoneme_feature in phoneme_features
+            for phoneme in phonemes
         ]
         self.db.insert_data("phonemes", phoneme_docs)
+
+    @staticmethod
+    def serialize_frame_features(features):
+        """
+        Serialize frame-level features.
+
+        Args:
+            features (pd.DataFrame): Frame-level features for the entire recording.
+
+        Returns:
+            bytes: Serialized binary data of timestamps and feature values.
+        """
+        timestamps = features.index.to_numpy().round(6)
+        values = features.to_numpy().round(6)
+        return pickle.dumps({"timestamps": timestamps, "values": values})
 
     def import_files(self, files):
         """
