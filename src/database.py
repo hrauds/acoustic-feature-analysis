@@ -1,10 +1,16 @@
+# src/database.py
+import json
+import os
 import pickle
-from pymongo import MongoClient, errors
-from config import MONGO_URI
 import logging
+from config import MONGO_URI, USE_MONGO_MOCK
 
 logging.basicConfig(level=logging.INFO)
 
+if USE_MONGO_MOCK:
+    import mongomock
+else:
+    from pymongo import MongoClient, errors
 
 class Database:
     def __init__(self):
@@ -12,15 +18,46 @@ class Database:
         Initialize the database connection and define collections.
         """
         try:
-            self.client = MongoClient(MONGO_URI)
+            if USE_MONGO_MOCK:
+                self.client = mongomock.MongoClient()
+                logging.info("Using mongomock for MongoDB.")
+            else:
+                self.client = MongoClient(MONGO_URI)
+                logging.info("Connected to MongoDB database.")
+
             self.db = self.client['speech_analysis']
             self.recordings_col = self.db['recordings']
             self.words_col = self.db['words']
             self.phonemes_col = self.db['phonemes']
-            logging.info("Connected to MongoDB database.")
-        except errors.ConnectionFailure as e:
-            logging.error(f"Failed to connect to MongoDB: {e}")
+        except Exception as e:
+            logging.error(f"Failed to initialize database: {e}")
             raise e
+
+    def initialize_sample_data(self):
+        """
+        Initialize the mock database with sample data.
+        """
+        collection_files = {
+            'recordings': 'speech_analysis.recordings.json',
+            'words': 'speech_analysis.words.json',
+            'phonemes': 'speech_analysis.phonemes.json'
+        }
+
+        for collection_name, filename in collection_files.items():
+            filepath = os.path.join('data', filename)
+            if not os.path.exists(filepath):
+                logging.warning(f"Sample data file not found at {filepath}")
+                continue
+
+            try:
+                with open(filepath, 'r') as f:
+                    data = json.load(f)
+                    collection = getattr(self, f"{collection_name}_col")
+                    collection.insert_many(data)
+                    logging.info(f"Initialized '{collection_name}' collection with sample data from {filename}.")
+            except Exception as e:
+                logging.error(f"Failed to initialize sample data for '{collection_name}': {e}")
+
 
     def insert_data(self, collection_name, data_list):
         """
@@ -137,7 +174,9 @@ class Database:
                         logging.warning(f"Recording data not found for ID '{recording_id}'")
                         continue
 
-                    full_frame_values = self.deserialize_frame_values(recording_doc["features"]["frame_values"])
+                    # full_frame_values = self.deserialize_frame_values(recording_doc["features"]["frame_values"])
+                    full_frame_values = recording_doc["features"]["frame_values"]
+
 
                     for feature in features_list:
                         start, end = feature.get("start"), feature.get("end")

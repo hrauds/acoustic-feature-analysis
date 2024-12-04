@@ -8,16 +8,15 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 from src.ui.visualization import Visualization
-from src.database import Database
 from src.speech_importer import SpeechImporter
 
 
 class MainWindow(QWidget):
-    def __init__(self):
+    def __init__(self, db):
         super().__init__()
         self.visualization = Visualization()
-        self.database = Database()
-        self.speech_importer = SpeechImporter()
+        self.database = db
+        self.speech_importer = SpeechImporter(db)
         self.cached_features = {}  # Cache for storing fetched features
         self.init_ui()
         self.load_existing_recordings()
@@ -74,7 +73,7 @@ class MainWindow(QWidget):
 
         # Buttons for different visualizations
         self.vowel_chart_btn = QPushButton("Vowel Chart")
-        # self.vowel_chart_btn.clicked.connect(self.visualize_vowel_chart)
+        self.vowel_chart_btn.clicked.connect(self.visualize_vowel_chart)
 
         self.time_line_btn = QPushButton("Time Line Graph")
         self.time_line_btn.clicked.connect(self.visualize_time_line)
@@ -414,7 +413,7 @@ class MainWindow(QWidget):
 
         features_selected_count = len(selections['features'])
 
-        # Timeline visualization
+        # Time Line Visualization
         time_line_enabled = recordings_selected and analysis_level_selected and items_selected
         if len(selections['recordings']) > 1 or (
                 selections['analysis_level'] != 'recording' and len(selections['items']) > 1):
@@ -422,17 +421,17 @@ class MainWindow(QWidget):
         else:
             time_line_enabled = time_line_enabled and features_selected_count >= 1
 
-        # Radar chart visualization
+        # Radar Chart Visualization
         radar_enabled = recordings_selected and analysis_level_selected and items_selected and features_selected_count >= 1
 
-        # Histogram visualization
+        # Histogram Visualization
         histogram_enabled = recordings_selected and analysis_level_selected and items_selected and features_selected_count == 1
 
-        # Boxplot visualization
+        # Boxplot Visualization
         boxplot_enabled = recordings_selected and analysis_level_selected and items_selected and features_selected_count == 1
 
-        # Vowel Chart visualization
-        vowel_chart_enabled = recordings_selected and analysis_level_selected and items_selected and features_selected_count >= 1
+        # Vowel Chart Visualization
+        vowel_chart_enabled = recordings_selected and analysis_level_selected and items_selected
 
         # Set the buttons
         self.time_line_btn.setEnabled(time_line_enabled)
@@ -527,18 +526,20 @@ class MainWindow(QWidget):
     def visualize_vowel_chart(self):
         features = self.fetch_filtered_features()
         if not features:
-            QMessageBox.warning(self, 'Error', "Please select recordings and features to visualize.")
+            QMessageBox.warning(self, 'Error', "Please select recordings and items to visualize.")
             return
 
         self.clear_visualisation()
         ax = self.canvas.figure.add_subplot(111)
 
         try:
-            vowel_chart_data = self.visualization.plot_vowel_chart(ax, features)
+            vowel_df_original, vowel_df_normalized = self.visualization.plot_vowel_chart(ax, features)
             self.canvas.draw()
 
-            if vowel_chart_data is not None:
-                self.create_table(vowel_chart_data, self.raw_data_table)
+            if vowel_df_original is not None:
+                self.create_table(vowel_df_original, self.raw_data_table)
+            if vowel_df_normalized is not None:
+                self.create_table(vowel_df_normalized, self.normalized_data_table)
         except ValueError as ve:
             QMessageBox.critical(self, 'Plotting Error', str(ve))
 

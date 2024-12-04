@@ -1,0 +1,4200 @@
+[{
+  "_id": {
+    "$oid": "6750a36c2332775276011d8c"
+  },
+  "recording_id": "144_10001144_23",
+  "parent_id": null,
+  "text": "kaotasin",
+  "start": 2.2692776158082277,
+  "end": 3.1096619084792385,
+  "duration": 0.8403842926710108,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.16602,
+      "alphaRatio_sma3": -14.976976,
+      "hammarbergIndex_sma3": 26.718311,
+      "slope0-500_sma3": 0.038985,
+      "slope500-1500_sma3": -0.025789,
+      "spectralFlux_sma3": 0.76646,
+      "mfcc1_sma3": 24.273497,
+      "mfcc2_sma3": 11.638564,
+      "mfcc3_sma3": 2.414799,
+      "mfcc4_sma3": -26.39846,
+      "F0semitoneFrom27.5Hz_sma3nz": 30.485994,
+      "jitterLocal_sma3nz": 0.013885,
+      "shimmerLocaldB_sma3nz": 0.700757,
+      "HNRdBACF_sma3nz": 7.162344,
+      "logRelF0-H1-H2_sma3nz": 8.833401,
+      "logRelF0-H1-A3_sma3nz": 26.380339,
+      "F1frequency_sma3nz": 485.643005,
+      "F1bandwidth_sma3nz": 1292.766602,
+      "F1amplitudeLogRelF0_sma3nz": -37.812698,
+      "F2frequency_sma3nz": 1551.884155,
+      "F2bandwidth_sma3nz": 906.178589,
+      "F2amplitudeLogRelF0_sma3nz": -49.950382,
+      "F3frequency_sma3nz": 2739.212402,
+      "F3bandwidth_sma3nz": 1111.007935,
+      "F3amplitudeLogRelF0_sma3nz": -58.498825
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36c2332775276011d8d"
+  },
+  "recording_id": "144_10001144_23",
+  "parent_id": null,
+  "text": "sada",
+  "start": 3.1096619084792385,
+  "end": 3.582466608994272,
+  "duration": 0.47280470051503354,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.936251,
+      "alphaRatio_sma3": -7.109618,
+      "hammarbergIndex_sma3": 18.014585,
+      "slope0-500_sma3": 0.057836,
+      "slope500-1500_sma3": -0.014926,
+      "spectralFlux_sma3": 1.29273,
+      "mfcc1_sma3": 19.560812,
+      "mfcc2_sma3": 4.141917,
+      "mfcc3_sma3": -9.870391,
+      "mfcc4_sma3": -29.701416,
+      "F0semitoneFrom27.5Hz_sma3nz": 29.724318,
+      "jitterLocal_sma3nz": 0.009894,
+      "shimmerLocaldB_sma3nz": 0.963516,
+      "HNRdBACF_sma3nz": 7.314188,
+      "logRelF0-H1-H2_sma3nz": -1.293154,
+      "logRelF0-H1-A3_sma3nz": 21.258299,
+      "F1frequency_sma3nz": 544.97345,
+      "F1bandwidth_sma3nz": 1303.14917,
+      "F1amplitudeLogRelF0_sma3nz": -38.141144,
+      "F2frequency_sma3nz": 1481.162964,
+      "F2bandwidth_sma3nz": 819.627197,
+      "F2amplitudeLogRelF0_sma3nz": -45.446606,
+      "F3frequency_sma3nz": 2813.917725,
+      "F3bandwidth_sma3nz": 1448.470581,
+      "F3amplitudeLogRelF0_sma3nz": -59.616772
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36c2332775276011d8e"
+  },
+  "recording_id": "144_10001144_23",
+  "parent_id": null,
+  "text": "krooni",
+  "start": 3.582466608994272,
+  "end": 4.209541982662283,
+  "duration": 0.6270753736680108,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.277259,
+      "alphaRatio_sma3": -18.320637,
+      "hammarbergIndex_sma3": 30.522419,
+      "slope0-500_sma3": 0.082132,
+      "slope500-1500_sma3": -0.028239,
+      "spectralFlux_sma3": 0.634983,
+      "mfcc1_sma3": 33.724754,
+      "mfcc2_sma3": 4.987989,
+      "mfcc3_sma3": 2.899181,
+      "mfcc4_sma3": -25.442024,
+      "F0semitoneFrom27.5Hz_sma3nz": 34.123772,
+      "jitterLocal_sma3nz": 0.024712,
+      "shimmerLocaldB_sma3nz": 0.839409,
+      "HNRdBACF_sma3nz": 9.242274,
+      "logRelF0-H1-H2_sma3nz": 11.768876,
+      "logRelF0-H1-A3_sma3nz": 30.823229,
+      "F1frequency_sma3nz": 542.146057,
+      "F1bandwidth_sma3nz": 1367.697388,
+      "F1amplitudeLogRelF0_sma3nz": -6.695836,
+      "F2frequency_sma3nz": 1529.111206,
+      "F2bandwidth_sma3nz": 1342.159058,
+      "F2amplitudeLogRelF0_sma3nz": -23.223083,
+      "F3frequency_sma3nz": 2614.748779,
+      "F3bandwidth_sma3nz": 941.01239,
+      "F3amplitudeLogRelF0_sma3nz": -33.612892
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36c2332775276011d8f"
+  },
+  "recording_id": "144_10001144_23",
+  "parent_id": null,
+  "text": "raha",
+  "start": 4.209541982662283,
+  "end": 4.568728203925248,
+  "duration": 0.3591862212629655,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.348659,
+      "alphaRatio_sma3": -9.269921,
+      "hammarbergIndex_sma3": 30.189236,
+      "slope0-500_sma3": 0.055844,
+      "slope500-1500_sma3": -0.004943,
+      "spectralFlux_sma3": 0.536606,
+      "mfcc1_sma3": 37.735115,
+      "mfcc2_sma3": -2.942436,
+      "mfcc3_sma3": -9.281748,
+      "mfcc4_sma3": -22.020393,
+      "F0semitoneFrom27.5Hz_sma3nz": 35.145756,
+      "jitterLocal_sma3nz": 0.013543,
+      "shimmerLocaldB_sma3nz": 0.792335,
+      "HNRdBACF_sma3nz": 10.750024,
+      "logRelF0-H1-H2_sma3nz": 2.036812,
+      "logRelF0-H1-A3_sma3nz": 25.470778,
+      "F1frequency_sma3nz": 707.936279,
+      "F1bandwidth_sma3nz": 1227.849976,
+      "F1amplitudeLogRelF0_sma3nz": -6.595687,
+      "F2frequency_sma3nz": 1552.813354,
+      "F2bandwidth_sma3nz": 1021.410828,
+      "F2amplitudeLogRelF0_sma3nz": -14.895916,
+      "F3frequency_sma3nz": 2854.383789,
+      "F3bandwidth_sma3nz": 536.432739,
+      "F3amplitudeLogRelF0_sma3nz": -32.969112
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36d2332775276011da6"
+  },
+  "recording_id": "144_10001144_24",
+  "parent_id": null,
+  "text": "palun",
+  "start": 2.440249433106576,
+  "end": 2.9779469009826154,
+  "duration": 0.5376974678760393,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.336726,
+      "alphaRatio_sma3": -16.048649,
+      "hammarbergIndex_sma3": 28.39489,
+      "slope0-500_sma3": 0.048229,
+      "slope500-1500_sma3": -0.027884,
+      "spectralFlux_sma3": 0.837545,
+      "mfcc1_sma3": 24.448235,
+      "mfcc2_sma3": 9.26707,
+      "mfcc3_sma3": -7.489282,
+      "mfcc4_sma3": -21.389307,
+      "F0semitoneFrom27.5Hz_sma3nz": 27.922762,
+      "jitterLocal_sma3nz": 0.008344,
+      "shimmerLocaldB_sma3nz": 0.414524,
+      "HNRdBACF_sma3nz": 8.534835,
+      "logRelF0-H1-H2_sma3nz": 10.180857,
+      "logRelF0-H1-A3_sma3nz": 26.40999,
+      "F1frequency_sma3nz": 556.42157,
+      "F1bandwidth_sma3nz": 1376.804199,
+      "F1amplitudeLogRelF0_sma3nz": -62.885544,
+      "F2frequency_sma3nz": 1530.354614,
+      "F2bandwidth_sma3nz": 1094.696533,
+      "F2amplitudeLogRelF0_sma3nz": -74.575874,
+      "F3frequency_sma3nz": 2665.149658,
+      "F3bandwidth_sma3nz": 1021.676086,
+      "F3amplitudeLogRelF0_sma3nz": -84.755638
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36d2332775276011da7"
+  },
+  "recording_id": "144_10001144_24",
+  "parent_id": null,
+  "text": "saada",
+  "start": 2.9779469009826154,
+  "end": 3.5601069882498453,
+  "duration": 0.5821600872672299,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.746498,
+      "alphaRatio_sma3": -7.897858,
+      "hammarbergIndex_sma3": 22.174002,
+      "slope0-500_sma3": 0.054921,
+      "slope500-1500_sma3": -0.016211,
+      "spectralFlux_sma3": 0.906971,
+      "mfcc1_sma3": 26.00576,
+      "mfcc2_sma3": 4.212399,
+      "mfcc3_sma3": -17.18932,
+      "mfcc4_sma3": -33.630375,
+      "F0semitoneFrom27.5Hz_sma3nz": 31.87488,
+      "jitterLocal_sma3nz": 0.016194,
+      "shimmerLocaldB_sma3nz": 0.932757,
+      "HNRdBACF_sma3nz": 7.578757,
+      "logRelF0-H1-H2_sma3nz": -2.35322,
+      "logRelF0-H1-A3_sma3nz": 22.135866,
+      "F1frequency_sma3nz": 569.425293,
+      "F1bandwidth_sma3nz": 1390.405884,
+      "F1amplitudeLogRelF0_sma3nz": -27.724222,
+      "F2frequency_sma3nz": 1459.207886,
+      "F2bandwidth_sma3nz": 1053.749023,
+      "F2amplitudeLogRelF0_sma3nz": -34.776123,
+      "F3frequency_sma3nz": 2678.912109,
+      "F3bandwidth_sma3nz": 1071.698975,
+      "F3amplitudeLogRelF0_sma3nz": -51.387238
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36d2332775276011da8"
+  },
+  "recording_id": "144_10001144_24",
+  "parent_id": null,
+  "text": "talle",
+  "start": 3.5601069882498453,
+  "end": 4.219863008564307,
+  "duration": 0.6597560203144615,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.456337,
+      "alphaRatio_sma3": -15.139778,
+      "hammarbergIndex_sma3": 26.586164,
+      "slope0-500_sma3": 0.054028,
+      "slope500-1500_sma3": -0.018587,
+      "spectralFlux_sma3": 0.430778,
+      "mfcc1_sma3": 31.660509,
+      "mfcc2_sma3": 6.022196,
+      "mfcc3_sma3": 0.061332,
+      "mfcc4_sma3": -30.558672,
+      "F0semitoneFrom27.5Hz_sma3nz": 34.90823,
+      "jitterLocal_sma3nz": 0.009165,
+      "shimmerLocaldB_sma3nz": 0.561763,
+      "HNRdBACF_sma3nz": 11.522468,
+      "logRelF0-H1-H2_sma3nz": 3.018931,
+      "logRelF0-H1-A3_sma3nz": 24.195827,
+      "F1frequency_sma3nz": 583.2229,
+      "F1bandwidth_sma3nz": 1415.600464,
+      "F1amplitudeLogRelF0_sma3nz": -8.517659,
+      "F2frequency_sma3nz": 1531.077515,
+      "F2bandwidth_sma3nz": 994.901733,
+      "F2amplitudeLogRelF0_sma3nz": -20.593384,
+      "F3frequency_sma3nz": 2945.869141,
+      "F3bandwidth_sma3nz": 732.517639,
+      "F3amplitudeLogRelF0_sma3nz": -32.135162
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36d2332775276011da9"
+  },
+  "recording_id": "144_10001144_24",
+  "parent_id": null,
+  "text": "artikli",
+  "start": 4.219863008564307,
+  "end": 5.2100917336631625,
+  "duration": 0.9902287250988557,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 0.923046,
+      "alphaRatio_sma3": -14.767634,
+      "hammarbergIndex_sma3": 25.446421,
+      "slope0-500_sma3": 0.015674,
+      "slope500-1500_sma3": -0.022043,
+      "spectralFlux_sma3": 0.450303,
+      "mfcc1_sma3": 22.956413,
+      "mfcc2_sma3": 14.161748,
+      "mfcc3_sma3": 14.256619,
+      "mfcc4_sma3": -17.744534,
+      "F0semitoneFrom27.5Hz_sma3nz": 30.411369,
+      "jitterLocal_sma3nz": 0.014822,
+      "shimmerLocaldB_sma3nz": 0.881131,
+      "HNRdBACF_sma3nz": 7.052013,
+      "logRelF0-H1-H2_sma3nz": 8.416386,
+      "logRelF0-H1-A3_sma3nz": 18.867012,
+      "F1frequency_sma3nz": 565.078613,
+      "F1bandwidth_sma3nz": 1278.480835,
+      "F1amplitudeLogRelF0_sma3nz": -41.876171,
+      "F2frequency_sma3nz": 1644.941406,
+      "F2bandwidth_sma3nz": 977.334534,
+      "F2amplitudeLogRelF0_sma3nz": -55.653873,
+      "F3frequency_sma3nz": 2745.142822,
+      "F3bandwidth_sma3nz": 664.144836,
+      "F3amplitudeLogRelF0_sma3nz": -58.169655
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36d2332775276011daa"
+  },
+  "recording_id": "144_10001144_24",
+  "parent_id": null,
+  "text": "koopia",
+  "start": 5.2100917336631625,
+  "end": 5.914495086923658,
+  "duration": 0.7044033532604956,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 0.949733,
+      "alphaRatio_sma3": -19.023752,
+      "hammarbergIndex_sma3": 31.481735,
+      "slope0-500_sma3": 0.041829,
+      "slope500-1500_sma3": -0.034465,
+      "spectralFlux_sma3": 0.502882,
+      "mfcc1_sma3": 33.039814,
+      "mfcc2_sma3": 14.550593,
+      "mfcc3_sma3": -7.064671,
+      "mfcc4_sma3": -20.655214,
+      "F0semitoneFrom27.5Hz_sma3nz": 29.942535,
+      "jitterLocal_sma3nz": 0.010557,
+      "shimmerLocaldB_sma3nz": 0.613179,
+      "HNRdBACF_sma3nz": 8.124804,
+      "logRelF0-H1-H2_sma3nz": 1.997321,
+      "logRelF0-H1-A3_sma3nz": 27.296043,
+      "F1frequency_sma3nz": 523.298096,
+      "F1bandwidth_sma3nz": 1435.013672,
+      "F1amplitudeLogRelF0_sma3nz": -34.556057,
+      "F2frequency_sma3nz": 1471.581421,
+      "F2bandwidth_sma3nz": 1095.87915,
+      "F2amplitudeLogRelF0_sma3nz": -49.082706,
+      "F3frequency_sma3nz": 2662.709717,
+      "F3bandwidth_sma3nz": 853.000671,
+      "F3amplitudeLogRelF0_sma3nz": -60.987492
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36d2332775276011dc5"
+  },
+  "recording_id": "144_10001144_25",
+  "parent_id": null,
+  "text": "soovin",
+  "start": 2.183212396069539,
+  "end": 2.8500713430026097,
+  "duration": 0.6668589469330706,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.333559,
+      "alphaRatio_sma3": -14.829225,
+      "hammarbergIndex_sma3": 24.027319,
+      "slope0-500_sma3": 0.04936,
+      "slope500-1500_sma3": -0.036887,
+      "spectralFlux_sma3": 0.858177,
+      "mfcc1_sma3": 21.585556,
+      "mfcc2_sma3": 12.742738,
+      "mfcc3_sma3": 4.325897,
+      "mfcc4_sma3": -31.845852,
+      "F0semitoneFrom27.5Hz_sma3nz": 30.446945,
+      "jitterLocal_sma3nz": 0.008747,
+      "shimmerLocaldB_sma3nz": 0.368988,
+      "HNRdBACF_sma3nz": 8.514867,
+      "logRelF0-H1-H2_sma3nz": 12.85881,
+      "logRelF0-H1-A3_sma3nz": 26.398098,
+      "F1frequency_sma3nz": 561.504028,
+      "F1bandwidth_sma3nz": 1232.970337,
+      "F1amplitudeLogRelF0_sma3nz": -46.96529,
+      "F2frequency_sma3nz": 1503.309692,
+      "F2bandwidth_sma3nz": 1007.943542,
+      "F2amplitudeLogRelF0_sma3nz": -61.674259,
+      "F3frequency_sma3nz": 2676.561035,
+      "F3bandwidth_sma3nz": 570.141357,
+      "F3amplitudeLogRelF0_sma3nz": -68.411209
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36d2332775276011dc6"
+  },
+  "recording_id": "144_10001144_25",
+  "parent_id": null,
+  "text": "saada",
+  "start": 2.8500713430026097,
+  "end": 3.3923495806089425,
+  "duration": 0.5422782376063329,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.657581,
+      "alphaRatio_sma3": -8.549972,
+      "hammarbergIndex_sma3": 21.153835,
+      "slope0-500_sma3": 0.020206,
+      "slope500-1500_sma3": -0.016935,
+      "spectralFlux_sma3": 0.959994,
+      "mfcc1_sma3": 23.708738,
+      "mfcc2_sma3": 5.831728,
+      "mfcc3_sma3": -11.217751,
+      "mfcc4_sma3": -27.156889,
+      "F0semitoneFrom27.5Hz_sma3nz": 29.396122,
+      "jitterLocal_sma3nz": 0.011296,
+      "shimmerLocaldB_sma3nz": 0.950307,
+      "HNRdBACF_sma3nz": 4.96489,
+      "logRelF0-H1-H2_sma3nz": 0.788954,
+      "logRelF0-H1-A3_sma3nz": 23.975655,
+      "F1frequency_sma3nz": 486.050507,
+      "F1bandwidth_sma3nz": 1243.439331,
+      "F1amplitudeLogRelF0_sma3nz": -28.613844,
+      "F2frequency_sma3nz": 1403.01001,
+      "F2bandwidth_sma3nz": 997.406799,
+      "F2amplitudeLogRelF0_sma3nz": -34.706692,
+      "F3frequency_sma3nz": 2467.870117,
+      "F3bandwidth_sma3nz": 2034.32312,
+      "F3amplitudeLogRelF0_sma3nz": -52.363956
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36d2332775276011dc7"
+  },
+  "recording_id": "144_10001144_25",
+  "parent_id": null,
+  "text": "kolme",
+  "start": 3.3923495806089425,
+  "end": 4.008639792550683,
+  "duration": 0.6162902119417408,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.992523,
+      "alphaRatio_sma3": -18.549538,
+      "hammarbergIndex_sma3": 26.031487,
+      "slope0-500_sma3": 0.066159,
+      "slope500-1500_sma3": -0.037895,
+      "spectralFlux_sma3": 1.264633,
+      "mfcc1_sma3": 30.80265,
+      "mfcc2_sma3": 2.818139,
+      "mfcc3_sma3": -1.553222,
+      "mfcc4_sma3": -31.541943,
+      "F0semitoneFrom27.5Hz_sma3nz": 34.91367,
+      "jitterLocal_sma3nz": 0.015918,
+      "shimmerLocaldB_sma3nz": 0.583277,
+      "HNRdBACF_sma3nz": 10.214195,
+      "logRelF0-H1-H2_sma3nz": 10.999666,
+      "logRelF0-H1-A3_sma3nz": 25.378954,
+      "F1frequency_sma3nz": 512.618591,
+      "F1bandwidth_sma3nz": 1433.779785,
+      "F1amplitudeLogRelF0_sma3nz": -13.102418,
+      "F2frequency_sma3nz": 1457.553223,
+      "F2bandwidth_sma3nz": 1173.446777,
+      "F2amplitudeLogRelF0_sma3nz": -26.911846,
+      "F3frequency_sma3nz": 2630.251709,
+      "F3bandwidth_sma3nz": 815.208313,
+      "F3amplitudeLogRelF0_sma3nz": -35.031395
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36d2332775276011dc8"
+  },
+  "recording_id": "144_10001144_25",
+  "parent_id": null,
+  "text": "kuu",
+  "start": 4.008639792550683,
+  "end": 4.659013489156346,
+  "duration": 0.650373696605663,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.072209,
+      "alphaRatio_sma3": -30.275425,
+      "hammarbergIndex_sma3": 37.515907,
+      "slope0-500_sma3": 0.076843,
+      "slope500-1500_sma3": -0.051207,
+      "spectralFlux_sma3": 0.511417,
+      "mfcc1_sma3": 41.41898,
+      "mfcc2_sma3": 20.281078,
+      "mfcc3_sma3": -0.699083,
+      "mfcc4_sma3": -35.223686,
+      "F0semitoneFrom27.5Hz_sma3nz": 37.349632,
+      "jitterLocal_sma3nz": 0.010672,
+      "shimmerLocaldB_sma3nz": 0.545365,
+      "HNRdBACF_sma3nz": 11.734842,
+      "logRelF0-H1-H2_sma3nz": 12.349961,
+      "logRelF0-H1-A3_sma3nz": 45.34642,
+      "F1frequency_sma3nz": 642.035156,
+      "F1bandwidth_sma3nz": 1363.155884,
+      "F1amplitudeLogRelF0_sma3nz": -11.919436,
+      "F2frequency_sma3nz": 1623.034058,
+      "F2bandwidth_sma3nz": 1281.12439,
+      "F2amplitudeLogRelF0_sma3nz": -37.372536,
+      "F3frequency_sma3nz": 2806.644043,
+      "F3bandwidth_sma3nz": 865.310303,
+      "F3amplitudeLogRelF0_sma3nz": -46.018761
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36d2332775276011dc9"
+  },
+  "recording_id": "144_10001144_25",
+  "parent_id": null,
+  "text": "aruannet",
+  "start": 4.659013489156346,
+  "end": 5.809802587701747,
+  "duration": 1.1507890985454008,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.371356,
+      "alphaRatio_sma3": -16.316645,
+      "hammarbergIndex_sma3": 30.465832,
+      "slope0-500_sma3": 0.057003,
+      "slope500-1500_sma3": -0.024487,
+      "spectralFlux_sma3": 0.615065,
+      "mfcc1_sma3": 33.365562,
+      "mfcc2_sma3": 5.588797,
+      "mfcc3_sma3": -5.724925,
+      "mfcc4_sma3": -21.905592,
+      "F0semitoneFrom27.5Hz_sma3nz": 32.614239,
+      "jitterLocal_sma3nz": 0.010523,
+      "shimmerLocaldB_sma3nz": 0.613511,
+      "HNRdBACF_sma3nz": 9.779054,
+      "logRelF0-H1-H2_sma3nz": 2.697277,
+      "logRelF0-H1-A3_sma3nz": 25.316906,
+      "F1frequency_sma3nz": 510.543579,
+      "F1bandwidth_sma3nz": 1372.818359,
+      "F1amplitudeLogRelF0_sma3nz": -23.15103,
+      "F2frequency_sma3nz": 1431.208618,
+      "F2bandwidth_sma3nz": 1060.777344,
+      "F2amplitudeLogRelF0_sma3nz": -35.104843,
+      "F3frequency_sma3nz": 2633.392334,
+      "F3bandwidth_sma3nz": 911.937073,
+      "F3amplitudeLogRelF0_sma3nz": -47.721878
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36e2332775276011de2"
+  },
+  "recording_id": "144_10001144_26",
+  "parent_id": null,
+  "text": "linna",
+  "start": 2.4605099795693857,
+  "end": 2.9239603174603173,
+  "duration": 0.4634503378909316,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.889948,
+      "alphaRatio_sma3": -18.438183,
+      "hammarbergIndex_sma3": 27.82826,
+      "slope0-500_sma3": 0.080202,
+      "slope500-1500_sma3": -0.031355,
+      "spectralFlux_sma3": 1.116952,
+      "mfcc1_sma3": 26.961603,
+      "mfcc2_sma3": 4.496862,
+      "mfcc3_sma3": 4.14024,
+      "mfcc4_sma3": -29.148615,
+      "F0semitoneFrom27.5Hz_sma3nz": 38.818363,
+      "jitterLocal_sma3nz": 0.008095,
+      "shimmerLocaldB_sma3nz": 0.468709,
+      "HNRdBACF_sma3nz": 12.340078,
+      "logRelF0-H1-H2_sma3nz": 13.48685,
+      "logRelF0-H1-A3_sma3nz": 24.864025,
+      "F1frequency_sma3nz": 564.391296,
+      "F1bandwidth_sma3nz": 1278.775513,
+      "F1amplitudeLogRelF0_sma3nz": -7.537403,
+      "F2frequency_sma3nz": 1700.644409,
+      "F2bandwidth_sma3nz": 936.858521,
+      "F2amplitudeLogRelF0_sma3nz": -22.718775,
+      "F3frequency_sma3nz": 2605.573975,
+      "F3bandwidth_sma3nz": 907.24585,
+      "F3amplitudeLogRelF0_sma3nz": -29.262568
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36e2332775276011de3"
+  },
+  "recording_id": "144_10001144_26",
+  "parent_id": null,
+  "text": "tuled",
+  "start": 2.9239603174603173,
+  "end": 3.47984660530879,
+  "duration": 0.5558862878484727,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.958205,
+      "alphaRatio_sma3": -12.146985,
+      "hammarbergIndex_sma3": 21.650646,
+      "slope0-500_sma3": 0.058345,
+      "slope500-1500_sma3": -0.028081,
+      "spectralFlux_sma3": 1.215157,
+      "mfcc1_sma3": 27.00029,
+      "mfcc2_sma3": -4.257318,
+      "mfcc3_sma3": -3.138865,
+      "mfcc4_sma3": -37.154045,
+      "F0semitoneFrom27.5Hz_sma3nz": 35.744671,
+      "jitterLocal_sma3nz": 0.022394,
+      "shimmerLocaldB_sma3nz": 0.842472,
+      "HNRdBACF_sma3nz": 6.04366,
+      "logRelF0-H1-H2_sma3nz": 5.648879,
+      "logRelF0-H1-A3_sma3nz": 21.912315,
+      "F1frequency_sma3nz": 492.556213,
+      "F1bandwidth_sma3nz": 1319.037476,
+      "F1amplitudeLogRelF0_sma3nz": -13.198867,
+      "F2frequency_sma3nz": 1429.075806,
+      "F2bandwidth_sma3nz": 1126.615356,
+      "F2amplitudeLogRelF0_sma3nz": -24.456659,
+      "F3frequency_sma3nz": 2478.071045,
+      "F3bandwidth_sma3nz": 930.614746,
+      "F3amplitudeLogRelF0_sma3nz": -32.209221
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36e2332775276011de4"
+  },
+  "recording_id": "144_10001144_26",
+  "parent_id": null,
+  "text": "kumavad",
+  "start": 3.47984660530879,
+  "end": 4.446066491112574,
+  "duration": 0.9662198858037838,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.683476,
+      "alphaRatio_sma3": -13.310957,
+      "hammarbergIndex_sma3": 28.285118,
+      "slope0-500_sma3": 0.046507,
+      "slope500-1500_sma3": -0.021896,
+      "spectralFlux_sma3": 0.837565,
+      "mfcc1_sma3": 31.972189,
+      "mfcc2_sma3": 3.434875,
+      "mfcc3_sma3": -11.738796,
+      "mfcc4_sma3": -28.973623,
+      "F0semitoneFrom27.5Hz_sma3nz": 33.961586,
+      "jitterLocal_sma3nz": 0.016608,
+      "shimmerLocaldB_sma3nz": 0.783752,
+      "HNRdBACF_sma3nz": 8.668173,
+      "logRelF0-H1-H2_sma3nz": 3.788702,
+      "logRelF0-H1-A3_sma3nz": 25.900299,
+      "F1frequency_sma3nz": 564.46582,
+      "F1bandwidth_sma3nz": 1408.144531,
+      "F1amplitudeLogRelF0_sma3nz": -19.253206,
+      "F2frequency_sma3nz": 1482.138794,
+      "F2bandwidth_sma3nz": 1172.860474,
+      "F2amplitudeLogRelF0_sma3nz": -28.152121,
+      "F3frequency_sma3nz": 2633.11499,
+      "F3bandwidth_sma3nz": 1256.787231,
+      "F3amplitudeLogRelF0_sma3nz": -43.260048
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36e2332775276011de5"
+  },
+  "recording_id": "144_10001144_26",
+  "parent_id": null,
+  "text": "paistis",
+  "start": 4.446066491112574,
+  "end": 5.814786420228469,
+  "duration": 1.368719929115895,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.211347,
+      "alphaRatio_sma3": -4.12025,
+      "hammarbergIndex_sma3": 10.374589,
+      "slope0-500_sma3": -0.00481,
+      "slope500-1500_sma3": -0.01886,
+      "spectralFlux_sma3": 0.69629,
+      "mfcc1_sma3": 2.602175,
+      "mfcc2_sma3": 15.565918,
+      "mfcc3_sma3": 21.651548,
+      "mfcc4_sma3": -19.672138,
+      "F0semitoneFrom27.5Hz_sma3nz": 17.966137,
+      "jitterLocal_sma3nz": 0.008197,
+      "shimmerLocaldB_sma3nz": 0.361744,
+      "HNRdBACF_sma3nz": 3.402647,
+      "logRelF0-H1-H2_sma3nz": 4.318009,
+      "logRelF0-H1-A3_sma3nz": 7.757898,
+      "F1frequency_sma3nz": 532.254761,
+      "F1bandwidth_sma3nz": 1123.000854,
+      "F1amplitudeLogRelF0_sma3nz": -110.218109,
+      "F2frequency_sma3nz": 1633.786377,
+      "F2bandwidth_sma3nz": 794.625244,
+      "F2amplitudeLogRelF0_sma3nz": -118.69735,
+      "F3frequency_sma3nz": 2628.282227,
+      "F3bandwidth_sma3nz": 830.891663,
+      "F3amplitudeLogRelF0_sma3nz": -116.790215
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36e2332775276011de6"
+  },
+  "recording_id": "144_10001144_26",
+  "parent_id": null,
+  "text": "öösel",
+  "start": 5.952676043390329,
+  "end": 6.76171201814059,
+  "duration": 0.8090359747502607,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.510929,
+      "alphaRatio_sma3": -11.734186,
+      "hammarbergIndex_sma3": 17.586861,
+      "slope0-500_sma3": 0.078227,
+      "slope500-1500_sma3": -0.027002,
+      "spectralFlux_sma3": 0.758623,
+      "mfcc1_sma3": 17.774635,
+      "mfcc2_sma3": 9.264162,
+      "mfcc3_sma3": 16.41506,
+      "mfcc4_sma3": -30.617058,
+      "F0semitoneFrom27.5Hz_sma3nz": 34.041393,
+      "jitterLocal_sma3nz": 0.033717,
+      "shimmerLocaldB_sma3nz": 0.738175,
+      "HNRdBACF_sma3nz": 8.019195,
+      "logRelF0-H1-H2_sma3nz": 10.258377,
+      "logRelF0-H1-A3_sma3nz": 19.330046,
+      "F1frequency_sma3nz": 635.866943,
+      "F1bandwidth_sma3nz": 1032.412354,
+      "F1amplitudeLogRelF0_sma3nz": -20.724133,
+      "F2frequency_sma3nz": 1737.619019,
+      "F2bandwidth_sma3nz": 691.692078,
+      "F2amplitudeLogRelF0_sma3nz": -37.803104,
+      "F3frequency_sma3nz": 3009.660156,
+      "F3bandwidth_sma3nz": 737.862244,
+      "F3amplitudeLogRelF0_sma3nz": -38.083317
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36e2332775276011de7"
+  },
+  "recording_id": "144_10001144_26",
+  "parent_id": null,
+  "text": "kaugele",
+  "start": 6.76171201814059,
+  "end": 7.5568793866753055,
+  "duration": 0.7951673685347158,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.283502,
+      "alphaRatio_sma3": -16.491972,
+      "hammarbergIndex_sma3": 28.99737,
+      "slope0-500_sma3": 0.070918,
+      "slope500-1500_sma3": -0.027273,
+      "spectralFlux_sma3": 0.667843,
+      "mfcc1_sma3": 35.934242,
+      "mfcc2_sma3": 2.486989,
+      "mfcc3_sma3": -3.636737,
+      "mfcc4_sma3": -27.98686,
+      "F0semitoneFrom27.5Hz_sma3nz": 33.290096,
+      "jitterLocal_sma3nz": 0.016229,
+      "shimmerLocaldB_sma3nz": 0.743728,
+      "HNRdBACF_sma3nz": 8.647931,
+      "logRelF0-H1-H2_sma3nz": 3.189926,
+      "logRelF0-H1-A3_sma3nz": 27.503847,
+      "F1frequency_sma3nz": 494.083801,
+      "F1bandwidth_sma3nz": 1347.891235,
+      "F1amplitudeLogRelF0_sma3nz": -14.909662,
+      "F2frequency_sma3nz": 1404.595093,
+      "F2bandwidth_sma3nz": 1089.412231,
+      "F2amplitudeLogRelF0_sma3nz": -29.896435,
+      "F3frequency_sma3nz": 2652.060547,
+      "F3bandwidth_sma3nz": 937.928589,
+      "F3amplitudeLogRelF0_sma3nz": -41.337387
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36e2332775276011e0b"
+  },
+  "recording_id": "144_10001144_27",
+  "parent_id": null,
+  "text": "ole",
+  "start": 2.3411678004535146,
+  "end": 2.709796085100707,
+  "duration": 0.3686282846471922,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.511503,
+      "alphaRatio_sma3": -20.471882,
+      "hammarbergIndex_sma3": 30.821468,
+      "slope0-500_sma3": 0.070163,
+      "slope500-1500_sma3": -0.049349,
+      "spectralFlux_sma3": 1.075663,
+      "mfcc1_sma3": 39.315731,
+      "mfcc2_sma3": -0.622392,
+      "mfcc3_sma3": 5.586812,
+      "mfcc4_sma3": -45.492973,
+      "F0semitoneFrom27.5Hz_sma3nz": 32.880566,
+      "jitterLocal_sma3nz": 0.078375,
+      "shimmerLocaldB_sma3nz": 1.402523,
+      "HNRdBACF_sma3nz": 6.534288,
+      "logRelF0-H1-H2_sma3nz": 7.201664,
+      "logRelF0-H1-A3_sma3nz": 30.354746,
+      "F1frequency_sma3nz": 531.255676,
+      "F1bandwidth_sma3nz": 1435.063232,
+      "F1amplitudeLogRelF0_sma3nz": 4.025903,
+      "F2frequency_sma3nz": 1538.263916,
+      "F2bandwidth_sma3nz": 1327.206421,
+      "F2amplitudeLogRelF0_sma3nz": -15.884075,
+      "F3frequency_sma3nz": 2691.831543,
+      "F3bandwidth_sma3nz": 991.04718,
+      "F3amplitudeLogRelF0_sma3nz": -24.661394
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36e2332775276011e0c"
+  },
+  "recording_id": "144_10001144_27",
+  "parent_id": null,
+  "text": "kuuma",
+  "start": 2.709796085100707,
+  "end": 3.3097278353048933,
+  "duration": 0.5999317502041865,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.003996,
+      "alphaRatio_sma3": -24.31057,
+      "hammarbergIndex_sma3": 35.078674,
+      "slope0-500_sma3": 0.061476,
+      "slope500-1500_sma3": -0.042546,
+      "spectralFlux_sma3": 0.566461,
+      "mfcc1_sma3": 38.837124,
+      "mfcc2_sma3": 16.294626,
+      "mfcc3_sma3": -5.057519,
+      "mfcc4_sma3": -20.858774,
+      "F0semitoneFrom27.5Hz_sma3nz": 33.680809,
+      "jitterLocal_sma3nz": 0.037865,
+      "shimmerLocaldB_sma3nz": 0.839925,
+      "HNRdBACF_sma3nz": 8.880956,
+      "logRelF0-H1-H2_sma3nz": 7.495855,
+      "logRelF0-H1-A3_sma3nz": 37.289757,
+      "F1frequency_sma3nz": 592.881165,
+      "F1bandwidth_sma3nz": 1358.03125,
+      "F1amplitudeLogRelF0_sma3nz": -12.544422,
+      "F2frequency_sma3nz": 1616.692749,
+      "F2bandwidth_sma3nz": 1020.587708,
+      "F2amplitudeLogRelF0_sma3nz": -32.192699,
+      "F3frequency_sma3nz": 2761.456787,
+      "F3bandwidth_sma3nz": 1060.922241,
+      "F3amplitudeLogRelF0_sma3nz": -44.144493
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36e2332775276011e0d"
+  },
+  "recording_id": "144_10001144_27",
+  "parent_id": null,
+  "text": "supi+potiga",
+  "start": 3.3097278353048933,
+  "end": 4.8399308390022675,
+  "duration": 1.5302030036973742,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.026759,
+      "alphaRatio_sma3": -15.503055,
+      "hammarbergIndex_sma3": 24.91127,
+      "slope0-500_sma3": 0.05945,
+      "slope500-1500_sma3": -0.027311,
+      "spectralFlux_sma3": 0.639351,
+      "mfcc1_sma3": 24.641644,
+      "mfcc2_sma3": 14.230874,
+      "mfcc3_sma3": 12.35898,
+      "mfcc4_sma3": -24.890522,
+      "F0semitoneFrom27.5Hz_sma3nz": 30.472139,
+      "jitterLocal_sma3nz": 0.046149,
+      "shimmerLocaldB_sma3nz": 0.925153,
+      "HNRdBACF_sma3nz": 6.046685,
+      "logRelF0-H1-H2_sma3nz": 9.38455,
+      "logRelF0-H1-A3_sma3nz": 26.607313,
+      "F1frequency_sma3nz": 559.430664,
+      "F1bandwidth_sma3nz": 1219.972412,
+      "F1amplitudeLogRelF0_sma3nz": -23.412788,
+      "F2frequency_sma3nz": 1610.571655,
+      "F2bandwidth_sma3nz": 1071.261108,
+      "F2amplitudeLogRelF0_sma3nz": -43.502159,
+      "F3frequency_sma3nz": 2718.846436,
+      "F3bandwidth_sma3nz": 754.186768,
+      "F3amplitudeLogRelF0_sma3nz": -47.367973
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36e2332775276011e0e"
+  },
+  "recording_id": "144_10001144_27",
+  "parent_id": null,
+  "text": "ette+vaatlik",
+  "start": 4.8399308390022675,
+  "end": 6.079953892668178,
+  "duration": 1.2400230536659107,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 0.726379,
+      "alphaRatio_sma3": -16.70225,
+      "hammarbergIndex_sma3": 27.122793,
+      "slope0-500_sma3": 0.03323,
+      "slope500-1500_sma3": -0.023304,
+      "spectralFlux_sma3": 0.33674,
+      "mfcc1_sma3": 28.522091,
+      "mfcc2_sma3": 11.089613,
+      "mfcc3_sma3": 7.099657,
+      "mfcc4_sma3": -17.217358,
+      "F0semitoneFrom27.5Hz_sma3nz": 25.378195,
+      "jitterLocal_sma3nz": 0.037375,
+      "shimmerLocaldB_sma3nz": 0.824526,
+      "HNRdBACF_sma3nz": 5.362485,
+      "logRelF0-H1-H2_sma3nz": 1.319228,
+      "logRelF0-H1-A3_sma3nz": 19.859299,
+      "F1frequency_sma3nz": 538.813721,
+      "F1bandwidth_sma3nz": 1331.777344,
+      "F1amplitudeLogRelF0_sma3nz": -40.816944,
+      "F2frequency_sma3nz": 1531.127563,
+      "F2bandwidth_sma3nz": 1160.835815,
+      "F2amplitudeLogRelF0_sma3nz": -53.7318,
+      "F3frequency_sma3nz": 2649.556641,
+      "F3bandwidth_sma3nz": 761.924622,
+      "F3amplitudeLogRelF0_sma3nz": -60.236912
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36e2332775276011e2a"
+  },
+  "recording_id": "144_10001144_28",
+  "parent_id": null,
+  "text": "väike",
+  "start": 2.0246390778533634,
+  "end": 2.6237599611273077,
+  "duration": 0.5991208832739443,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.37084,
+      "alphaRatio_sma3": -15.718751,
+      "hammarbergIndex_sma3": 23.410345,
+      "slope0-500_sma3": 0.050195,
+      "slope500-1500_sma3": -0.033503,
+      "spectralFlux_sma3": 0.949208,
+      "mfcc1_sma3": 26.033813,
+      "mfcc2_sma3": 3.532095,
+      "mfcc3_sma3": 15.838923,
+      "mfcc4_sma3": -30.894342,
+      "F0semitoneFrom27.5Hz_sma3nz": 31.848848,
+      "jitterLocal_sma3nz": 0.095989,
+      "shimmerLocaldB_sma3nz": 1.053066,
+      "HNRdBACF_sma3nz": 6.766849,
+      "logRelF0-H1-H2_sma3nz": 8.065422,
+      "logRelF0-H1-A3_sma3nz": 21.356611,
+      "F1frequency_sma3nz": 524.266052,
+      "F1bandwidth_sma3nz": 1216.089478,
+      "F1amplitudeLogRelF0_sma3nz": -25.309471,
+      "F2frequency_sma3nz": 1655.162231,
+      "F2bandwidth_sma3nz": 966.303406,
+      "F2amplitudeLogRelF0_sma3nz": -40.694595,
+      "F3frequency_sma3nz": 2662.797363,
+      "F3bandwidth_sma3nz": 794.90918,
+      "F3amplitudeLogRelF0_sma3nz": -43.549789
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36e2332775276011e2b"
+  },
+  "recording_id": "144_10001144_28",
+  "parent_id": null,
+  "text": "tüdruk",
+  "start": 2.6237599611273077,
+  "end": 3.131707482993197,
+  "duration": 0.5079475218658893,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 0.961292,
+      "alphaRatio_sma3": -22.560198,
+      "hammarbergIndex_sma3": 33.761208,
+      "slope0-500_sma3": 0.049166,
+      "slope500-1500_sma3": -0.035125,
+      "spectralFlux_sma3": 1.002006,
+      "mfcc1_sma3": 32.766796,
+      "mfcc2_sma3": 16.089136,
+      "mfcc3_sma3": 5.419577,
+      "mfcc4_sma3": -20.789301,
+      "F0semitoneFrom27.5Hz_sma3nz": 34.825668,
+      "jitterLocal_sma3nz": 0.05987,
+      "shimmerLocaldB_sma3nz": 1.157516,
+      "HNRdBACF_sma3nz": 6.361725,
+      "logRelF0-H1-H2_sma3nz": 19.838657,
+      "logRelF0-H1-A3_sma3nz": 34.736626,
+      "F1frequency_sma3nz": 456.72998,
+      "F1bandwidth_sma3nz": 1327.482788,
+      "F1amplitudeLogRelF0_sma3nz": -5.826625,
+      "F2frequency_sma3nz": 1416.350464,
+      "F2bandwidth_sma3nz": 903.06073,
+      "F2amplitudeLogRelF0_sma3nz": -27.9123,
+      "F3frequency_sma3nz": 2694.115479,
+      "F3bandwidth_sma3nz": 615.429932,
+      "F3amplitudeLogRelF0_sma3nz": -38.27087
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36e2332775276011e2c"
+  },
+  "recording_id": "144_10001144_28",
+  "parent_id": null,
+  "text": "katsus",
+  "start": 3.131707482993197,
+  "end": 3.7962263184843827,
+  "duration": 0.6645188354911857,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.396015,
+      "alphaRatio_sma3": -7.180803,
+      "hammarbergIndex_sma3": 18.338966,
+      "slope0-500_sma3": 0.029434,
+      "slope500-1500_sma3": -0.016483,
+      "spectralFlux_sma3": 0.91459,
+      "mfcc1_sma3": 14.850924,
+      "mfcc2_sma3": 11.474144,
+      "mfcc3_sma3": -4.156145,
+      "mfcc4_sma3": -16.426235,
+      "F0semitoneFrom27.5Hz_sma3nz": 28.08502,
+      "jitterLocal_sma3nz": 0.024103,
+      "shimmerLocaldB_sma3nz": 1.01836,
+      "HNRdBACF_sma3nz": 3.836513,
+      "logRelF0-H1-H2_sma3nz": 4.171763,
+      "logRelF0-H1-A3_sma3nz": 17.87244,
+      "F1frequency_sma3nz": 554.535095,
+      "F1bandwidth_sma3nz": 1093.833496,
+      "F1amplitudeLogRelF0_sma3nz": -52.753735,
+      "F2frequency_sma3nz": 1495.102417,
+      "F2bandwidth_sma3nz": 852.641785,
+      "F2amplitudeLogRelF0_sma3nz": -61.461529,
+      "F3frequency_sma3nz": 2736.362061,
+      "F3bandwidth_sma3nz": 1051.805176,
+      "F3amplitudeLogRelF0_sma3nz": -69.933952
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36e2332775276011e2d"
+  },
+  "recording_id": "144_10001144_28",
+  "parent_id": null,
+  "text": "kuuma",
+  "start": 3.7962263184843827,
+  "end": 4.363280995900044,
+  "duration": 0.5670546774156611,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.136367,
+      "alphaRatio_sma3": -21.209335,
+      "hammarbergIndex_sma3": 31.896265,
+      "slope0-500_sma3": 0.049279,
+      "slope500-1500_sma3": -0.030747,
+      "spectralFlux_sma3": 0.682373,
+      "mfcc1_sma3": 29.515608,
+      "mfcc2_sma3": 18.728022,
+      "mfcc3_sma3": -2.172206,
+      "mfcc4_sma3": -19.314024,
+      "F0semitoneFrom27.5Hz_sma3nz": 31.439894,
+      "jitterLocal_sma3nz": 0.013212,
+      "shimmerLocaldB_sma3nz": 0.72671,
+      "HNRdBACF_sma3nz": 9.201745,
+      "logRelF0-H1-H2_sma3nz": 10.899343,
+      "logRelF0-H1-A3_sma3nz": 34.447186,
+      "F1frequency_sma3nz": 548.671143,
+      "F1bandwidth_sma3nz": 1371.342773,
+      "F1amplitudeLogRelF0_sma3nz": -36.5383,
+      "F2frequency_sma3nz": 1536.595093,
+      "F2bandwidth_sma3nz": 1051.867065,
+      "F2amplitudeLogRelF0_sma3nz": -54.075809,
+      "F3frequency_sma3nz": 2732.87085,
+      "F3bandwidth_sma3nz": 1089.780273,
+      "F3amplitudeLogRelF0_sma3nz": -64.736389
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36e2332775276011e2e"
+  },
+  "recording_id": "144_10001144_28",
+  "parent_id": null,
+  "text": "triik+rauda",
+  "start": 4.363280995900044,
+  "end": 5.445649747078319,
+  "duration": 1.082368751178275,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.196173,
+      "alphaRatio_sma3": -14.600508,
+      "hammarbergIndex_sma3": 25.696184,
+      "slope0-500_sma3": 0.047994,
+      "slope500-1500_sma3": -0.020718,
+      "spectralFlux_sma3": 0.633753,
+      "mfcc1_sma3": 28.993879,
+      "mfcc2_sma3": 7.545135,
+      "mfcc3_sma3": 12.468983,
+      "mfcc4_sma3": -25.699537,
+      "F0semitoneFrom27.5Hz_sma3nz": 29.138798,
+      "jitterLocal_sma3nz": 0.015033,
+      "shimmerLocaldB_sma3nz": 0.830178,
+      "HNRdBACF_sma3nz": 6.984075,
+      "logRelF0-H1-H2_sma3nz": 8.817393,
+      "logRelF0-H1-A3_sma3nz": 26.882034,
+      "F1frequency_sma3nz": 447.885498,
+      "F1bandwidth_sma3nz": 1290.883911,
+      "F1amplitudeLogRelF0_sma3nz": -29.272079,
+      "F2frequency_sma3nz": 1480.630737,
+      "F2bandwidth_sma3nz": 1283.190552,
+      "F2amplitudeLogRelF0_sma3nz": -45.466885,
+      "F3frequency_sma3nz": 2456.023926,
+      "F3bandwidth_sma3nz": 1213.775269,
+      "F3amplitudeLogRelF0_sma3nz": -53.556046
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36f2332775276011e4e"
+  },
+  "recording_id": "144_10001144_29",
+  "parent_id": null,
+  "text": "plahvatus",
+  "start": 2.420047619047619,
+  "end": 3.3901083128286778,
+  "duration": 0.970060693781059,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.256321,
+      "alphaRatio_sma3": -8.122404,
+      "hammarbergIndex_sma3": 19.418091,
+      "slope0-500_sma3": 0.026744,
+      "slope500-1500_sma3": -0.014417,
+      "spectralFlux_sma3": 1.063249,
+      "mfcc1_sma3": 19.669283,
+      "mfcc2_sma3": 2.969008,
+      "mfcc3_sma3": -3.269127,
+      "mfcc4_sma3": -24.004755,
+      "F0semitoneFrom27.5Hz_sma3nz": 25.913637,
+      "jitterLocal_sma3nz": 0.017456,
+      "shimmerLocaldB_sma3nz": 0.737535,
+      "HNRdBACF_sma3nz": 3.375876,
+      "logRelF0-H1-H2_sma3nz": 1.183437,
+      "logRelF0-H1-A3_sma3nz": 16.635363,
+      "F1frequency_sma3nz": 603.543518,
+      "F1bandwidth_sma3nz": 1235.060791,
+      "F1amplitudeLogRelF0_sma3nz": -68.283821,
+      "F2frequency_sma3nz": 1518.397583,
+      "F2bandwidth_sma3nz": 953.05603,
+      "F2amplitudeLogRelF0_sma3nz": -75.912613,
+      "F3frequency_sma3nz": 2807.855957,
+      "F3bandwidth_sma3nz": 546.342957,
+      "F3amplitudeLogRelF0_sma3nz": -83.641121
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36f2332775276011e4f"
+  },
+  "recording_id": "144_10001144_29",
+  "parent_id": null,
+  "text": "kõma",
+  "start": 3.3901083128286778,
+  "end": 4.3647545981355504,
+  "duration": 0.9746462853068727,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.552294,
+      "alphaRatio_sma3": -11.242404,
+      "hammarbergIndex_sma3": 27.57456,
+      "slope0-500_sma3": 0.076104,
+      "slope500-1500_sma3": -0.017982,
+      "spectralFlux_sma3": 0.713149,
+      "mfcc1_sma3": 32.140007,
+      "mfcc2_sma3": 4.234005,
+      "mfcc3_sma3": -10.373958,
+      "mfcc4_sma3": -28.341455,
+      "F0semitoneFrom27.5Hz_sma3nz": 32.473503,
+      "jitterLocal_sma3nz": 0.027335,
+      "shimmerLocaldB_sma3nz": 0.566209,
+      "HNRdBACF_sma3nz": 8.952232,
+      "logRelF0-H1-H2_sma3nz": 5.349197,
+      "logRelF0-H1-A3_sma3nz": 28.666569,
+      "F1frequency_sma3nz": 530.009155,
+      "F1bandwidth_sma3nz": 1388.947998,
+      "F1amplitudeLogRelF0_sma3nz": -20.528786,
+      "F2frequency_sma3nz": 1384.62146,
+      "F2bandwidth_sma3nz": 925.175964,
+      "F2amplitudeLogRelF0_sma3nz": -29.309027,
+      "F3frequency_sma3nz": 2655.962402,
+      "F3bandwidth_sma3nz": 654.789368,
+      "F3amplitudeLogRelF0_sma3nz": -49.355213
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36f2332775276011e50"
+  },
+  "recording_id": "144_10001144_29",
+  "parent_id": null,
+  "text": "kostis",
+  "start": 4.594868804664722,
+  "end": 5.873894891289849,
+  "duration": 1.2790260866251266,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 0.992647,
+      "alphaRatio_sma3": -0.821126,
+      "hammarbergIndex_sma3": 7.361762,
+      "slope0-500_sma3": 0.023466,
+      "slope500-1500_sma3": -0.016823,
+      "spectralFlux_sma3": 0.64592,
+      "mfcc1_sma3": 1.634531,
+      "mfcc2_sma3": 13.831602,
+      "mfcc3_sma3": 14.255591,
+      "mfcc4_sma3": -16.08386,
+      "F0semitoneFrom27.5Hz_sma3nz": 15.657124,
+      "jitterLocal_sma3nz": 0.012455,
+      "shimmerLocaldB_sma3nz": 0.382589,
+      "HNRdBACF_sma3nz": 2.452646,
+      "logRelF0-H1-H2_sma3nz": 2.918371,
+      "logRelF0-H1-A3_sma3nz": 5.515594,
+      "F1frequency_sma3nz": 605.62085,
+      "F1bandwidth_sma3nz": 1060.520996,
+      "F1amplitudeLogRelF0_sma3nz": -122.261955,
+      "F2frequency_sma3nz": 1730.521484,
+      "F2bandwidth_sma3nz": 861.195068,
+      "F2amplitudeLogRelF0_sma3nz": -127.941956,
+      "F3frequency_sma3nz": 2756.762207,
+      "F3bandwidth_sma3nz": 767.527344,
+      "F3amplitudeLogRelF0_sma3nz": -126.377937
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36f2332775276011e51"
+  },
+  "recording_id": "144_10001144_29",
+  "parent_id": null,
+  "text": "mitmete",
+  "start": 6.302044266982155,
+  "end": 7.567852917564541,
+  "duration": 1.265808650582386,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 0.99195,
+      "alphaRatio_sma3": -17.474863,
+      "hammarbergIndex_sma3": 24.42494,
+      "slope0-500_sma3": 0.052523,
+      "slope500-1500_sma3": -0.031199,
+      "spectralFlux_sma3": 0.413746,
+      "mfcc1_sma3": 28.161701,
+      "mfcc2_sma3": 7.567506,
+      "mfcc3_sma3": 11.224907,
+      "mfcc4_sma3": -23.570385,
+      "F0semitoneFrom27.5Hz_sma3nz": 29.336878,
+      "jitterLocal_sma3nz": 0.012185,
+      "shimmerLocaldB_sma3nz": 0.546527,
+      "HNRdBACF_sma3nz": 8.476083,
+      "logRelF0-H1-H2_sma3nz": 3.81267,
+      "logRelF0-H1-A3_sma3nz": 18.008343,
+      "F1frequency_sma3nz": 570.054749,
+      "F1bandwidth_sma3nz": 1207.736084,
+      "F1amplitudeLogRelF0_sma3nz": -37.495548,
+      "F2frequency_sma3nz": 1611.12561,
+      "F2bandwidth_sma3nz": 1059.164185,
+      "F2amplitudeLogRelF0_sma3nz": -54.084751,
+      "F3frequency_sma3nz": 2684.691895,
+      "F3bandwidth_sma3nz": 592.601257,
+      "F3amplitudeLogRelF0_sma3nz": -53.982716
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36f2332775276011e52"
+  },
+  "recording_id": "144_10001144_29",
+  "parent_id": null,
+  "text": "kilo+meetrite",
+  "start": 7.62709977324263,
+  "end": 8.824039954009773,
+  "duration": 1.1969401807671431,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 0.962218,
+      "alphaRatio_sma3": -14.195863,
+      "hammarbergIndex_sma3": 22.358084,
+      "slope0-500_sma3": 0.046222,
+      "slope500-1500_sma3": -0.021456,
+      "spectralFlux_sma3": 0.532717,
+      "mfcc1_sma3": 24.20306,
+      "mfcc2_sma3": 8.73913,
+      "mfcc3_sma3": 13.189901,
+      "mfcc4_sma3": -17.01963,
+      "F0semitoneFrom27.5Hz_sma3nz": 24.641962,
+      "jitterLocal_sma3nz": 0.009609,
+      "shimmerLocaldB_sma3nz": 0.625448,
+      "HNRdBACF_sma3nz": 5.811983,
+      "logRelF0-H1-H2_sma3nz": 3.283045,
+      "logRelF0-H1-A3_sma3nz": 17.788979,
+      "F1frequency_sma3nz": 500.421112,
+      "F1bandwidth_sma3nz": 1235.671631,
+      "F1amplitudeLogRelF0_sma3nz": -55.094204,
+      "F2frequency_sma3nz": 1526.800781,
+      "F2bandwidth_sma3nz": 1018.1828,
+      "F2amplitudeLogRelF0_sma3nz": -68.244545,
+      "F3frequency_sma3nz": 2584.035889,
+      "F3bandwidth_sma3nz": 752.68335,
+      "F3amplitudeLogRelF0_sma3nz": -72.271599
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36f2332775276011e53"
+  },
+  "recording_id": "144_10001144_29",
+  "parent_id": null,
+  "text": "taha",
+  "start": 8.824039954009773,
+  "end": 9.261367832847425,
+  "duration": 0.43732787883765134,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.125422,
+      "alphaRatio_sma3": -9.903944,
+      "hammarbergIndex_sma3": 29.60022,
+      "slope0-500_sma3": 0.05014,
+      "slope500-1500_sma3": -0.012208,
+      "spectralFlux_sma3": 0.449707,
+      "mfcc1_sma3": 38.124699,
+      "mfcc2_sma3": -2.028989,
+      "mfcc3_sma3": -9.954658,
+      "mfcc4_sma3": -25.011719,
+      "F0semitoneFrom27.5Hz_sma3nz": 31.329975,
+      "jitterLocal_sma3nz": 0.010473,
+      "shimmerLocaldB_sma3nz": 1.033178,
+      "HNRdBACF_sma3nz": 8.579113,
+      "logRelF0-H1-H2_sma3nz": -2.157827,
+      "logRelF0-H1-A3_sma3nz": 21.416685,
+      "F1frequency_sma3nz": 642.135315,
+      "F1bandwidth_sma3nz": 1343.983032,
+      "F1amplitudeLogRelF0_sma3nz": -25.652163,
+      "F2frequency_sma3nz": 1508.030396,
+      "F2bandwidth_sma3nz": 1067.730347,
+      "F2amplitudeLogRelF0_sma3nz": -30.720989,
+      "F3frequency_sma3nz": 2684.556396,
+      "F3bandwidth_sma3nz": 852.527344,
+      "F3amplitudeLogRelF0_sma3nz": -48.837864
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36f2332775276011e7e"
+  },
+  "recording_id": "144_10001144_30",
+  "parent_id": null,
+  "text": "see",
+  "start": 2.3894461241286638,
+  "end": 2.810374963660678,
+  "duration": 0.4209288395320141,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.938879,
+      "alphaRatio_sma3": -11.877404,
+      "hammarbergIndex_sma3": 16.312721,
+      "slope0-500_sma3": 0.068262,
+      "slope500-1500_sma3": -0.039398,
+      "spectralFlux_sma3": 0.973316,
+      "mfcc1_sma3": 15.246387,
+      "mfcc2_sma3": 3.166984,
+      "mfcc3_sma3": 22.556368,
+      "mfcc4_sma3": -41.639088,
+      "F0semitoneFrom27.5Hz_sma3nz": 30.613878,
+      "jitterLocal_sma3nz": 0.007165,
+      "shimmerLocaldB_sma3nz": 0.430474,
+      "HNRdBACF_sma3nz": 9.729068,
+      "logRelF0-H1-H2_sma3nz": 15.208653,
+      "logRelF0-H1-A3_sma3nz": 21.567564,
+      "F1frequency_sma3nz": 473.110107,
+      "F1bandwidth_sma3nz": 1030.355225,
+      "F1amplitudeLogRelF0_sma3nz": -43.339142,
+      "F2frequency_sma3nz": 1677.216431,
+      "F2bandwidth_sma3nz": 1372.798462,
+      "F2amplitudeLogRelF0_sma3nz": -62.422989,
+      "F3frequency_sma3nz": 2366.277832,
+      "F3bandwidth_sma3nz": 630.288269,
+      "F3amplitudeLogRelF0_sma3nz": -60.570301
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36f2332775276011e7f"
+  },
+  "recording_id": "144_10001144_30",
+  "parent_id": null,
+  "text": "šampoon",
+  "start": 2.810374963660678,
+  "end": 4.010596793289587,
+  "duration": 1.2002218296289096,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.468979,
+      "alphaRatio_sma3": -12.743245,
+      "hammarbergIndex_sma3": 23.835381,
+      "slope0-500_sma3": 0.070523,
+      "slope500-1500_sma3": -0.02093,
+      "spectralFlux_sma3": 0.662763,
+      "mfcc1_sma3": 22.533106,
+      "mfcc2_sma3": 6.916559,
+      "mfcc3_sma3": -2.173549,
+      "mfcc4_sma3": -17.622314,
+      "F0semitoneFrom27.5Hz_sma3nz": 28.381639,
+      "jitterLocal_sma3nz": 0.007691,
+      "shimmerLocaldB_sma3nz": 0.413018,
+      "HNRdBACF_sma3nz": 9.215788,
+      "logRelF0-H1-H2_sma3nz": 9.698483,
+      "logRelF0-H1-A3_sma3nz": 24.78182,
+      "F1frequency_sma3nz": 526.082703,
+      "F1bandwidth_sma3nz": 1200.826782,
+      "F1amplitudeLogRelF0_sma3nz": -46.796791,
+      "F2frequency_sma3nz": 1473.916382,
+      "F2bandwidth_sma3nz": 986.287903,
+      "F2amplitudeLogRelF0_sma3nz": -59.221851,
+      "F3frequency_sma3nz": 2626.085205,
+      "F3bandwidth_sma3nz": 747.27594,
+      "F3amplitudeLogRelF0_sma3nz": -70.389046
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36f2332775276011e80"
+  },
+  "recording_id": "144_10001144_30",
+  "parent_id": null,
+  "text": "aitab",
+  "start": 4.010596793289587,
+  "end": 4.675198746165132,
+  "duration": 0.6646019528755449,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.30665,
+      "alphaRatio_sma3": -12.177142,
+      "hammarbergIndex_sma3": 23.654177,
+      "slope0-500_sma3": 0.054651,
+      "slope500-1500_sma3": -0.018182,
+      "spectralFlux_sma3": 0.757579,
+      "mfcc1_sma3": 27.338644,
+      "mfcc2_sma3": -1.652185,
+      "mfcc3_sma3": 4.868784,
+      "mfcc4_sma3": -19.228243,
+      "F0semitoneFrom27.5Hz_sma3nz": 31.016901,
+      "jitterLocal_sma3nz": 0.013766,
+      "shimmerLocaldB_sma3nz": 1.024849,
+      "HNRdBACF_sma3nz": 7.518759,
+      "logRelF0-H1-H2_sma3nz": 10.546547,
+      "logRelF0-H1-A3_sma3nz": 20.182943,
+      "F1frequency_sma3nz": 427.565735,
+      "F1bandwidth_sma3nz": 1245.808594,
+      "F1amplitudeLogRelF0_sma3nz": -31.615435,
+      "F2frequency_sma3nz": 1392.761597,
+      "F2bandwidth_sma3nz": 1017.182861,
+      "F2amplitudeLogRelF0_sma3nz": -47.789841,
+      "F3frequency_sma3nz": 2371.228516,
+      "F3bandwidth_sma3nz": 1021.570801,
+      "F3amplitudeLogRelF0_sma3nz": -51.304199
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36f2332775276011e81"
+  },
+  "recording_id": "144_10001144_30",
+  "parent_id": null,
+  "text": "hästi",
+  "start": 4.675198746165132,
+  "end": 5.304113536887623,
+  "duration": 0.628914790722491,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.362404,
+      "alphaRatio_sma3": -3.967849,
+      "hammarbergIndex_sma3": 10.022094,
+      "slope0-500_sma3": 0.018249,
+      "slope500-1500_sma3": -0.017724,
+      "spectralFlux_sma3": 0.761448,
+      "mfcc1_sma3": 7.190195,
+      "mfcc2_sma3": 9.082612,
+      "mfcc3_sma3": 21.153009,
+      "mfcc4_sma3": -18.595774,
+      "F0semitoneFrom27.5Hz_sma3nz": 27.643389,
+      "jitterLocal_sma3nz": 0.010497,
+      "shimmerLocaldB_sma3nz": 0.617317,
+      "HNRdBACF_sma3nz": 3.071976,
+      "logRelF0-H1-H2_sma3nz": 4.641315,
+      "logRelF0-H1-A3_sma3nz": 7.076371,
+      "F1frequency_sma3nz": 691.477417,
+      "F1bandwidth_sma3nz": 1123.557983,
+      "F1amplitudeLogRelF0_sma3nz": -63.310925,
+      "F2frequency_sma3nz": 1789.87439,
+      "F2bandwidth_sma3nz": 931.367554,
+      "F2amplitudeLogRelF0_sma3nz": -70.982994,
+      "F3frequency_sma3nz": 2730.935547,
+      "F3bandwidth_sma3nz": 893.469116,
+      "F3amplitudeLogRelF0_sma3nz": -67.858452
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36f2332775276011e82"
+  },
+  "recording_id": "144_10001144_30",
+  "parent_id": null,
+  "text": "kõõma",
+  "start": 5.304113536887623,
+  "end": 5.973883692365835,
+  "duration": 0.6697701554782114,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.332979,
+      "alphaRatio_sma3": -12.84183,
+      "hammarbergIndex_sma3": 30.63559,
+      "slope0-500_sma3": 0.089808,
+      "slope500-1500_sma3": -0.01471,
+      "spectralFlux_sma3": 0.447734,
+      "mfcc1_sma3": 35.616394,
+      "mfcc2_sma3": 2.18792,
+      "mfcc3_sma3": -7.948187,
+      "mfcc4_sma3": -13.089961,
+      "F0semitoneFrom27.5Hz_sma3nz": 34.92812,
+      "jitterLocal_sma3nz": 0.008116,
+      "shimmerLocaldB_sma3nz": 0.676122,
+      "HNRdBACF_sma3nz": 11.269532,
+      "logRelF0-H1-H2_sma3nz": 8.280548,
+      "logRelF0-H1-A3_sma3nz": 29.150778,
+      "F1frequency_sma3nz": 429.164246,
+      "F1bandwidth_sma3nz": 1346.328979,
+      "F1amplitudeLogRelF0_sma3nz": -3.231608,
+      "F2frequency_sma3nz": 1369.551392,
+      "F2bandwidth_sma3nz": 996.445312,
+      "F2amplitudeLogRelF0_sma3nz": -14.131683,
+      "F3frequency_sma3nz": 2387.47583,
+      "F3bandwidth_sma3nz": 1060.240112,
+      "F3amplitudeLogRelF0_sma3nz": -31.673355
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a36f2332775276011e83"
+  },
+  "recording_id": "144_10001144_30",
+  "parent_id": null,
+  "text": "puhul",
+  "start": 5.973883692365835,
+  "end": 6.4766254631934075,
+  "duration": 0.5027417708275728,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 0.638819,
+      "alphaRatio_sma3": -22.511147,
+      "hammarbergIndex_sma3": 42.665092,
+      "slope0-500_sma3": 0.05994,
+      "slope500-1500_sma3": -0.028672,
+      "spectralFlux_sma3": 0.298526,
+      "mfcc1_sma3": 44.711376,
+      "mfcc2_sma3": 15.419215,
+      "mfcc3_sma3": -8.461576,
+      "mfcc4_sma3": -14.463558,
+      "F0semitoneFrom27.5Hz_sma3nz": 32.581223,
+      "jitterLocal_sma3nz": 0.008171,
+      "shimmerLocaldB_sma3nz": 0.688338,
+      "HNRdBACF_sma3nz": 10.11085,
+      "logRelF0-H1-H2_sma3nz": 9.622753,
+      "logRelF0-H1-A3_sma3nz": 42.587109,
+      "F1frequency_sma3nz": 513.055542,
+      "F1bandwidth_sma3nz": 1553.774048,
+      "F1amplitudeLogRelF0_sma3nz": -21.597101,
+      "F2frequency_sma3nz": 1462.029419,
+      "F2bandwidth_sma3nz": 1226.12146,
+      "F2amplitudeLogRelF0_sma3nz": -41.73204,
+      "F3frequency_sma3nz": 2727.829346,
+      "F3bandwidth_sma3nz": 1363.348267,
+      "F3amplitudeLogRelF0_sma3nz": -60.689194
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3702332775276011ea0"
+  },
+  "recording_id": "144_10001144_31",
+  "parent_id": null,
+  "text": "poisi",
+  "start": 2.2876810724289713,
+  "end": 2.8392244621425804,
+  "duration": 0.5515433897136091,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.837433,
+      "alphaRatio_sma3": -12.274698,
+      "hammarbergIndex_sma3": 19.452559,
+      "slope0-500_sma3": 0.044879,
+      "slope500-1500_sma3": -0.028787,
+      "spectralFlux_sma3": 1.318507,
+      "mfcc1_sma3": 19.198103,
+      "mfcc2_sma3": 12.401837,
+      "mfcc3_sma3": 13.517624,
+      "mfcc4_sma3": -26.232042,
+      "F0semitoneFrom27.5Hz_sma3nz": 28.986757,
+      "jitterLocal_sma3nz": 0.009666,
+      "shimmerLocaldB_sma3nz": 0.610135,
+      "HNRdBACF_sma3nz": 6.333871,
+      "logRelF0-H1-H2_sma3nz": 13.05972,
+      "logRelF0-H1-A3_sma3nz": 23.933435,
+      "F1frequency_sma3nz": 499.017487,
+      "F1bandwidth_sma3nz": 1192.893066,
+      "F1amplitudeLogRelF0_sma3nz": -36.12952,
+      "F2frequency_sma3nz": 1675.850708,
+      "F2bandwidth_sma3nz": 1122.939819,
+      "F2amplitudeLogRelF0_sma3nz": -55.211796,
+      "F3frequency_sma3nz": 2582.042236,
+      "F3bandwidth_sma3nz": 675.535095,
+      "F3amplitudeLogRelF0_sma3nz": -56.709797
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3702332775276011ea1"
+  },
+  "recording_id": "144_10001144_31",
+  "parent_id": null,
+  "text": "pea",
+  "start": 2.8392244621425804,
+  "end": 3.2101901815340073,
+  "duration": 0.37096571939142686,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 2.302695,
+      "alphaRatio_sma3": -11.579846,
+      "hammarbergIndex_sma3": 23.814793,
+      "slope0-500_sma3": 0.044103,
+      "slope500-1500_sma3": -0.022534,
+      "spectralFlux_sma3": 0.918595,
+      "mfcc1_sma3": 31.953415,
+      "mfcc2_sma3": -6.19675,
+      "mfcc3_sma3": 8.243833,
+      "mfcc4_sma3": -25.251982,
+      "F0semitoneFrom27.5Hz_sma3nz": 32.645813,
+      "jitterLocal_sma3nz": 0.014207,
+      "shimmerLocaldB_sma3nz": 0.697372,
+      "HNRdBACF_sma3nz": 10.336703,
+      "logRelF0-H1-H2_sma3nz": -0.140466,
+      "logRelF0-H1-A3_sma3nz": 18.424627,
+      "F1frequency_sma3nz": 434.419098,
+      "F1bandwidth_sma3nz": 1276.699707,
+      "F1amplitudeLogRelF0_sma3nz": -17.358118,
+      "F2frequency_sma3nz": 1493.080566,
+      "F2bandwidth_sma3nz": 1308.343872,
+      "F2amplitudeLogRelF0_sma3nz": -27.412489,
+      "F3frequency_sma3nz": 2294.9375,
+      "F3bandwidth_sma3nz": 1584.23877,
+      "F3amplitudeLogRelF0_sma3nz": -35.81485
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3702332775276011ea2"
+  },
+  "recording_id": "144_10001144_31",
+  "parent_id": null,
+  "text": "oli",
+  "start": 3.2101901815340073,
+  "end": 3.4693538916670423,
+  "duration": 0.2591637101330351,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.759214,
+      "alphaRatio_sma3": -15.255532,
+      "hammarbergIndex_sma3": 21.881638,
+      "slope0-500_sma3": 0.059373,
+      "slope500-1500_sma3": -0.021666,
+      "spectralFlux_sma3": 0.779978,
+      "mfcc1_sma3": 31.812206,
+      "mfcc2_sma3": 0.949438,
+      "mfcc3_sma3": 29.300047,
+      "mfcc4_sma3": -25.901464,
+      "F0semitoneFrom27.5Hz_sma3nz": 34.50856,
+      "jitterLocal_sma3nz": 0.010129,
+      "shimmerLocaldB_sma3nz": 0.569863,
+      "HNRdBACF_sma3nz": 10.754787,
+      "logRelF0-H1-H2_sma3nz": 12.83854,
+      "logRelF0-H1-A3_sma3nz": 25.375948,
+      "F1frequency_sma3nz": 402.085541,
+      "F1bandwidth_sma3nz": 1168.857056,
+      "F1amplitudeLogRelF0_sma3nz": 1.394719,
+      "F2frequency_sma3nz": 1559.695679,
+      "F2bandwidth_sma3nz": 1167.438599,
+      "F2amplitudeLogRelF0_sma3nz": -25.374187,
+      "F3frequency_sma3nz": 2407.227295,
+      "F3bandwidth_sma3nz": 679.144897,
+      "F3amplitudeLogRelF0_sma3nz": -23.959282
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3702332775276011ea3"
+  },
+  "recording_id": "144_10001144_31",
+  "parent_id": null,
+  "text": "kõõma",
+  "start": 3.4693538916670423,
+  "end": 4.007938658221909,
+  "duration": 0.5385847665548669,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.515165,
+      "alphaRatio_sma3": -13.59468,
+      "hammarbergIndex_sma3": 27.925505,
+      "slope0-500_sma3": 0.050413,
+      "slope500-1500_sma3": -0.014005,
+      "spectralFlux_sma3": 0.695128,
+      "mfcc1_sma3": 36.391197,
+      "mfcc2_sma3": -1.133548,
+      "mfcc3_sma3": 2.211071,
+      "mfcc4_sma3": -4.929798,
+      "F0semitoneFrom27.5Hz_sma3nz": 31.020931,
+      "jitterLocal_sma3nz": 0.007424,
+      "shimmerLocaldB_sma3nz": 0.507289,
+      "HNRdBACF_sma3nz": 9.223588,
+      "logRelF0-H1-H2_sma3nz": 6.743718,
+      "logRelF0-H1-A3_sma3nz": 25.552599,
+      "F1frequency_sma3nz": 516.295959,
+      "F1bandwidth_sma3nz": 1386.045288,
+      "F1amplitudeLogRelF0_sma3nz": -24.909742,
+      "F2frequency_sma3nz": 1453.76123,
+      "F2bandwidth_sma3nz": 1158.553101,
+      "F2amplitudeLogRelF0_sma3nz": -36.040424,
+      "F3frequency_sma3nz": 2562.438477,
+      "F3bandwidth_sma3nz": 835.668274,
+      "F3amplitudeLogRelF0_sma3nz": -48.308102
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3702332775276011ea4"
+  },
+  "recording_id": "144_10001144_31",
+  "parent_id": null,
+  "text": "täis",
+  "start": 4.007938658221909,
+  "end": 4.470552391499235,
+  "duration": 0.46261373327732613,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.293983,
+      "alphaRatio_sma3": -8.913669,
+      "hammarbergIndex_sma3": 15.617883,
+      "slope0-500_sma3": 0.036671,
+      "slope500-1500_sma3": -0.021899,
+      "spectralFlux_sma3": 0.650851,
+      "mfcc1_sma3": 17.714258,
+      "mfcc2_sma3": 10.145278,
+      "mfcc3_sma3": 19.284906,
+      "mfcc4_sma3": -18.384857,
+      "F0semitoneFrom27.5Hz_sma3nz": 23.241325,
+      "jitterLocal_sma3nz": 0.005877,
+      "shimmerLocaldB_sma3nz": 0.372886,
+      "HNRdBACF_sma3nz": 7.179937,
+      "logRelF0-H1-H2_sma3nz": 3.810398,
+      "logRelF0-H1-A3_sma3nz": 17.217707,
+      "F1frequency_sma3nz": 694.611023,
+      "F1bandwidth_sma3nz": 1123.317627,
+      "F1amplitudeLogRelF0_sma3nz": -72.890152,
+      "F2frequency_sma3nz": 1729.161377,
+      "F2bandwidth_sma3nz": 831.262329,
+      "F2amplitudeLogRelF0_sma3nz": -85.563965,
+      "F3frequency_sma3nz": 2827.839844,
+      "F3bandwidth_sma3nz": 585.824768,
+      "F3amplitudeLogRelF0_sma3nz": -87.257042
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3702332775276011eb9"
+  },
+  "recording_id": "144_10001144_77",
+  "parent_id": null,
+  "text": "paigutasin",
+  "start": 2.3496742252456535,
+  "end": 3.2565962127541073,
+  "duration": 0.9069219875084538,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.637092,
+      "alphaRatio_sma3": -14.431938,
+      "hammarbergIndex_sma3": 24.434618,
+      "slope0-500_sma3": 0.034346,
+      "slope500-1500_sma3": -0.026164,
+      "spectralFlux_sma3": 1.283545,
+      "mfcc1_sma3": 23.892603,
+      "mfcc2_sma3": 7.050479,
+      "mfcc3_sma3": 2.128771,
+      "mfcc4_sma3": -22.275135,
+      "F0semitoneFrom27.5Hz_sma3nz": 32.421532,
+      "jitterLocal_sma3nz": 0.028602,
+      "shimmerLocaldB_sma3nz": 0.943468,
+      "HNRdBACF_sma3nz": 6.603056,
+      "logRelF0-H1-H2_sma3nz": 11.274158,
+      "logRelF0-H1-A3_sma3nz": 24.575262,
+      "F1frequency_sma3nz": 533.898376,
+      "F1bandwidth_sma3nz": 1270.859863,
+      "F1amplitudeLogRelF0_sma3nz": -25.301046,
+      "F2frequency_sma3nz": 1580.844116,
+      "F2bandwidth_sma3nz": 1053.83374,
+      "F2amplitudeLogRelF0_sma3nz": -41.227226,
+      "F3frequency_sma3nz": 2592.259521,
+      "F3bandwidth_sma3nz": 1155.04126,
+      "F3amplitudeLogRelF0_sma3nz": -47.438564
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3702332775276011eba"
+  },
+  "recording_id": "144_10001144_77",
+  "parent_id": null,
+  "text": "oma",
+  "start": 3.2565962127541073,
+  "end": 3.5709691381793807,
+  "duration": 0.3143729254252734,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.489256,
+      "alphaRatio_sma3": -14.125483,
+      "hammarbergIndex_sma3": 35.57325,
+      "slope0-500_sma3": 0.066551,
+      "slope500-1500_sma3": -0.010716,
+      "spectralFlux_sma3": 0.631637,
+      "mfcc1_sma3": 34.649544,
+      "mfcc2_sma3": 7.89774,
+      "mfcc3_sma3": -12.10641,
+      "mfcc4_sma3": -5.163094,
+      "F0semitoneFrom27.5Hz_sma3nz": 33.267483,
+      "jitterLocal_sma3nz": 0.009203,
+      "shimmerLocaldB_sma3nz": 0.332269,
+      "HNRdBACF_sma3nz": 10.844339,
+      "logRelF0-H1-H2_sma3nz": 8.866568,
+      "logRelF0-H1-A3_sma3nz": 25.498018,
+      "F1frequency_sma3nz": 388.288879,
+      "F1bandwidth_sma3nz": 1539.710449,
+      "F1amplitudeLogRelF0_sma3nz": -13.491241,
+      "F2frequency_sma3nz": 1283.291626,
+      "F2bandwidth_sma3nz": 1205.724365,
+      "F2amplitudeLogRelF0_sma3nz": -24.381905,
+      "F3frequency_sma3nz": 2214.189453,
+      "F3bandwidth_sma3nz": 1225.651855,
+      "F3amplitudeLogRelF0_sma3nz": -39.815849
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3702332775276011ebb"
+  },
+  "recording_id": "144_10001144_77",
+  "parent_id": null,
+  "text": "raha",
+  "start": 3.5709691381793807,
+  "end": 3.9453337403337403,
+  "duration": 0.3743646021543596,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 2.309104,
+      "alphaRatio_sma3": -7.69083,
+      "hammarbergIndex_sma3": 22.879145,
+      "slope0-500_sma3": 0.051201,
+      "slope500-1500_sma3": -0.008708,
+      "spectralFlux_sma3": 1.163155,
+      "mfcc1_sma3": 28.721621,
+      "mfcc2_sma3": -6.69984,
+      "mfcc3_sma3": -12.182218,
+      "mfcc4_sma3": -26.999046,
+      "F0semitoneFrom27.5Hz_sma3nz": 35.59779,
+      "jitterLocal_sma3nz": 0.036953,
+      "shimmerLocaldB_sma3nz": 0.55584,
+      "HNRdBACF_sma3nz": 9.346395,
+      "logRelF0-H1-H2_sma3nz": 0.316339,
+      "logRelF0-H1-A3_sma3nz": 22.695808,
+      "F1frequency_sma3nz": 620.327637,
+      "F1bandwidth_sma3nz": 1382.240723,
+      "F1amplitudeLogRelF0_sma3nz": -4.384889,
+      "F2frequency_sma3nz": 1476.929321,
+      "F2bandwidth_sma3nz": 1241.106323,
+      "F2amplitudeLogRelF0_sma3nz": -10.117554,
+      "F3frequency_sma3nz": 2637.279785,
+      "F3bandwidth_sma3nz": 1474.191162,
+      "F3amplitudeLogRelF0_sma3nz": -25.998262
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3702332775276011ebc"
+  },
+  "recording_id": "144_10001144_77",
+  "parent_id": null,
+  "text": "kinnis+varasse",
+  "start": 3.9453337403337403,
+  "end": 5.1114514068538215,
+  "duration": 1.1661176665200812,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.277896,
+      "alphaRatio_sma3": -7.68155,
+      "hammarbergIndex_sma3": 16.882753,
+      "slope0-500_sma3": 0.033999,
+      "slope500-1500_sma3": -0.017629,
+      "spectralFlux_sma3": 0.692808,
+      "mfcc1_sma3": 16.830315,
+      "mfcc2_sma3": 9.952187,
+      "mfcc3_sma3": 9.288865,
+      "mfcc4_sma3": -16.74321,
+      "F0semitoneFrom27.5Hz_sma3nz": 29.310078,
+      "jitterLocal_sma3nz": 0.011462,
+      "shimmerLocaldB_sma3nz": 0.654421,
+      "HNRdBACF_sma3nz": 6.052557,
+      "logRelF0-H1-H2_sma3nz": 3.654824,
+      "logRelF0-H1-A3_sma3nz": 15.119104,
+      "F1frequency_sma3nz": 555.653442,
+      "F1bandwidth_sma3nz": 1198.707764,
+      "F1amplitudeLogRelF0_sma3nz": -46.510971,
+      "F2frequency_sma3nz": 1540.146118,
+      "F2bandwidth_sma3nz": 988.016418,
+      "F2amplitudeLogRelF0_sma3nz": -56.378788,
+      "F3frequency_sma3nz": 2453.850586,
+      "F3bandwidth_sma3nz": 996.760132,
+      "F3amplitudeLogRelF0_sma3nz": -58.694683
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3702332775276011eda"
+  },
+  "recording_id": "144_10001144_78",
+  "parent_id": null,
+  "text": "firma",
+  "start": 2.3457054673721336,
+  "end": 3.0102606802721086,
+  "duration": 0.664555212899975,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.692232,
+      "alphaRatio_sma3": -14.060529,
+      "hammarbergIndex_sma3": 24.16383,
+      "slope0-500_sma3": 0.083449,
+      "slope500-1500_sma3": -0.029951,
+      "spectralFlux_sma3": 0.842887,
+      "mfcc1_sma3": 31.062103,
+      "mfcc2_sma3": -2.522761,
+      "mfcc3_sma3": 3.623177,
+      "mfcc4_sma3": -22.002909,
+      "F0semitoneFrom27.5Hz_sma3nz": 36.161469,
+      "jitterLocal_sma3nz": 0.057494,
+      "shimmerLocaldB_sma3nz": 0.919372,
+      "HNRdBACF_sma3nz": 11.002168,
+      "logRelF0-H1-H2_sma3nz": 10.849043,
+      "logRelF0-H1-A3_sma3nz": 27.222794,
+      "F1frequency_sma3nz": 660.357605,
+      "F1bandwidth_sma3nz": 1372.500244,
+      "F1amplitudeLogRelF0_sma3nz": -3.550263,
+      "F2frequency_sma3nz": 1603.865479,
+      "F2bandwidth_sma3nz": 1340.998779,
+      "F2amplitudeLogRelF0_sma3nz": -18.163475,
+      "F3frequency_sma3nz": 2598.34082,
+      "F3bandwidth_sma3nz": 887.982117,
+      "F3amplitudeLogRelF0_sma3nz": -26.717434
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3702332775276011edb"
+  },
+  "recording_id": "144_10001144_78",
+  "parent_id": null,
+  "text": "oli",
+  "start": 3.0102606802721086,
+  "end": 3.419532386474217,
+  "duration": 0.4092717062021083,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.73947,
+      "alphaRatio_sma3": -16.823145,
+      "hammarbergIndex_sma3": 23.971514,
+      "slope0-500_sma3": 0.106497,
+      "slope500-1500_sma3": -0.02965,
+      "spectralFlux_sma3": 0.546284,
+      "mfcc1_sma3": 27.230701,
+      "mfcc2_sma3": 5.584895,
+      "mfcc3_sma3": 28.379547,
+      "mfcc4_sma3": -39.744942,
+      "F0semitoneFrom27.5Hz_sma3nz": 35.967396,
+      "jitterLocal_sma3nz": 0.008614,
+      "shimmerLocaldB_sma3nz": 0.345715,
+      "HNRdBACF_sma3nz": 12.949286,
+      "logRelF0-H1-H2_sma3nz": 17.023085,
+      "logRelF0-H1-A3_sma3nz": 29.138617,
+      "F1frequency_sma3nz": 501.98291,
+      "F1bandwidth_sma3nz": 1262.031616,
+      "F1amplitudeLogRelF0_sma3nz": -1.094871,
+      "F2frequency_sma3nz": 1583.159424,
+      "F2bandwidth_sma3nz": 2015.541992,
+      "F2amplitudeLogRelF0_sma3nz": -28.75819,
+      "F3frequency_sma3nz": 2408.491699,
+      "F3bandwidth_sma3nz": 452.143616,
+      "F3amplitudeLogRelF0_sma3nz": -26.951092
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3702332775276011edc"
+  },
+  "recording_id": "144_10001144_78",
+  "parent_id": null,
+  "text": "üsna",
+  "start": 3.419532386474217,
+  "end": 3.951944671201814,
+  "duration": 0.5324122847275969,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.268355,
+      "alphaRatio_sma3": -13.021601,
+      "hammarbergIndex_sma3": 22.252394,
+      "slope0-500_sma3": 0.058691,
+      "slope500-1500_sma3": -0.01982,
+      "spectralFlux_sma3": 0.697683,
+      "mfcc1_sma3": 19.561979,
+      "mfcc2_sma3": 10.697071,
+      "mfcc3_sma3": 13.149741,
+      "mfcc4_sma3": -9.91399,
+      "F0semitoneFrom27.5Hz_sma3nz": 26.028313,
+      "jitterLocal_sma3nz": 0.008454,
+      "shimmerLocaldB_sma3nz": 0.504196,
+      "HNRdBACF_sma3nz": 7.360418,
+      "logRelF0-H1-H2_sma3nz": 14.52212,
+      "logRelF0-H1-A3_sma3nz": 19.28363,
+      "F1frequency_sma3nz": 562.041809,
+      "F1bandwidth_sma3nz": 1117.432373,
+      "F1amplitudeLogRelF0_sma3nz": -67.926376,
+      "F2frequency_sma3nz": 1692.650757,
+      "F2bandwidth_sma3nz": 714.909363,
+      "F2amplitudeLogRelF0_sma3nz": -75.602837,
+      "F3frequency_sma3nz": 2665.72876,
+      "F3bandwidth_sma3nz": 777.238708,
+      "F3amplitudeLogRelF0_sma3nz": -81.248505
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3702332775276011edd"
+  },
+  "recording_id": "144_10001144_78",
+  "parent_id": null,
+  "text": "krahhi",
+  "start": 3.951944671201814,
+  "end": 4.703491523593565,
+  "duration": 0.7515468523917508,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.065815,
+      "alphaRatio_sma3": -10.01878,
+      "hammarbergIndex_sma3": 20.102734,
+      "slope0-500_sma3": 0.020536,
+      "slope500-1500_sma3": -0.009033,
+      "spectralFlux_sma3": 0.555366,
+      "mfcc1_sma3": 20.030106,
+      "mfcc2_sma3": 2.266995,
+      "mfcc3_sma3": 10.744155,
+      "mfcc4_sma3": -17.600691,
+      "F0semitoneFrom27.5Hz_sma3nz": 23.752275,
+      "jitterLocal_sma3nz": 0.012407,
+      "shimmerLocaldB_sma3nz": 0.613897,
+      "HNRdBACF_sma3nz": 5.558371,
+      "logRelF0-H1-H2_sma3nz": 8.183602,
+      "logRelF0-H1-A3_sma3nz": 18.152681,
+      "F1frequency_sma3nz": 564.718323,
+      "F1bandwidth_sma3nz": 1158.819946,
+      "F1amplitudeLogRelF0_sma3nz": -78.610802,
+      "F2frequency_sma3nz": 1635.363281,
+      "F2bandwidth_sma3nz": 737.302307,
+      "F2amplitudeLogRelF0_sma3nz": -84.974495,
+      "F3frequency_sma3nz": 2678.230469,
+      "F3bandwidth_sma3nz": 738.555054,
+      "F3amplitudeLogRelF0_sma3nz": -89.632629
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3702332775276011ede"
+  },
+  "recording_id": "144_10001144_78",
+  "parent_id": null,
+  "text": "piiril",
+  "start": 4.703491523593565,
+  "end": 5.33266920909778,
+  "duration": 0.6291776855042155,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.079484,
+      "alphaRatio_sma3": -21.187233,
+      "hammarbergIndex_sma3": 25.942972,
+      "slope0-500_sma3": 0.067109,
+      "slope500-1500_sma3": -0.034609,
+      "spectralFlux_sma3": 0.466664,
+      "mfcc1_sma3": 27.547783,
+      "mfcc2_sma3": 15.148463,
+      "mfcc3_sma3": 31.473837,
+      "mfcc4_sma3": -30.571606,
+      "F0semitoneFrom27.5Hz_sma3nz": 33.649231,
+      "jitterLocal_sma3nz": 0.015634,
+      "shimmerLocaldB_sma3nz": 0.672774,
+      "HNRdBACF_sma3nz": 9.616436,
+      "logRelF0-H1-H2_sma3nz": 12.865647,
+      "logRelF0-H1-A3_sma3nz": 25.626232,
+      "F1frequency_sma3nz": 523.527771,
+      "F1bandwidth_sma3nz": 1392.944092,
+      "F1amplitudeLogRelF0_sma3nz": -16.549704,
+      "F2frequency_sma3nz": 1613.302368,
+      "F2bandwidth_sma3nz": 1023.704102,
+      "F2amplitudeLogRelF0_sma3nz": -37.901627,
+      "F3frequency_sma3nz": 2696.170898,
+      "F3bandwidth_sma3nz": 556.173462,
+      "F3amplitudeLogRelF0_sma3nz": -35.323536
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3712332775276011ef6"
+  },
+  "recording_id": "144_10001144_79",
+  "parent_id": null,
+  "text": "on",
+  "start": 2.2671693952306198,
+  "end": 2.5548599714800004,
+  "duration": 0.28769057624938066,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.605814,
+      "alphaRatio_sma3": -23.587479,
+      "hammarbergIndex_sma3": 33.690269,
+      "slope0-500_sma3": 0.098232,
+      "slope500-1500_sma3": -0.027424,
+      "spectralFlux_sma3": 0.770401,
+      "mfcc1_sma3": 31.463617,
+      "mfcc2_sma3": 10.723085,
+      "mfcc3_sma3": -2.211589,
+      "mfcc4_sma3": -9.554625,
+      "F0semitoneFrom27.5Hz_sma3nz": 37.026932,
+      "jitterLocal_sma3nz": 0.009356,
+      "shimmerLocaldB_sma3nz": 0.387589,
+      "HNRdBACF_sma3nz": 13.334916,
+      "logRelF0-H1-H2_sma3nz": 18.425886,
+      "logRelF0-H1-A3_sma3nz": 33.763763,
+      "F1frequency_sma3nz": 475.250366,
+      "F1bandwidth_sma3nz": 1352.348389,
+      "F1amplitudeLogRelF0_sma3nz": -1.519607,
+      "F2frequency_sma3nz": 1571.168335,
+      "F2bandwidth_sma3nz": 1096.576294,
+      "F2amplitudeLogRelF0_sma3nz": -25.297974,
+      "F3frequency_sma3nz": 2564.222168,
+      "F3bandwidth_sma3nz": 1064.676147,
+      "F3amplitudeLogRelF0_sma3nz": -33.137829
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3712332775276011ef7"
+  },
+  "recording_id": "144_10001144_79",
+  "parent_id": null,
+  "text": "oodata",
+  "start": 2.5548599714800004,
+  "end": 3.2170506753426005,
+  "duration": 0.6621907038626,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.40487,
+      "alphaRatio_sma3": -16.381264,
+      "hammarbergIndex_sma3": 31.044689,
+      "slope0-500_sma3": 0.03425,
+      "slope500-1500_sma3": -0.029699,
+      "spectralFlux_sma3": 0.993912,
+      "mfcc1_sma3": 34.153137,
+      "mfcc2_sma3": 5.862371,
+      "mfcc3_sma3": -6.704336,
+      "mfcc4_sma3": -27.909441,
+      "F0semitoneFrom27.5Hz_sma3nz": 32.814499,
+      "jitterLocal_sma3nz": 0.014584,
+      "shimmerLocaldB_sma3nz": 0.949792,
+      "HNRdBACF_sma3nz": 6.727211,
+      "logRelF0-H1-H2_sma3nz": 5.007218,
+      "logRelF0-H1-A3_sma3nz": 26.128279,
+      "F1frequency_sma3nz": 458.652222,
+      "F1bandwidth_sma3nz": 1367.48584,
+      "F1amplitudeLogRelF0_sma3nz": -14.063743,
+      "F2frequency_sma3nz": 1382.4729,
+      "F2bandwidth_sma3nz": 1149.177368,
+      "F2amplitudeLogRelF0_sma3nz": -27.604826,
+      "F3frequency_sma3nz": 2490.554199,
+      "F3bandwidth_sma3nz": 1143.992188,
+      "F3amplitudeLogRelF0_sma3nz": -41.378136
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3712332775276011ef8"
+  },
+  "recording_id": "144_10001144_79",
+  "parent_id": null,
+  "text": "krahhi",
+  "start": 3.2170506753426005,
+  "end": 3.9801961794818936,
+  "duration": 0.7631455041392932,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.118601,
+      "alphaRatio_sma3": -10.707823,
+      "hammarbergIndex_sma3": 21.113503,
+      "slope0-500_sma3": 0.005433,
+      "slope500-1500_sma3": -0.014515,
+      "spectralFlux_sma3": 0.628191,
+      "mfcc1_sma3": 24.200529,
+      "mfcc2_sma3": 0.64297,
+      "mfcc3_sma3": 15.63151,
+      "mfcc4_sma3": -16.131136,
+      "F0semitoneFrom27.5Hz_sma3nz": 22.474403,
+      "jitterLocal_sma3nz": 0.032464,
+      "shimmerLocaldB_sma3nz": 0.590044,
+      "HNRdBACF_sma3nz": 4.913321,
+      "logRelF0-H1-H2_sma3nz": 5.324154,
+      "logRelF0-H1-A3_sma3nz": 15.901139,
+      "F1frequency_sma3nz": 551.572693,
+      "F1bandwidth_sma3nz": 1185.687866,
+      "F1amplitudeLogRelF0_sma3nz": -69.54229,
+      "F2frequency_sma3nz": 1620.20752,
+      "F2bandwidth_sma3nz": 809.972168,
+      "F2amplitudeLogRelF0_sma3nz": -75.489265,
+      "F3frequency_sma3nz": 2578.015137,
+      "F3bandwidth_sma3nz": 1061.570435,
+      "F3amplitudeLogRelF0_sma3nz": -80.489861
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3712332775276011ef9"
+  },
+  "recording_id": "144_10001144_79",
+  "parent_id": null,
+  "text": "panganduses",
+  "start": 3.9801961794818936,
+  "end": 5.35999940327008,
+  "duration": 1.379803223788186,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.160839,
+      "alphaRatio_sma3": -9.582304,
+      "hammarbergIndex_sma3": 19.4217,
+      "slope0-500_sma3": 0.037302,
+      "slope500-1500_sma3": -0.020955,
+      "spectralFlux_sma3": 0.672257,
+      "mfcc1_sma3": 20.606916,
+      "mfcc2_sma3": 9.157547,
+      "mfcc3_sma3": 3.738303,
+      "mfcc4_sma3": -17.32655,
+      "F0semitoneFrom27.5Hz_sma3nz": 25.919844,
+      "jitterLocal_sma3nz": 0.018679,
+      "shimmerLocaldB_sma3nz": 0.583596,
+      "HNRdBACF_sma3nz": 5.978868,
+      "logRelF0-H1-H2_sma3nz": 5.250381,
+      "logRelF0-H1-A3_sma3nz": 18.509388,
+      "F1frequency_sma3nz": 521.383362,
+      "F1bandwidth_sma3nz": 1235.440063,
+      "F1amplitudeLogRelF0_sma3nz": -58.453732,
+      "F2frequency_sma3nz": 1484.69043,
+      "F2bandwidth_sma3nz": 962.987,
+      "F2amplitudeLogRelF0_sma3nz": -68.871536,
+      "F3frequency_sma3nz": 2618.509521,
+      "F3bandwidth_sma3nz": 718.184204,
+      "F3amplitudeLogRelF0_sma3nz": -75.545738
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3712332775276011f12"
+  },
+  "recording_id": "144_10001144_80",
+  "parent_id": null,
+  "text": "vajatakse",
+  "start": 2.3817864229024943,
+  "end": 3.1166043083900226,
+  "duration": 0.7348178854875282,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.59946,
+      "alphaRatio_sma3": -6.804043,
+      "hammarbergIndex_sma3": 18.860466,
+      "slope0-500_sma3": 0.059814,
+      "slope500-1500_sma3": -0.022794,
+      "spectralFlux_sma3": 0.994814,
+      "mfcc1_sma3": 23.031404,
+      "mfcc2_sma3": -5.305267,
+      "mfcc3_sma3": -4.077754,
+      "mfcc4_sma3": -22.700706,
+      "F0semitoneFrom27.5Hz_sma3nz": 30.762127,
+      "jitterLocal_sma3nz": 0.010402,
+      "shimmerLocaldB_sma3nz": 0.87,
+      "HNRdBACF_sma3nz": 7.210907,
+      "logRelF0-H1-H2_sma3nz": -0.858234,
+      "logRelF0-H1-A3_sma3nz": 18.203512,
+      "F1frequency_sma3nz": 635.010864,
+      "F1bandwidth_sma3nz": 1312.098022,
+      "F1amplitudeLogRelF0_sma3nz": -37.079475,
+      "F2frequency_sma3nz": 1629.651855,
+      "F2bandwidth_sma3nz": 945.749573,
+      "F2amplitudeLogRelF0_sma3nz": -46.206318,
+      "F3frequency_sma3nz": 2751.207031,
+      "F3bandwidth_sma3nz": 792.809692,
+      "F3amplitudeLogRelF0_sma3nz": -55.920586
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3712332775276011f13"
+  },
+  "recording_id": "144_10001144_80",
+  "parent_id": null,
+  "text": "tõelise",
+  "start": 3.1166043083900226,
+  "end": 3.870261742792355,
+  "duration": 0.7536574344023323,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.803678,
+      "alphaRatio_sma3": -12.065728,
+      "hammarbergIndex_sma3": 18.948441,
+      "slope0-500_sma3": 0.067602,
+      "slope500-1500_sma3": -0.035176,
+      "spectralFlux_sma3": 1.03929,
+      "mfcc1_sma3": 18.956217,
+      "mfcc2_sma3": 5.233471,
+      "mfcc3_sma3": 15.504634,
+      "mfcc4_sma3": -29.665453,
+      "F0semitoneFrom27.5Hz_sma3nz": 34.333817,
+      "jitterLocal_sma3nz": 0.017618,
+      "shimmerLocaldB_sma3nz": 0.864071,
+      "HNRdBACF_sma3nz": 6.755527,
+      "logRelF0-H1-H2_sma3nz": 10.190999,
+      "logRelF0-H1-A3_sma3nz": 21.778433,
+      "F1frequency_sma3nz": 463.028717,
+      "F1bandwidth_sma3nz": 1213.044312,
+      "F1amplitudeLogRelF0_sma3nz": -14.217689,
+      "F2frequency_sma3nz": 1612.330566,
+      "F2bandwidth_sma3nz": 1281.661987,
+      "F2amplitudeLogRelF0_sma3nz": -33.676727,
+      "F3frequency_sma3nz": 2511.18335,
+      "F3bandwidth_sma3nz": 1234.963257,
+      "F3amplitudeLogRelF0_sma3nz": -33.612408
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3712332775276011f14"
+  },
+  "recording_id": "144_10001144_80",
+  "parent_id": null,
+  "text": "profi",
+  "start": 3.870261742792355,
+  "end": 4.51805285606306,
+  "duration": 0.6477911132707055,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.083462,
+      "alphaRatio_sma3": -10.748972,
+      "hammarbergIndex_sma3": 18.972969,
+      "slope0-500_sma3": 0.04752,
+      "slope500-1500_sma3": -0.020552,
+      "spectralFlux_sma3": 0.620813,
+      "mfcc1_sma3": 19.408026,
+      "mfcc2_sma3": 2.453152,
+      "mfcc3_sma3": 11.777003,
+      "mfcc4_sma3": -16.67017,
+      "F0semitoneFrom27.5Hz_sma3nz": 23.061367,
+      "jitterLocal_sma3nz": 0.006851,
+      "shimmerLocaldB_sma3nz": 0.426416,
+      "HNRdBACF_sma3nz": 5.040615,
+      "logRelF0-H1-H2_sma3nz": 6.224721,
+      "logRelF0-H1-A3_sma3nz": 16.750317,
+      "F1frequency_sma3nz": 534.313843,
+      "F1bandwidth_sma3nz": 1151.855103,
+      "F1amplitudeLogRelF0_sma3nz": -66.493065,
+      "F2frequency_sma3nz": 1484.610107,
+      "F2bandwidth_sma3nz": 1280.207764,
+      "F2amplitudeLogRelF0_sma3nz": -80.278137,
+      "F3frequency_sma3nz": 2444.803223,
+      "F3bandwidth_sma3nz": 831.53717,
+      "F3amplitudeLogRelF0_sma3nz": -82.350388
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3712332775276011f15"
+  },
+  "recording_id": "144_10001144_80",
+  "parent_id": null,
+  "text": "tööd",
+  "start": 4.51805285606306,
+  "end": 4.985639455782313,
+  "duration": 0.46758659971925276,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 0.982421,
+      "alphaRatio_sma3": -14.65923,
+      "hammarbergIndex_sma3": 22.094101,
+      "slope0-500_sma3": 0.050954,
+      "slope500-1500_sma3": -0.028794,
+      "spectralFlux_sma3": 0.423307,
+      "mfcc1_sma3": 24.368183,
+      "mfcc2_sma3": 5.062131,
+      "mfcc3_sma3": 17.903906,
+      "mfcc4_sma3": -21.148277,
+      "F0semitoneFrom27.5Hz_sma3nz": 28.302418,
+      "jitterLocal_sma3nz": 0.014008,
+      "shimmerLocaldB_sma3nz": 0.780503,
+      "HNRdBACF_sma3nz": 7.118244,
+      "logRelF0-H1-H2_sma3nz": 5.354034,
+      "logRelF0-H1-A3_sma3nz": 18.150105,
+      "F1frequency_sma3nz": 477.177032,
+      "F1bandwidth_sma3nz": 1198.365356,
+      "F1amplitudeLogRelF0_sma3nz": -42.952934,
+      "F2frequency_sma3nz": 1583.167236,
+      "F2bandwidth_sma3nz": 1002.357544,
+      "F2amplitudeLogRelF0_sma3nz": -55.876949,
+      "F3frequency_sma3nz": 2585.650391,
+      "F3bandwidth_sma3nz": 1314.168213,
+      "F3amplitudeLogRelF0_sma3nz": -60.335655
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3712332775276011f2f"
+  },
+  "recording_id": "144_10001144_81",
+  "parent_id": null,
+  "text": "otsime",
+  "start": 2.298162999385966,
+  "end": 2.9182438672438673,
+  "duration": 0.6200808678579013,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.69962,
+      "alphaRatio_sma3": -10.730376,
+      "hammarbergIndex_sma3": 19.636896,
+      "slope0-500_sma3": 0.044735,
+      "slope500-1500_sma3": -0.032176,
+      "spectralFlux_sma3": 1.413631,
+      "mfcc1_sma3": 18.29356,
+      "mfcc2_sma3": 7.781299,
+      "mfcc3_sma3": 5.320683,
+      "mfcc4_sma3": -22.796375,
+      "F0semitoneFrom27.5Hz_sma3nz": 35.319935,
+      "jitterLocal_sma3nz": 0.019442,
+      "shimmerLocaldB_sma3nz": 1.001279,
+      "HNRdBACF_sma3nz": 6.202096,
+      "logRelF0-H1-H2_sma3nz": 9.393246,
+      "logRelF0-H1-A3_sma3nz": 21.136398,
+      "F1frequency_sma3nz": 446.385651,
+      "F1bandwidth_sma3nz": 1192.391724,
+      "F1amplitudeLogRelF0_sma3nz": -18.424656,
+      "F2frequency_sma3nz": 1472.730591,
+      "F2bandwidth_sma3nz": 1064.043945,
+      "F2amplitudeLogRelF0_sma3nz": -33.770554,
+      "F3frequency_sma3nz": 2472.948486,
+      "F3bandwidth_sma3nz": 1176.7948,
+      "F3amplitudeLogRelF0_sma3nz": -36.729698
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3712332775276011f30"
+  },
+  "recording_id": "144_10001144_81",
+  "parent_id": null,
+  "text": "kolme",
+  "start": 2.9182438672438673,
+  "end": 3.5562735326688815,
+  "duration": 0.6380296654250142,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.349746,
+      "alphaRatio_sma3": -19.513306,
+      "hammarbergIndex_sma3": 31.346928,
+      "slope0-500_sma3": 0.071777,
+      "slope500-1500_sma3": -0.029202,
+      "spectralFlux_sma3": 0.690694,
+      "mfcc1_sma3": 33.762741,
+      "mfcc2_sma3": 7.111228,
+      "mfcc3_sma3": -3.000834,
+      "mfcc4_sma3": -17.256775,
+      "F0semitoneFrom27.5Hz_sma3nz": 34.512287,
+      "jitterLocal_sma3nz": 0.018897,
+      "shimmerLocaldB_sma3nz": 0.533967,
+      "HNRdBACF_sma3nz": 10.833117,
+      "logRelF0-H1-H2_sma3nz": 10.215382,
+      "logRelF0-H1-A3_sma3nz": 30.607269,
+      "F1frequency_sma3nz": 531.978271,
+      "F1bandwidth_sma3nz": 1444.864014,
+      "F1amplitudeLogRelF0_sma3nz": -17.690107,
+      "F2frequency_sma3nz": 1506.176514,
+      "F2bandwidth_sma3nz": 1058.487915,
+      "F2amplitudeLogRelF0_sma3nz": -33.2173,
+      "F3frequency_sma3nz": 2686.625,
+      "F3bandwidth_sma3nz": 867.764282,
+      "F3amplitudeLogRelF0_sma3nz": -44.714474
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3712332775276011f31"
+  },
+  "recording_id": "144_10001144_81",
+  "parent_id": null,
+  "text": "proffi",
+  "start": 3.5562735326688815,
+  "end": 4.598232552280171,
+  "duration": 1.0419590196112898,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.357342,
+      "alphaRatio_sma3": -10.83997,
+      "hammarbergIndex_sma3": 18.031477,
+      "slope0-500_sma3": 0.01385,
+      "slope500-1500_sma3": -0.024479,
+      "spectralFlux_sma3": 0.60392,
+      "mfcc1_sma3": 19.670017,
+      "mfcc2_sma3": 5.034915,
+      "mfcc3_sma3": 20.791012,
+      "mfcc4_sma3": -17.436855,
+      "F0semitoneFrom27.5Hz_sma3nz": 24.37714,
+      "jitterLocal_sma3nz": 0.011368,
+      "shimmerLocaldB_sma3nz": 0.468033,
+      "HNRdBACF_sma3nz": 6.654735,
+      "logRelF0-H1-H2_sma3nz": 5.075985,
+      "logRelF0-H1-A3_sma3nz": 17.033787,
+      "F1frequency_sma3nz": 466.746246,
+      "F1bandwidth_sma3nz": 1165.767822,
+      "F1amplitudeLogRelF0_sma3nz": -64.57177,
+      "F2frequency_sma3nz": 1550.324463,
+      "F2bandwidth_sma3nz": 1146.080688,
+      "F2amplitudeLogRelF0_sma3nz": -80.85804,
+      "F3frequency_sma3nz": 2321.869629,
+      "F3bandwidth_sma3nz": 1023.488708,
+      "F3amplitudeLogRelF0_sma3nz": -80.829155
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3712332775276011f32"
+  },
+  "recording_id": "144_10001144_81",
+  "parent_id": null,
+  "text": "keevitajat",
+  "start": 4.598232552280171,
+  "end": 5.880111406881593,
+  "duration": 1.2818788546014215,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.004676,
+      "alphaRatio_sma3": -16.237328,
+      "hammarbergIndex_sma3": 25.347906,
+      "slope0-500_sma3": -0.016914,
+      "slope500-1500_sma3": -0.022408,
+      "spectralFlux_sma3": 0.442725,
+      "mfcc1_sma3": 26.382362,
+      "mfcc2_sma3": 5.441944,
+      "mfcc3_sma3": 18.333273,
+      "mfcc4_sma3": -12.91049,
+      "F0semitoneFrom27.5Hz_sma3nz": 19.233246,
+      "jitterLocal_sma3nz": 0.007624,
+      "shimmerLocaldB_sma3nz": 0.419071,
+      "HNRdBACF_sma3nz": 5.356349,
+      "logRelF0-H1-H2_sma3nz": 3.181783,
+      "logRelF0-H1-A3_sma3nz": 11.023061,
+      "F1frequency_sma3nz": 552.230286,
+      "F1bandwidth_sma3nz": 1328.427368,
+      "F1amplitudeLogRelF0_sma3nz": -90.720963,
+      "F2frequency_sma3nz": 1531.578735,
+      "F2bandwidth_sma3nz": 1405.773071,
+      "F2amplitudeLogRelF0_sma3nz": -100.411652,
+      "F3frequency_sma3nz": 2516.513916,
+      "F3bandwidth_sma3nz": 657.545227,
+      "F3amplitudeLogRelF0_sma3nz": -100.960976
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3722332775276011f4d"
+  },
+  "recording_id": "144_10001144_82",
+  "parent_id": null,
+  "text": "pimeda",
+  "start": 2.568928135356707,
+  "end": 3.132535954494792,
+  "duration": 0.5636078191380851,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.807184,
+      "alphaRatio_sma3": -15.579,
+      "hammarbergIndex_sma3": 22.576725,
+      "slope0-500_sma3": 0.017123,
+      "slope500-1500_sma3": -0.032532,
+      "spectralFlux_sma3": 1.290133,
+      "mfcc1_sma3": 26.54063,
+      "mfcc2_sma3": 1.560851,
+      "mfcc3_sma3": 9.569536,
+      "mfcc4_sma3": -20.896465,
+      "F0semitoneFrom27.5Hz_sma3nz": 31.651173,
+      "jitterLocal_sma3nz": 0.038423,
+      "shimmerLocaldB_sma3nz": 0.975321,
+      "HNRdBACF_sma3nz": 7.728443,
+      "logRelF0-H1-H2_sma3nz": 2.661915,
+      "logRelF0-H1-A3_sma3nz": 15.874178,
+      "F1frequency_sma3nz": 633.436768,
+      "F1bandwidth_sma3nz": 1272.867676,
+      "F1amplitudeLogRelF0_sma3nz": -28.28544,
+      "F2frequency_sma3nz": 1706.523438,
+      "F2bandwidth_sma3nz": 905.687866,
+      "F2amplitudeLogRelF0_sma3nz": -37.640144,
+      "F3frequency_sma3nz": 2712.177734,
+      "F3bandwidth_sma3nz": 859.597168,
+      "F3amplitudeLogRelF0_sma3nz": -41.488762
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3722332775276011f4e"
+  },
+  "recording_id": "144_10001144_82",
+  "parent_id": null,
+  "text": "kongi",
+  "start": 3.132535954494792,
+  "end": 3.665756957328386,
+  "duration": 0.533221002833594,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.187933,
+      "alphaRatio_sma3": -21.376186,
+      "hammarbergIndex_sma3": 29.461695,
+      "slope0-500_sma3": 0.043949,
+      "slope500-1500_sma3": -0.039007,
+      "spectralFlux_sma3": 0.95095,
+      "mfcc1_sma3": 26.056665,
+      "mfcc2_sma3": 18.924231,
+      "mfcc3_sma3": 4.331055,
+      "mfcc4_sma3": -20.709457,
+      "F0semitoneFrom27.5Hz_sma3nz": 35.078487,
+      "jitterLocal_sma3nz": 0.019029,
+      "shimmerLocaldB_sma3nz": 1.075589,
+      "HNRdBACF_sma3nz": 8.411068,
+      "logRelF0-H1-H2_sma3nz": 15.186553,
+      "logRelF0-H1-A3_sma3nz": 28.982162,
+      "F1frequency_sma3nz": 628.484375,
+      "F1bandwidth_sma3nz": 1182.705933,
+      "F1amplitudeLogRelF0_sma3nz": -32.700043,
+      "F2frequency_sma3nz": 1754.076416,
+      "F2bandwidth_sma3nz": 987.537048,
+      "F2amplitudeLogRelF0_sma3nz": -48.371754,
+      "F3frequency_sma3nz": 2707.321289,
+      "F3bandwidth_sma3nz": 1100.19519,
+      "F3amplitudeLogRelF0_sma3nz": -52.57851
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3722332775276011f4f"
+  },
+  "recording_id": "144_10001144_82",
+  "parent_id": null,
+  "text": "põrand",
+  "start": 3.665756957328386,
+  "end": 4.23042618335579,
+  "duration": 0.5646692260274038,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.435279,
+      "alphaRatio_sma3": -15.814295,
+      "hammarbergIndex_sma3": 27.665722,
+      "slope0-500_sma3": 0.057379,
+      "slope500-1500_sma3": -0.016609,
+      "spectralFlux_sma3": 0.796157,
+      "mfcc1_sma3": 30.56743,
+      "mfcc2_sma3": 4.383323,
+      "mfcc3_sma3": -1.165615,
+      "mfcc4_sma3": -11.493221,
+      "F0semitoneFrom27.5Hz_sma3nz": 32.168102,
+      "jitterLocal_sma3nz": 0.012036,
+      "shimmerLocaldB_sma3nz": 0.659814,
+      "HNRdBACF_sma3nz": 8.9821,
+      "logRelF0-H1-H2_sma3nz": 8.65743,
+      "logRelF0-H1-A3_sma3nz": 23.839279,
+      "F1frequency_sma3nz": 471.510651,
+      "F1bandwidth_sma3nz": 1263.276733,
+      "F1amplitudeLogRelF0_sma3nz": -27.915354,
+      "F2frequency_sma3nz": 1450.644043,
+      "F2bandwidth_sma3nz": 1021.971619,
+      "F2amplitudeLogRelF0_sma3nz": -41.960278,
+      "F3frequency_sma3nz": 2448.853027,
+      "F3bandwidth_sma3nz": 900.733948,
+      "F3amplitudeLogRelF0_sma3nz": -49.986492
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3722332775276011f50"
+  },
+  "recording_id": "144_10001144_82",
+  "parent_id": null,
+  "text": "oli",
+  "start": 4.23042618335579,
+  "end": 4.506922204779348,
+  "duration": 0.2764960214235579,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.158701,
+      "alphaRatio_sma3": -19.506681,
+      "hammarbergIndex_sma3": 23.929245,
+      "slope0-500_sma3": 0.0809,
+      "slope500-1500_sma3": -0.033858,
+      "spectralFlux_sma3": 0.412634,
+      "mfcc1_sma3": 31.721792,
+      "mfcc2_sma3": 5.46454,
+      "mfcc3_sma3": 31.741625,
+      "mfcc4_sma3": -24.155624,
+      "F0semitoneFrom27.5Hz_sma3nz": 35.573124,
+      "jitterLocal_sma3nz": 0.016985,
+      "shimmerLocaldB_sma3nz": 0.478538,
+      "HNRdBACF_sma3nz": 12.25423,
+      "logRelF0-H1-H2_sma3nz": 13.899891,
+      "logRelF0-H1-A3_sma3nz": 25.883511,
+      "F1frequency_sma3nz": 517.876465,
+      "F1bandwidth_sma3nz": 1220.816284,
+      "F1amplitudeLogRelF0_sma3nz": -7.424562,
+      "F2frequency_sma3nz": 1715.047974,
+      "F2bandwidth_sma3nz": 994.538025,
+      "F2amplitudeLogRelF0_sma3nz": -29.62451,
+      "F3frequency_sma3nz": 2645.188477,
+      "F3bandwidth_sma3nz": 841.462646,
+      "F3amplitudeLogRelF0_sma3nz": -26.993217
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3722332775276011f51"
+  },
+  "recording_id": "144_10001144_82",
+  "parent_id": null,
+  "text": "libe",
+  "start": 4.506922204779348,
+  "end": 4.93686755952381,
+  "duration": 0.42994535474446227,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.30664,
+      "alphaRatio_sma3": -15.768252,
+      "hammarbergIndex_sma3": 23.825241,
+      "slope0-500_sma3": 0.064759,
+      "slope500-1500_sma3": -0.029079,
+      "spectralFlux_sma3": 0.610004,
+      "mfcc1_sma3": 31.170969,
+      "mfcc2_sma3": 0.417238,
+      "mfcc3_sma3": 24.209209,
+      "mfcc4_sma3": -21.824493,
+      "F0semitoneFrom27.5Hz_sma3nz": 36.184013,
+      "jitterLocal_sma3nz": 0.016026,
+      "shimmerLocaldB_sma3nz": 0.608946,
+      "HNRdBACF_sma3nz": 11.201217,
+      "logRelF0-H1-H2_sma3nz": 11.314505,
+      "logRelF0-H1-A3_sma3nz": 20.15069,
+      "F1frequency_sma3nz": 582.155212,
+      "F1bandwidth_sma3nz": 1394.759766,
+      "F1amplitudeLogRelF0_sma3nz": -10.344872,
+      "F2frequency_sma3nz": 1664.78894,
+      "F2bandwidth_sma3nz": 1021.840271,
+      "F2amplitudeLogRelF0_sma3nz": -25.910997,
+      "F3frequency_sma3nz": 2614.240967,
+      "F3bandwidth_sma3nz": 1091.005737,
+      "F3amplitudeLogRelF0_sma3nz": -26.374147
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3722332775276011f6b"
+  },
+  "recording_id": "144_10001144_83",
+  "parent_id": null,
+  "text": "varas",
+  "start": 2.2517044595616023,
+  "end": 2.7999323927101707,
+  "duration": 0.5482279331485684,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 2.040238,
+      "alphaRatio_sma3": -5.659199,
+      "hammarbergIndex_sma3": 16.950354,
+      "slope0-500_sma3": 0.037738,
+      "slope500-1500_sma3": -0.017989,
+      "spectralFlux_sma3": 1.319901,
+      "mfcc1_sma3": 19.967091,
+      "mfcc2_sma3": -4.004513,
+      "mfcc3_sma3": -8.367517,
+      "mfcc4_sma3": -32.820835,
+      "F0semitoneFrom27.5Hz_sma3nz": 28.710108,
+      "jitterLocal_sma3nz": 0.034733,
+      "shimmerLocaldB_sma3nz": 1.099936,
+      "HNRdBACF_sma3nz": 6.436022,
+      "logRelF0-H1-H2_sma3nz": 0.999053,
+      "logRelF0-H1-A3_sma3nz": 16.384981,
+      "F1frequency_sma3nz": 486.390747,
+      "F1bandwidth_sma3nz": 1223.677979,
+      "F1amplitudeLogRelF0_sma3nz": -50.577042,
+      "F2frequency_sma3nz": 1469.045288,
+      "F2bandwidth_sma3nz": 940.554382,
+      "F2amplitudeLogRelF0_sma3nz": -55.846828,
+      "F3frequency_sma3nz": 2489.516602,
+      "F3bandwidth_sma3nz": 977.865601,
+      "F3amplitudeLogRelF0_sma3nz": -65.618187
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3722332775276011f6c"
+  },
+  "recording_id": "144_10001144_83",
+  "parent_id": null,
+  "text": "viidi",
+  "start": 2.7999323927101707,
+  "end": 3.1897008962315083,
+  "duration": 0.38976850352133763,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.158503,
+      "alphaRatio_sma3": -18.080654,
+      "hammarbergIndex_sma3": 22.60219,
+      "slope0-500_sma3": 0.056376,
+      "slope500-1500_sma3": -0.040743,
+      "spectralFlux_sma3": 0.677127,
+      "mfcc1_sma3": 22.771915,
+      "mfcc2_sma3": 17.395136,
+      "mfcc3_sma3": 40.18861,
+      "mfcc4_sma3": -37.260674,
+      "F0semitoneFrom27.5Hz_sma3nz": 31.443184,
+      "jitterLocal_sma3nz": 0.060727,
+      "shimmerLocaldB_sma3nz": 1.171958,
+      "HNRdBACF_sma3nz": 7.53332,
+      "logRelF0-H1-H2_sma3nz": 14.782944,
+      "logRelF0-H1-A3_sma3nz": 24.260973,
+      "F1frequency_sma3nz": 530.16687,
+      "F1bandwidth_sma3nz": 1199.509155,
+      "F1amplitudeLogRelF0_sma3nz": -7.921136,
+      "F2frequency_sma3nz": 1775.460327,
+      "F2bandwidth_sma3nz": 1329.914795,
+      "F2amplitudeLogRelF0_sma3nz": -31.96727,
+      "F3frequency_sma3nz": 2659.842041,
+      "F3bandwidth_sma3nz": 540.024048,
+      "F3amplitudeLogRelF0_sma3nz": -27.97854
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3722332775276011f6d"
+  },
+  "recording_id": "144_10001144_83",
+  "parent_id": null,
+  "text": "kongi",
+  "start": 3.1897008962315083,
+  "end": 3.831964150739661,
+  "duration": 0.6422632545081526,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.247512,
+      "alphaRatio_sma3": -20.179455,
+      "hammarbergIndex_sma3": 29.178032,
+      "slope0-500_sma3": 0.08075,
+      "slope500-1500_sma3": -0.037392,
+      "spectralFlux_sma3": 0.804058,
+      "mfcc1_sma3": 26.394098,
+      "mfcc2_sma3": 16.306025,
+      "mfcc3_sma3": 11.412539,
+      "mfcc4_sma3": -29.211851,
+      "F0semitoneFrom27.5Hz_sma3nz": 33.547504,
+      "jitterLocal_sma3nz": 0.026826,
+      "shimmerLocaldB_sma3nz": 0.754949,
+      "HNRdBACF_sma3nz": 8.97331,
+      "logRelF0-H1-H2_sma3nz": 15.451957,
+      "logRelF0-H1-A3_sma3nz": 32.916172,
+      "F1frequency_sma3nz": 589.90448,
+      "F1bandwidth_sma3nz": 1141.730713,
+      "F1amplitudeLogRelF0_sma3nz": -24.843151,
+      "F2frequency_sma3nz": 1782.687378,
+      "F2bandwidth_sma3nz": 1205.454712,
+      "F2amplitudeLogRelF0_sma3nz": -45.57254,
+      "F3frequency_sma3nz": 2658.634033,
+      "F3bandwidth_sma3nz": 761.229553,
+      "F3amplitudeLogRelF0_sma3nz": -50.519608
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3722332775276011f6e"
+  },
+  "recording_id": "144_10001144_83",
+  "parent_id": null,
+  "text": "karistust",
+  "start": 3.831964150739661,
+  "end": 5.003880748880749,
+  "duration": 1.1719165981410882,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.092892,
+      "alphaRatio_sma3": -8.936896,
+      "hammarbergIndex_sma3": 15.950688,
+      "slope0-500_sma3": 0.025817,
+      "slope500-1500_sma3": -0.020326,
+      "spectralFlux_sma3": 0.626913,
+      "mfcc1_sma3": 9.560122,
+      "mfcc2_sma3": 15.501801,
+      "mfcc3_sma3": 14.764303,
+      "mfcc4_sma3": -16.575672,
+      "F0semitoneFrom27.5Hz_sma3nz": 23.835489,
+      "jitterLocal_sma3nz": 0.009659,
+      "shimmerLocaldB_sma3nz": 0.501128,
+      "HNRdBACF_sma3nz": 3.205362,
+      "logRelF0-H1-H2_sma3nz": 0.691617,
+      "logRelF0-H1-A3_sma3nz": 8.192705,
+      "F1frequency_sma3nz": 533.759705,
+      "F1bandwidth_sma3nz": 1032.637329,
+      "F1amplitudeLogRelF0_sma3nz": -62.226192,
+      "F2frequency_sma3nz": 1591.005493,
+      "F2bandwidth_sma3nz": 904.17041,
+      "F2amplitudeLogRelF0_sma3nz": -73.522743,
+      "F3frequency_sma3nz": 2684.320557,
+      "F3bandwidth_sma3nz": 661.084106,
+      "F3amplitudeLogRelF0_sma3nz": -74.818024
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3722332775276011f6f"
+  },
+  "recording_id": "144_10001144_83",
+  "parent_id": null,
+  "text": ".fil",
+  "start": 5.003880748880749,
+  "end": 5.110698696145125,
+  "duration": 0.10681794726437577,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 0.671297,
+      "alphaRatio_sma3": -18.548332,
+      "hammarbergIndex_sma3": 37.907043,
+      "slope0-500_sma3": 0.04221,
+      "slope500-1500_sma3": -0.032517,
+      "spectralFlux_sma3": 0.608017,
+      "mfcc1_sma3": 41.387947,
+      "mfcc2_sma3": 20.764437,
+      "mfcc3_sma3": -7.32959,
+      "mfcc4_sma3": -21.417484,
+      "F0semitoneFrom27.5Hz_sma3nz": 16.436853,
+      "jitterLocal_sma3nz": 0.100458,
+      "shimmerLocaldB_sma3nz": 0.907923,
+      "HNRdBACF_sma3nz": -1.464157,
+      "logRelF0-H1-H2_sma3nz": 2.611672,
+      "logRelF0-H1-A3_sma3nz": 31.534283,
+      "F1frequency_sma3nz": 412.604462,
+      "F1bandwidth_sma3nz": 1358.718628,
+      "F1amplitudeLogRelF0_sma3nz": -23.809887,
+      "F2frequency_sma3nz": 1297.182983,
+      "F2bandwidth_sma3nz": 954.319336,
+      "F2amplitudeLogRelF0_sma3nz": -35.583244,
+      "F3frequency_sma3nz": 2683.208252,
+      "F3bandwidth_sma3nz": 1671.375366,
+      "F3amplitudeLogRelF0_sma3nz": -56.199024
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3722332775276011f70"
+  },
+  "recording_id": "144_10001144_83",
+  "parent_id": null,
+  "text": "kandma",
+  "start": 5.110698696145125,
+  "end": 5.8312347478674,
+  "duration": 0.7205360517222754,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 0.952051,
+      "alphaRatio_sma3": -17.400368,
+      "hammarbergIndex_sma3": 34.384174,
+      "slope0-500_sma3": 0.069392,
+      "slope500-1500_sma3": -0.016362,
+      "spectralFlux_sma3": 0.374942,
+      "mfcc1_sma3": 33.682415,
+      "mfcc2_sma3": 11.907596,
+      "mfcc3_sma3": -10.002277,
+      "mfcc4_sma3": -5.916205,
+      "F0semitoneFrom27.5Hz_sma3nz": 31.518026,
+      "jitterLocal_sma3nz": 0.01329,
+      "shimmerLocaldB_sma3nz": 0.566827,
+      "HNRdBACF_sma3nz": 9.312964,
+      "logRelF0-H1-H2_sma3nz": 7.04138,
+      "logRelF0-H1-A3_sma3nz": 29.124403,
+      "F1frequency_sma3nz": 440.638184,
+      "F1bandwidth_sma3nz": 1426.447021,
+      "F1amplitudeLogRelF0_sma3nz": -17.810251,
+      "F2frequency_sma3nz": 1338.647339,
+      "F2bandwidth_sma3nz": 1137.146851,
+      "F2amplitudeLogRelF0_sma3nz": -32.870705,
+      "F3frequency_sma3nz": 2451.134521,
+      "F3bandwidth_sma3nz": 950.930786,
+      "F3amplitudeLogRelF0_sma3nz": -46.143291
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3722332775276011f8f"
+  },
+  "recording_id": "144_10001144_84",
+  "parent_id": null,
+  "text": "Üks",
+  "start": 2.332600760734401,
+  "end": 2.6196604215456674,
+  "duration": 0.2870596608112663,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 0.992709,
+      "alphaRatio_sma3": -5.210711,
+      "hammarbergIndex_sma3": 11.405001,
+      "slope0-500_sma3": 0.022502,
+      "slope500-1500_sma3": -0.009369,
+      "spectralFlux_sma3": 0.564486,
+      "mfcc1_sma3": 7.358029,
+      "mfcc2_sma3": 7.00478,
+      "mfcc3_sma3": 23.246826,
+      "mfcc4_sma3": -8.016188,
+      "F0semitoneFrom27.5Hz_sma3nz": 24.541094,
+      "jitterLocal_sma3nz": 0.013972,
+      "shimmerLocaldB_sma3nz": 0.576642,
+      "HNRdBACF_sma3nz": 4.015748,
+      "logRelF0-H1-H2_sma3nz": 10.927544,
+      "logRelF0-H1-A3_sma3nz": 14.656459,
+      "F1frequency_sma3nz": 596.933044,
+      "F1bandwidth_sma3nz": 968.299927,
+      "F1amplitudeLogRelF0_sma3nz": -82.908447,
+      "F2frequency_sma3nz": 1718.677734,
+      "F2bandwidth_sma3nz": 1028.458374,
+      "F2amplitudeLogRelF0_sma3nz": -95.00145,
+      "F3frequency_sma3nz": 2668.751709,
+      "F3bandwidth_sma3nz": 632.35614,
+      "F3amplitudeLogRelF0_sma3nz": -93.264442
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3722332775276011f90"
+  },
+  "recording_id": "144_10001144_84",
+  "parent_id": null,
+  "text": "konngi",
+  "start": 2.6196604215456674,
+  "end": 3.8176323438466295,
+  "duration": 1.1979719223009622,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.291043,
+      "alphaRatio_sma3": -18.240108,
+      "hammarbergIndex_sma3": 27.180576,
+      "slope0-500_sma3": 0.068016,
+      "slope500-1500_sma3": -0.033734,
+      "spectralFlux_sma3": 0.526489,
+      "mfcc1_sma3": 25.307028,
+      "mfcc2_sma3": 12.879861,
+      "mfcc3_sma3": 15.231564,
+      "mfcc4_sma3": -28.179907,
+      "F0semitoneFrom27.5Hz_sma3nz": 30.446354,
+      "jitterLocal_sma3nz": 0.019282,
+      "shimmerLocaldB_sma3nz": 0.536142,
+      "HNRdBACF_sma3nz": 9.574921,
+      "logRelF0-H1-H2_sma3nz": 12.947822,
+      "logRelF0-H1-A3_sma3nz": 27.168037,
+      "F1frequency_sma3nz": 524.144775,
+      "F1bandwidth_sma3nz": 1153.128052,
+      "F1amplitudeLogRelF0_sma3nz": -33.061741,
+      "F2frequency_sma3nz": 1723.660645,
+      "F2bandwidth_sma3nz": 852.389221,
+      "F2amplitudeLogRelF0_sma3nz": -54.306755,
+      "F3frequency_sma3nz": 2693.168701,
+      "F3bandwidth_sma3nz": 1518.616699,
+      "F3amplitudeLogRelF0_sma3nz": -55.703575
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3722332775276011f91"
+  },
+  "recording_id": "144_10001144_84",
+  "parent_id": null,
+  "text": "hüppas",
+  "start": 3.8176323438466295,
+  "end": 4.570721559063877,
+  "duration": 0.7530892152172473,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.067763,
+      "alphaRatio_sma3": -6.764144,
+      "hammarbergIndex_sma3": 14.335085,
+      "slope0-500_sma3": 0.021174,
+      "slope500-1500_sma3": -0.015891,
+      "spectralFlux_sma3": 0.586101,
+      "mfcc1_sma3": 10.190231,
+      "mfcc2_sma3": 9.75726,
+      "mfcc3_sma3": 13.411713,
+      "mfcc4_sma3": -14.716738,
+      "F0semitoneFrom27.5Hz_sma3nz": 35.459743,
+      "jitterLocal_sma3nz": 0.018925,
+      "shimmerLocaldB_sma3nz": 0.867072,
+      "HNRdBACF_sma3nz": 4.198132,
+      "logRelF0-H1-H2_sma3nz": 8.076956,
+      "logRelF0-H1-A3_sma3nz": 14.661348,
+      "F1frequency_sma3nz": 571.371216,
+      "F1bandwidth_sma3nz": 1029.201416,
+      "F1amplitudeLogRelF0_sma3nz": -41.818108,
+      "F2frequency_sma3nz": 1540.335693,
+      "F2bandwidth_sma3nz": 993.559082,
+      "F2amplitudeLogRelF0_sma3nz": -52.577969,
+      "F3frequency_sma3nz": 2678.039307,
+      "F3bandwidth_sma3nz": 847.725891,
+      "F3amplitudeLogRelF0_sma3nz": -53.35025
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3722332775276011f92"
+  },
+  "recording_id": "144_10001144_84",
+  "parent_id": null,
+  "text": "kongis",
+  "start": 5.024060846560847,
+  "end": 5.875440152251377,
+  "duration": 0.8513793056905303,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 0.881816,
+      "alphaRatio_sma3": -14.424794,
+      "hammarbergIndex_sma3": 20.598719,
+      "slope0-500_sma3": 0.043076,
+      "slope500-1500_sma3": -0.030734,
+      "spectralFlux_sma3": 0.520334,
+      "mfcc1_sma3": 17.404526,
+      "mfcc2_sma3": 20.712515,
+      "mfcc3_sma3": 14.001048,
+      "mfcc4_sma3": -16.902212,
+      "F0semitoneFrom27.5Hz_sma3nz": 31.759512,
+      "jitterLocal_sma3nz": 0.02976,
+      "shimmerLocaldB_sma3nz": 0.869631,
+      "HNRdBACF_sma3nz": 5.697817,
+      "logRelF0-H1-H2_sma3nz": 10.446293,
+      "logRelF0-H1-A3_sma3nz": 21.347378,
+      "F1frequency_sma3nz": 647.408752,
+      "F1bandwidth_sma3nz": 1157.130859,
+      "F1amplitudeLogRelF0_sma3nz": -43.976414,
+      "F2frequency_sma3nz": 1782.650879,
+      "F2bandwidth_sma3nz": 665.644104,
+      "F2amplitudeLogRelF0_sma3nz": -54.792591,
+      "F3frequency_sma3nz": 2930.414062,
+      "F3bandwidth_sma3nz": 694.551331,
+      "F3amplitudeLogRelF0_sma3nz": -55.554359
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3722332775276011f93"
+  },
+  "recording_id": "144_10001144_84",
+  "parent_id": null,
+  "text": "ringi",
+  "start": 5.875440152251377,
+  "end": 6.4324829931972785,
+  "duration": 0.5570428409459014,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 0.953277,
+      "alphaRatio_sma3": -23.602921,
+      "hammarbergIndex_sma3": 29.771023,
+      "slope0-500_sma3": 0.075852,
+      "slope500-1500_sma3": -0.039706,
+      "spectralFlux_sma3": 0.549751,
+      "mfcc1_sma3": 30.987316,
+      "mfcc2_sma3": 16.676237,
+      "mfcc3_sma3": 26.686697,
+      "mfcc4_sma3": -23.044216,
+      "F0semitoneFrom27.5Hz_sma3nz": 32.972904,
+      "jitterLocal_sma3nz": 0.02934,
+      "shimmerLocaldB_sma3nz": 0.739806,
+      "HNRdBACF_sma3nz": 9.436576,
+      "logRelF0-H1-H2_sma3nz": 15.873741,
+      "logRelF0-H1-A3_sma3nz": 30.409647,
+      "F1frequency_sma3nz": 626.906799,
+      "F1bandwidth_sma3nz": 1246.744385,
+      "F1amplitudeLogRelF0_sma3nz": -19.845961,
+      "F2frequency_sma3nz": 1853.702515,
+      "F2bandwidth_sma3nz": 842.200378,
+      "F2amplitudeLogRelF0_sma3nz": -42.538357,
+      "F3frequency_sma3nz": 2804.963623,
+      "F3bandwidth_sma3nz": 842.683777,
+      "F3amplitudeLogRelF0_sma3nz": -40.372211
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3732332775276011fac"
+  },
+  "recording_id": "144_10001144_85",
+  "parent_id": null,
+  "text": "rikka",
+  "start": 2.3410434274719987,
+  "end": 2.872711552612215,
+  "duration": 0.5316681251402162,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.256622,
+      "alphaRatio_sma3": -16.731409,
+      "hammarbergIndex_sma3": 24.693108,
+      "slope0-500_sma3": 0.007206,
+      "slope500-1500_sma3": -0.035737,
+      "spectralFlux_sma3": 1.005943,
+      "mfcc1_sma3": 23.840313,
+      "mfcc2_sma3": 11.507429,
+      "mfcc3_sma3": 19.935324,
+      "mfcc4_sma3": -24.315996,
+      "F0semitoneFrom27.5Hz_sma3nz": 28.210331,
+      "jitterLocal_sma3nz": 0.015179,
+      "shimmerLocaldB_sma3nz": 0.756943,
+      "HNRdBACF_sma3nz": 6.317804,
+      "logRelF0-H1-H2_sma3nz": 9.312543,
+      "logRelF0-H1-A3_sma3nz": 15.197983,
+      "F1frequency_sma3nz": 517.766418,
+      "F1bandwidth_sma3nz": 1148.487305,
+      "F1amplitudeLogRelF0_sma3nz": -58.87215,
+      "F2frequency_sma3nz": 1728.000732,
+      "F2bandwidth_sma3nz": 1043.240723,
+      "F2amplitudeLogRelF0_sma3nz": -74.037315,
+      "F3frequency_sma3nz": 2615.706055,
+      "F3bandwidth_sma3nz": 922.259155,
+      "F3amplitudeLogRelF0_sma3nz": -72.566399
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3732332775276011fad"
+  },
+  "recording_id": "144_10001144_85",
+  "parent_id": null,
+  "text": "šahhi",
+  "start": 2.872711552612215,
+  "end": 3.6902802073210235,
+  "duration": 0.8175686547088086,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.611168,
+      "alphaRatio_sma3": -4.131139,
+      "hammarbergIndex_sma3": 12.730079,
+      "slope0-500_sma3": -0.004219,
+      "slope500-1500_sma3": -0.013081,
+      "spectralFlux_sma3": 1.050132,
+      "mfcc1_sma3": 9.13583,
+      "mfcc2_sma3": 2.279956,
+      "mfcc3_sma3": 16.884689,
+      "mfcc4_sma3": -17.537039,
+      "F0semitoneFrom27.5Hz_sma3nz": 18.105633,
+      "jitterLocal_sma3nz": 0.005793,
+      "shimmerLocaldB_sma3nz": 0.382489,
+      "HNRdBACF_sma3nz": 4.708902,
+      "logRelF0-H1-H2_sma3nz": 6.585525,
+      "logRelF0-H1-A3_sma3nz": 13.658689,
+      "F1frequency_sma3nz": 564.555969,
+      "F1bandwidth_sma3nz": 1078.270874,
+      "F1amplitudeLogRelF0_sma3nz": -104.345467,
+      "F2frequency_sma3nz": 1544.236084,
+      "F2bandwidth_sma3nz": 1183.848145,
+      "F2amplitudeLogRelF0_sma3nz": -114.955925,
+      "F3frequency_sma3nz": 2560.465088,
+      "F3bandwidth_sma3nz": 675.238098,
+      "F3amplitudeLogRelF0_sma3nz": -116.754028
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3732332775276011fae"
+  },
+  "recording_id": "144_10001144_85",
+  "parent_id": null,
+  "text": "palee",
+  "start": 3.6902802073210235,
+  "end": 4.367450819695335,
+  "duration": 0.677170612374312,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 2.168543,
+      "alphaRatio_sma3": -12.591542,
+      "hammarbergIndex_sma3": 17.847702,
+      "slope0-500_sma3": 0.042408,
+      "slope500-1500_sma3": -0.030515,
+      "spectralFlux_sma3": 1.019733,
+      "mfcc1_sma3": 24.356083,
+      "mfcc2_sma3": 3.680982,
+      "mfcc3_sma3": 23.917458,
+      "mfcc4_sma3": -39.48061,
+      "F0semitoneFrom27.5Hz_sma3nz": 34.539173,
+      "jitterLocal_sma3nz": 0.010997,
+      "shimmerLocaldB_sma3nz": 0.799827,
+      "HNRdBACF_sma3nz": 9.371336,
+      "logRelF0-H1-H2_sma3nz": 9.795095,
+      "logRelF0-H1-A3_sma3nz": 22.188673,
+      "F1frequency_sma3nz": 420.477753,
+      "F1bandwidth_sma3nz": 1148.918213,
+      "F1amplitudeLogRelF0_sma3nz": -12.028335,
+      "F2frequency_sma3nz": 1567.069946,
+      "F2bandwidth_sma3nz": 1302.018188,
+      "F2amplitudeLogRelF0_sma3nz": -32.514961,
+      "F3frequency_sma3nz": 2431.974365,
+      "F3bandwidth_sma3nz": 763.062866,
+      "F3amplitudeLogRelF0_sma3nz": -33.861542
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3732332775276011faf"
+  },
+  "recording_id": "144_10001144_85",
+  "parent_id": null,
+  "text": "on",
+  "start": 4.367450819695335,
+  "end": 4.580597127739985,
+  "duration": 0.2131463080446494,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.272896,
+      "alphaRatio_sma3": -18.75614,
+      "hammarbergIndex_sma3": 29.933008,
+      "slope0-500_sma3": 0.035716,
+      "slope500-1500_sma3": -0.023516,
+      "spectralFlux_sma3": 0.552001,
+      "mfcc1_sma3": 35.859184,
+      "mfcc2_sma3": 6.86695,
+      "mfcc3_sma3": 8.002073,
+      "mfcc4_sma3": 0.969231,
+      "F0semitoneFrom27.5Hz_sma3nz": 33.253742,
+      "jitterLocal_sma3nz": 0.008884,
+      "shimmerLocaldB_sma3nz": 0.551333,
+      "HNRdBACF_sma3nz": 10.245137,
+      "logRelF0-H1-H2_sma3nz": 7.281256,
+      "logRelF0-H1-A3_sma3nz": 21.586479,
+      "F1frequency_sma3nz": 463.46994,
+      "F1bandwidth_sma3nz": 1431.104492,
+      "F1amplitudeLogRelF0_sma3nz": -15.565027,
+      "F2frequency_sma3nz": 1517.095215,
+      "F2bandwidth_sma3nz": 1482.918091,
+      "F2amplitudeLogRelF0_sma3nz": -32.797165,
+      "F3frequency_sma3nz": 2280.42334,
+      "F3bandwidth_sma3nz": 1149.281372,
+      "F3amplitudeLogRelF0_sma3nz": -36.782589
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3732332775276011fb0"
+  },
+  "recording_id": "144_10001144_85",
+  "parent_id": null,
+  "text": "hiigel+suur",
+  "start": 4.580597127739985,
+  "end": 5.805182884748102,
+  "duration": 1.224585757008117,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.165682,
+      "alphaRatio_sma3": -14.14576,
+      "hammarbergIndex_sma3": 22.470404,
+      "slope0-500_sma3": 0.018508,
+      "slope500-1500_sma3": -0.027682,
+      "spectralFlux_sma3": 0.727104,
+      "mfcc1_sma3": 20.8673,
+      "mfcc2_sma3": 17.339792,
+      "mfcc3_sma3": 20.847485,
+      "mfcc4_sma3": -19.839985,
+      "F0semitoneFrom27.5Hz_sma3nz": 25.403542,
+      "jitterLocal_sma3nz": 0.039357,
+      "shimmerLocaldB_sma3nz": 1.10479,
+      "HNRdBACF_sma3nz": 5.282051,
+      "logRelF0-H1-H2_sma3nz": 4.552153,
+      "logRelF0-H1-A3_sma3nz": 16.522346,
+      "F1frequency_sma3nz": 461.474792,
+      "F1bandwidth_sma3nz": 1237.395874,
+      "F1amplitudeLogRelF0_sma3nz": -34.196434,
+      "F2frequency_sma3nz": 1460.045288,
+      "F2bandwidth_sma3nz": 1108.289551,
+      "F2amplitudeLogRelF0_sma3nz": -52.077671,
+      "F3frequency_sma3nz": 2537.317383,
+      "F3bandwidth_sma3nz": 801.22229,
+      "F3amplitudeLogRelF0_sma3nz": -56.916672
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3732332775276011fc8"
+  },
+  "recording_id": "144_10001144_86",
+  "parent_id": null,
+  "text": "rikast",
+  "start": 2.313191609977324,
+  "end": 3.026844184870819,
+  "duration": 0.7136525748934952,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.158171,
+      "alphaRatio_sma3": -9.667263,
+      "hammarbergIndex_sma3": 15.712887,
+      "slope0-500_sma3": 0.035746,
+      "slope500-1500_sma3": -0.02873,
+      "spectralFlux_sma3": 0.899494,
+      "mfcc1_sma3": 15.446019,
+      "mfcc2_sma3": 9.931715,
+      "mfcc3_sma3": 12.36386,
+      "mfcc4_sma3": -32.746059,
+      "F0semitoneFrom27.5Hz_sma3nz": 31.226208,
+      "jitterLocal_sma3nz": 0.048829,
+      "shimmerLocaldB_sma3nz": 0.798264,
+      "HNRdBACF_sma3nz": 3.031747,
+      "logRelF0-H1-H2_sma3nz": 6.51982,
+      "logRelF0-H1-A3_sma3nz": 16.968267,
+      "F1frequency_sma3nz": 475.217316,
+      "F1bandwidth_sma3nz": 1089.871948,
+      "F1amplitudeLogRelF0_sma3nz": -33.958908,
+      "F2frequency_sma3nz": 1591.482544,
+      "F2bandwidth_sma3nz": 919.891479,
+      "F2amplitudeLogRelF0_sma3nz": -50.341827,
+      "F3frequency_sma3nz": 2621.931396,
+      "F3bandwidth_sma3nz": 1106.061035,
+      "F3amplitudeLogRelF0_sma3nz": -51.231544
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3732332775276011fc9"
+  },
+  "recording_id": "144_10001144_86",
+  "parent_id": null,
+  "text": "šahhi",
+  "start": 3.026844184870819,
+  "end": 4.017008844406217,
+  "duration": 0.9901646595353975,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.560417,
+      "alphaRatio_sma3": -5.233829,
+      "hammarbergIndex_sma3": 11.958729,
+      "slope0-500_sma3": 0.071918,
+      "slope500-1500_sma3": -0.017554,
+      "spectralFlux_sma3": 0.62293,
+      "mfcc1_sma3": 15.281703,
+      "mfcc2_sma3": -5.499702,
+      "mfcc3_sma3": 17.21624,
+      "mfcc4_sma3": -26.418736,
+      "F0semitoneFrom27.5Hz_sma3nz": 33.220249,
+      "jitterLocal_sma3nz": 0.014266,
+      "shimmerLocaldB_sma3nz": 0.647629,
+      "HNRdBACF_sma3nz": 6.841183,
+      "logRelF0-H1-H2_sma3nz": 5.625117,
+      "logRelF0-H1-A3_sma3nz": 16.583,
+      "F1frequency_sma3nz": 499.322693,
+      "F1bandwidth_sma3nz": 1056.771851,
+      "F1amplitudeLogRelF0_sma3nz": -29.769899,
+      "F2frequency_sma3nz": 1589.903687,
+      "F2bandwidth_sma3nz": 1395.561035,
+      "F2amplitudeLogRelF0_sma3nz": -44.627052,
+      "F3frequency_sma3nz": 2384.786377,
+      "F3bandwidth_sma3nz": 776.851318,
+      "F3amplitudeLogRelF0_sma3nz": -45.570274
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3732332775276011fca"
+  },
+  "recording_id": "144_10001144_86",
+  "parent_id": null,
+  "text": ".fil",
+  "start": 4.017008844406217,
+  "end": 4.1680822805312605,
+  "duration": 0.15107343612504387,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 0.820721,
+      "alphaRatio_sma3": -22.25622,
+      "hammarbergIndex_sma3": 35.766132,
+      "slope0-500_sma3": 0.086189,
+      "slope500-1500_sma3": -0.018365,
+      "spectralFlux_sma3": 0.304344,
+      "mfcc1_sma3": 41.703743,
+      "mfcc2_sma3": 11.929052,
+      "mfcc3_sma3": 3.553286,
+      "mfcc4_sma3": -13.794436,
+      "F0semitoneFrom27.5Hz_sma3nz": 31.970917,
+      "jitterLocal_sma3nz": 0.086593,
+      "shimmerLocaldB_sma3nz": 0.573887,
+      "HNRdBACF_sma3nz": 9.486029,
+      "logRelF0-H1-H2_sma3nz": 6.591093,
+      "logRelF0-H1-A3_sma3nz": 34.380802,
+      "F1frequency_sma3nz": 457.855896,
+      "F1bandwidth_sma3nz": 1462.133057,
+      "F1amplitudeLogRelF0_sma3nz": -2.303169,
+      "F2frequency_sma3nz": 1366.842285,
+      "F2bandwidth_sma3nz": 1031.854248,
+      "F2amplitudeLogRelF0_sma3nz": -21.070957,
+      "F3frequency_sma3nz": 2593.856201,
+      "F3bandwidth_sma3nz": 736.355103,
+      "F3amplitudeLogRelF0_sma3nz": -34.397915
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3732332775276011fcb"
+  },
+  "recording_id": "144_10001144_86",
+  "parent_id": null,
+  "text": "painavad",
+  "start": 4.1680822805312605,
+  "end": 5.339895342752485,
+  "duration": 1.1718130622212248,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.418158,
+      "alphaRatio_sma3": -13.427055,
+      "hammarbergIndex_sma3": 25.063112,
+      "slope0-500_sma3": 0.070778,
+      "slope500-1500_sma3": -0.017613,
+      "spectralFlux_sma3": 0.638698,
+      "mfcc1_sma3": 28.219707,
+      "mfcc2_sma3": 4.362769,
+      "mfcc3_sma3": 2.074979,
+      "mfcc4_sma3": -24.504822,
+      "F0semitoneFrom27.5Hz_sma3nz": 30.089449,
+      "jitterLocal_sma3nz": 0.011615,
+      "shimmerLocaldB_sma3nz": 0.716208,
+      "HNRdBACF_sma3nz": 8.31878,
+      "logRelF0-H1-H2_sma3nz": 4.008569,
+      "logRelF0-H1-A3_sma3nz": 21.207916,
+      "F1frequency_sma3nz": 491.541138,
+      "F1bandwidth_sma3nz": 1281.095947,
+      "F1amplitudeLogRelF0_sma3nz": -29.576647,
+      "F2frequency_sma3nz": 1408.942993,
+      "F2bandwidth_sma3nz": 1199.315674,
+      "F2amplitudeLogRelF0_sma3nz": -41.129807,
+      "F3frequency_sma3nz": 2532.838135,
+      "F3bandwidth_sma3nz": 857.265625,
+      "F3amplitudeLogRelF0_sma3nz": -50.015179
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3732332775276011fcc"
+  },
+  "recording_id": "144_10001144_86",
+  "parent_id": null,
+  "text": "kurjad",
+  "start": 5.339895342752485,
+  "end": 6.016536935286935,
+  "duration": 0.67664159253445,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.316955,
+      "alphaRatio_sma3": -12.935389,
+      "hammarbergIndex_sma3": 23.279001,
+      "slope0-500_sma3": 0.062164,
+      "slope500-1500_sma3": -0.022325,
+      "spectralFlux_sma3": 0.804632,
+      "mfcc1_sma3": 27.282394,
+      "mfcc2_sma3": 2.201449,
+      "mfcc3_sma3": 4.887239,
+      "mfcc4_sma3": -23.234102,
+      "F0semitoneFrom27.5Hz_sma3nz": 31.772127,
+      "jitterLocal_sma3nz": 0.011294,
+      "shimmerLocaldB_sma3nz": 0.957013,
+      "HNRdBACF_sma3nz": 7.102493,
+      "logRelF0-H1-H2_sma3nz": 7.410048,
+      "logRelF0-H1-A3_sma3nz": 22.910465,
+      "F1frequency_sma3nz": 485.216736,
+      "F1bandwidth_sma3nz": 1246.833252,
+      "F1amplitudeLogRelF0_sma3nz": -22.444094,
+      "F2frequency_sma3nz": 1537.09729,
+      "F2bandwidth_sma3nz": 1109.387939,
+      "F2amplitudeLogRelF0_sma3nz": -37.188782,
+      "F3frequency_sma3nz": 2480.725586,
+      "F3bandwidth_sma3nz": 1163.697754,
+      "F3amplitudeLogRelF0_sma3nz": -43.075268
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3732332775276011fcd"
+  },
+  "recording_id": "144_10001144_86",
+  "parent_id": null,
+  "text": "une+näod",
+  "start": 6.016536935286935,
+  "end": 6.854681531872008,
+  "duration": 0.8381445965850727,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.245956,
+      "alphaRatio_sma3": -10.719867,
+      "hammarbergIndex_sma3": 24.522655,
+      "slope0-500_sma3": 0.067239,
+      "slope500-1500_sma3": -0.013473,
+      "spectralFlux_sma3": 0.433481,
+      "mfcc1_sma3": 31.153492,
+      "mfcc2_sma3": -0.637582,
+      "mfcc3_sma3": -5.76813,
+      "mfcc4_sma3": -11.690895,
+      "F0semitoneFrom27.5Hz_sma3nz": 30.264431,
+      "jitterLocal_sma3nz": 0.009613,
+      "shimmerLocaldB_sma3nz": 0.580358,
+      "HNRdBACF_sma3nz": 9.105718,
+      "logRelF0-H1-H2_sma3nz": 3.404308,
+      "logRelF0-H1-A3_sma3nz": 17.192364,
+      "F1frequency_sma3nz": 487.163635,
+      "F1bandwidth_sma3nz": 1358.463013,
+      "F1amplitudeLogRelF0_sma3nz": -28.929344,
+      "F2frequency_sma3nz": 1377.018555,
+      "F2bandwidth_sma3nz": 1075.972412,
+      "F2amplitudeLogRelF0_sma3nz": -38.503372,
+      "F3frequency_sma3nz": 2450.088135,
+      "F3bandwidth_sma3nz": 756.625244,
+      "F3amplitudeLogRelF0_sma3nz": -46.741211
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3742332775276011fee"
+  },
+  "recording_id": "144_10001144_87",
+  "parent_id": null,
+  "text": "ette+võtja",
+  "start": 2.469112749105503,
+  "end": 3.64,
+  "duration": 1.1708872508944972,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.306122,
+      "alphaRatio_sma3": -16.514767,
+      "hammarbergIndex_sma3": 23.763548,
+      "slope0-500_sma3": 0.048391,
+      "slope500-1500_sma3": -0.036256,
+      "spectralFlux_sma3": 0.851469,
+      "mfcc1_sma3": 25.640844,
+      "mfcc2_sma3": 4.29802,
+      "mfcc3_sma3": 9.515901,
+      "mfcc4_sma3": -30.035082,
+      "F0semitoneFrom27.5Hz_sma3nz": 31.528044,
+      "jitterLocal_sma3nz": 0.012722,
+      "shimmerLocaldB_sma3nz": 0.747696,
+      "HNRdBACF_sma3nz": 7.014751,
+      "logRelF0-H1-H2_sma3nz": 10.192466,
+      "logRelF0-H1-A3_sma3nz": 22.503717,
+      "F1frequency_sma3nz": 493.434753,
+      "F1bandwidth_sma3nz": 1215.782837,
+      "F1amplitudeLogRelF0_sma3nz": -33.410324,
+      "F2frequency_sma3nz": 1580.235596,
+      "F2bandwidth_sma3nz": 1238.062744,
+      "F2amplitudeLogRelF0_sma3nz": -49.985458,
+      "F3frequency_sma3nz": 2505.041992,
+      "F3bandwidth_sma3nz": 1010.456482,
+      "F3amplitudeLogRelF0_sma3nz": -52.936165
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3742332775276011fef"
+  },
+  "recording_id": "144_10001144_87",
+  "parent_id": null,
+  "text": "leidis",
+  "start": 3.64,
+  "end": 4.52251621128475,
+  "duration": 0.88251621128475,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.346031,
+      "alphaRatio_sma3": -14.880014,
+      "hammarbergIndex_sma3": 19.184969,
+      "slope0-500_sma3": 0.04981,
+      "slope500-1500_sma3": -0.034519,
+      "spectralFlux_sma3": 0.663953,
+      "mfcc1_sma3": 18.337784,
+      "mfcc2_sma3": 13.594998,
+      "mfcc3_sma3": 27.625628,
+      "mfcc4_sma3": -32.578217,
+      "F0semitoneFrom27.5Hz_sma3nz": 30.643122,
+      "jitterLocal_sma3nz": 0.024501,
+      "shimmerLocaldB_sma3nz": 0.558318,
+      "HNRdBACF_sma3nz": 8.409181,
+      "logRelF0-H1-H2_sma3nz": 13.690523,
+      "logRelF0-H1-A3_sma3nz": 19.209702,
+      "F1frequency_sma3nz": 556.942261,
+      "F1bandwidth_sma3nz": 1126.80957,
+      "F1amplitudeLogRelF0_sma3nz": -44.064362,
+      "F2frequency_sma3nz": 1809.185791,
+      "F2bandwidth_sma3nz": 914.556641,
+      "F2amplitudeLogRelF0_sma3nz": -60.255245,
+      "F3frequency_sma3nz": 2753.763428,
+      "F3bandwidth_sma3nz": 646.247375,
+      "F3amplitudeLogRelF0_sma3nz": -57.235088
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3742332775276011ff0"
+  },
+  "recording_id": "144_10001144_87",
+  "parent_id": null,
+  "text": "niši",
+  "start": 4.52251621128475,
+  "end": 5.4430828580153685,
+  "duration": 0.9205666467306184,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.625993,
+      "alphaRatio_sma3": -8.878748,
+      "hammarbergIndex_sma3": 13.84597,
+      "slope0-500_sma3": 0.067516,
+      "slope500-1500_sma3": -0.03,
+      "spectralFlux_sma3": 0.879682,
+      "mfcc1_sma3": 11.038208,
+      "mfcc2_sma3": 9.511228,
+      "mfcc3_sma3": 37.462921,
+      "mfcc4_sma3": -29.159544,
+      "F0semitoneFrom27.5Hz_sma3nz": 40.214108,
+      "jitterLocal_sma3nz": 0.037395,
+      "shimmerLocaldB_sma3nz": 0.832285,
+      "HNRdBACF_sma3nz": 7.527147,
+      "logRelF0-H1-H2_sma3nz": 12.347242,
+      "logRelF0-H1-A3_sma3nz": 12.806079,
+      "F1frequency_sma3nz": 552.626587,
+      "F1bandwidth_sma3nz": 1044.436279,
+      "F1amplitudeLogRelF0_sma3nz": -7.065483,
+      "F2frequency_sma3nz": 1798.635864,
+      "F2bandwidth_sma3nz": 887.318298,
+      "F2amplitudeLogRelF0_sma3nz": -25.02327,
+      "F3frequency_sma3nz": 2780.541748,
+      "F3bandwidth_sma3nz": 1220.49231,
+      "F3amplitudeLogRelF0_sma3nz": -16.766947
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3742332775276011ff1"
+  },
+  "recording_id": "144_10001144_87",
+  "parent_id": null,
+  "text": "tulusaks",
+  "start": 6.447360319568469,
+  "end": 8.12,
+  "duration": 1.67263968043153,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.194785,
+      "alphaRatio_sma3": -6.410882,
+      "hammarbergIndex_sma3": 18.427683,
+      "slope0-500_sma3": 0.046565,
+      "slope500-1500_sma3": -0.018809,
+      "spectralFlux_sma3": 0.61253,
+      "mfcc1_sma3": 14.61013,
+      "mfcc2_sma3": 10.536765,
+      "mfcc3_sma3": -1.323504,
+      "mfcc4_sma3": -23.759222,
+      "F0semitoneFrom27.5Hz_sma3nz": 28.253735,
+      "jitterLocal_sma3nz": 0.014916,
+      "shimmerLocaldB_sma3nz": 0.473916,
+      "HNRdBACF_sma3nz": 6.507301,
+      "logRelF0-H1-H2_sma3nz": 6.814024,
+      "logRelF0-H1-A3_sma3nz": 22.027443,
+      "F1frequency_sma3nz": 575.068604,
+      "F1bandwidth_sma3nz": 1158.513428,
+      "F1amplitudeLogRelF0_sma3nz": -54.889004,
+      "F2frequency_sma3nz": 1449.722412,
+      "F2bandwidth_sma3nz": 992.501831,
+      "F2amplitudeLogRelF0_sma3nz": -64.781967,
+      "F3frequency_sma3nz": 2725.17334,
+      "F3bandwidth_sma3nz": 1023.430969,
+      "F3amplitudeLogRelF0_sma3nz": -74.322632
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3742332775276011ff2"
+  },
+  "recording_id": "144_10001144_87",
+  "parent_id": null,
+  "text": "äriks",
+  "start": 8.12,
+  "end": 8.89772206933365,
+  "duration": 0.7777220693336506,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.230279,
+      "alphaRatio_sma3": -3.459871,
+      "hammarbergIndex_sma3": 8.968504,
+      "slope0-500_sma3": 0.02877,
+      "slope500-1500_sma3": -0.017903,
+      "spectralFlux_sma3": 0.640143,
+      "mfcc1_sma3": 7.022314,
+      "mfcc2_sma3": 4.297656,
+      "mfcc3_sma3": 20.007509,
+      "mfcc4_sma3": -21.857733,
+      "F0semitoneFrom27.5Hz_sma3nz": 29.54245,
+      "jitterLocal_sma3nz": 0.01805,
+      "shimmerLocaldB_sma3nz": 0.93722,
+      "HNRdBACF_sma3nz": 4.75973,
+      "logRelF0-H1-H2_sma3nz": 7.22363,
+      "logRelF0-H1-A3_sma3nz": 11.814792,
+      "F1frequency_sma3nz": 486.591248,
+      "F1bandwidth_sma3nz": 1072.64502,
+      "F1amplitudeLogRelF0_sma3nz": -56.991505,
+      "F2frequency_sma3nz": 1468.024902,
+      "F2bandwidth_sma3nz": 1337.471313,
+      "F2amplitudeLogRelF0_sma3nz": -72.511955,
+      "F3frequency_sma3nz": 2397.478271,
+      "F3bandwidth_sma3nz": 580.057617,
+      "F3amplitudeLogRelF0_sma3nz": -67.64537
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3742332775276012013"
+  },
+  "recording_id": "144_10001144_88",
+  "parent_id": null,
+  "text": "raske",
+  "start": 2.5622789115646256,
+  "end": 3.0499146281028966,
+  "duration": 0.487635716538271,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 2.216905,
+      "alphaRatio_sma3": -4.417676,
+      "hammarbergIndex_sma3": 13.464821,
+      "slope0-500_sma3": 0.03842,
+      "slope500-1500_sma3": -0.020425,
+      "spectralFlux_sma3": 1.765706,
+      "mfcc1_sma3": 14.605121,
+      "mfcc2_sma3": -2.534862,
+      "mfcc3_sma3": 0.594098,
+      "mfcc4_sma3": -23.154032,
+      "F0semitoneFrom27.5Hz_sma3nz": 22.240852,
+      "jitterLocal_sma3nz": 0.005353,
+      "shimmerLocaldB_sma3nz": 0.413159,
+      "HNRdBACF_sma3nz": 5.172293,
+      "logRelF0-H1-H2_sma3nz": 2.681166,
+      "logRelF0-H1-A3_sma3nz": 14.229645,
+      "F1frequency_sma3nz": 471.073822,
+      "F1bandwidth_sma3nz": 1145.268188,
+      "F1amplitudeLogRelF0_sma3nz": -85.219276,
+      "F2frequency_sma3nz": 1535.774048,
+      "F2bandwidth_sma3nz": 892.103943,
+      "F2amplitudeLogRelF0_sma3nz": -91.835258,
+      "F3frequency_sma3nz": 2621.068115,
+      "F3bandwidth_sma3nz": 858.84259,
+      "F3amplitudeLogRelF0_sma3nz": -98.201332
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3742332775276012014"
+  },
+  "recording_id": "144_10001144_88",
+  "parent_id": null,
+  "text": "on",
+  "start": 3.0499146281028966,
+  "end": 3.2095445281287116,
+  "duration": 0.159629900025815,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.900195,
+      "alphaRatio_sma3": -21.724857,
+      "hammarbergIndex_sma3": 33.411381,
+      "slope0-500_sma3": 0.096307,
+      "slope500-1500_sma3": -0.026136,
+      "spectralFlux_sma3": 0.983888,
+      "mfcc1_sma3": 34.802509,
+      "mfcc2_sma3": 8.152012,
+      "mfcc3_sma3": 3.542249,
+      "mfcc4_sma3": -10.675214,
+      "F0semitoneFrom27.5Hz_sma3nz": 36.030807,
+      "jitterLocal_sma3nz": 0.005836,
+      "shimmerLocaldB_sma3nz": 0.471184,
+      "HNRdBACF_sma3nz": 13.013977,
+      "logRelF0-H1-H2_sma3nz": 15.954618,
+      "logRelF0-H1-A3_sma3nz": 36.081421,
+      "F1frequency_sma3nz": 429.452209,
+      "F1bandwidth_sma3nz": 1282.733154,
+      "F1amplitudeLogRelF0_sma3nz": 1.285784,
+      "F2frequency_sma3nz": 1435.284546,
+      "F2bandwidth_sma3nz": 1006.701172,
+      "F2amplitudeLogRelF0_sma3nz": -22.970348,
+      "F3frequency_sma3nz": 2550.430664,
+      "F3bandwidth_sma3nz": 738.948364,
+      "F3amplitudeLogRelF0_sma3nz": -34.795639
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3742332775276012015"
+  },
+  "recording_id": "144_10001144_88",
+  "parent_id": null,
+  "text": "leida",
+  "start": 3.2095445281287116,
+  "end": 3.7081619810815374,
+  "duration": 0.4986174529528258,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 2.116871,
+      "alphaRatio_sma3": -15.784886,
+      "hammarbergIndex_sma3": 23.359451,
+      "slope0-500_sma3": 0.069757,
+      "slope500-1500_sma3": -0.038831,
+      "spectralFlux_sma3": 1.436154,
+      "mfcc1_sma3": 24.637539,
+      "mfcc2_sma3": 4.310009,
+      "mfcc3_sma3": 18.174685,
+      "mfcc4_sma3": -32.945068,
+      "F0semitoneFrom27.5Hz_sma3nz": 35.353149,
+      "jitterLocal_sma3nz": 0.010313,
+      "shimmerLocaldB_sma3nz": 0.691453,
+      "HNRdBACF_sma3nz": 9.194746,
+      "logRelF0-H1-H2_sma3nz": 14.922441,
+      "logRelF0-H1-A3_sma3nz": 25.26614,
+      "F1frequency_sma3nz": 512.754639,
+      "F1bandwidth_sma3nz": 1248.594604,
+      "F1amplitudeLogRelF0_sma3nz": -17.583525,
+      "F2frequency_sma3nz": 1674.938721,
+      "F2bandwidth_sma3nz": 1213.435547,
+      "F2amplitudeLogRelF0_sma3nz": -34.971928,
+      "F3frequency_sma3nz": 2584.56665,
+      "F3bandwidth_sma3nz": 583.502747,
+      "F3amplitudeLogRelF0_sma3nz": -38.186295
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3742332775276012016"
+  },
+  "recording_id": "144_10001144_88",
+  "parent_id": null,
+  "text": "nišši",
+  "start": 3.7081619810815374,
+  "end": 4.55668274617323,
+  "duration": 0.8485207650916928,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 2.254,
+      "alphaRatio_sma3": -5.859839,
+      "hammarbergIndex_sma3": 10.620747,
+      "slope0-500_sma3": 0.059314,
+      "slope500-1500_sma3": -0.029628,
+      "spectralFlux_sma3": 1.463531,
+      "mfcc1_sma3": 9.473217,
+      "mfcc2_sma3": 7.050148,
+      "mfcc3_sma3": 25.90963,
+      "mfcc4_sma3": -22.9559,
+      "F0semitoneFrom27.5Hz_sma3nz": 37.692947,
+      "jitterLocal_sma3nz": 0.021797,
+      "shimmerLocaldB_sma3nz": 0.727496,
+      "HNRdBACF_sma3nz": 6.68895,
+      "logRelF0-H1-H2_sma3nz": 8.340455,
+      "logRelF0-H1-A3_sma3nz": 10.411338,
+      "F1frequency_sma3nz": 621.918823,
+      "F1bandwidth_sma3nz": 1210.844727,
+      "F1amplitudeLogRelF0_sma3nz": -20.576214,
+      "F2frequency_sma3nz": 1820.953491,
+      "F2bandwidth_sma3nz": 1043.133423,
+      "F2amplitudeLogRelF0_sma3nz": -30.826052,
+      "F3frequency_sma3nz": 2745.856201,
+      "F3bandwidth_sma3nz": 864.107178,
+      "F3amplitudeLogRelF0_sma3nz": -26.313545
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3742332775276012017"
+  },
+  "recording_id": "144_10001144_88",
+  "parent_id": null,
+  "text": "rahvus+vahelisel",
+  "start": 4.55668274617323,
+  "end": 6.027448685101747,
+  "duration": 1.4707659389285164,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.839292,
+      "alphaRatio_sma3": -9.880683,
+      "hammarbergIndex_sma3": 19.363586,
+      "slope0-500_sma3": 0.059385,
+      "slope500-1500_sma3": -0.017721,
+      "spectralFlux_sma3": 0.988813,
+      "mfcc1_sma3": 22.91551,
+      "mfcc2_sma3": -0.702899,
+      "mfcc3_sma3": 6.815304,
+      "mfcc4_sma3": -23.167938,
+      "F0semitoneFrom27.5Hz_sma3nz": 33.906429,
+      "jitterLocal_sma3nz": 0.012625,
+      "shimmerLocaldB_sma3nz": 0.823662,
+      "HNRdBACF_sma3nz": 7.934257,
+      "logRelF0-H1-H2_sma3nz": 0.660156,
+      "logRelF0-H1-A3_sma3nz": 18.008371,
+      "F1frequency_sma3nz": 484.104279,
+      "F1bandwidth_sma3nz": 1131.637939,
+      "F1amplitudeLogRelF0_sma3nz": -17.038345,
+      "F2frequency_sma3nz": 1537.840942,
+      "F2bandwidth_sma3nz": 929.171143,
+      "F2amplitudeLogRelF0_sma3nz": -26.630222,
+      "F3frequency_sma3nz": 2587.19165,
+      "F3bandwidth_sma3nz": 1080.732178,
+      "F3amplitudeLogRelF0_sma3nz": -34.368031
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6750a3742332775276012018"
+  },
+  "recording_id": "144_10001144_88",
+  "parent_id": null,
+  "text": "turul",
+  "start": 6.027448685101747,
+  "end": 6.565108449176772,
+  "duration": 0.5376597640750251,
+  "features": {
+    "mean": {
+      "Loudness_sma3": 1.168538,
+      "alphaRatio_sma3": -17.076717,
+      "hammarbergIndex_sma3": 33.505989,
+      "slope0-500_sma3": 0.058759,
+      "slope500-1500_sma3": -0.019938,
+      "spectralFlux_sma3": 0.616094,
+      "mfcc1_sma3": 37.529915,
+      "mfcc2_sma3": 9.094318,
+      "mfcc3_sma3": -2.707459,
+      "mfcc4_sma3": -16.790066,
+      "F0semitoneFrom27.5Hz_sma3nz": 34.031132,
+      "jitterLocal_sma3nz": 0.013046,
+      "shimmerLocaldB_sma3nz": 0.866739,
+      "HNRdBACF_sma3nz": 9.779364,
+      "logRelF0-H1-H2_sma3nz": 7.64674,
+      "logRelF0-H1-A3_sma3nz": 34.120087,
+      "F1frequency_sma3nz": 468.547729,
+      "F1bandwidth_sma3nz": 1403.067139,
+      "F1amplitudeLogRelF0_sma3nz": -9.766109,
+      "F2frequency_sma3nz": 1386.371582,
+      "F2bandwidth_sma3nz": 1141.555786,
+      "F2amplitudeLogRelF0_sma3nz": -26.045605,
+      "F3frequency_sma3nz": 2511.550049,
+      "F3bandwidth_sma3nz": 1240.902832,
+      "F3amplitudeLogRelF0_sma3nz": -41.803444
+    }
+  }
+}]

@@ -1,10 +1,9 @@
 import os
 import logging
-import pickle
 
 from src.textgrid_parser import TextGridParser
 from src.opensmile_features import OpenSmileFeatures
-from config import TEXTGRID_DIR, AUDIO_DIR
+from config import AUDIO_DIR
 from src.database import Database
 
 # Labels to exclude during processing
@@ -14,12 +13,12 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 class SpeechImporter:
-    def __init__(self, textgrid_dir=TEXTGRID_DIR, audio_dir=AUDIO_DIR):
-        self.textgrid_dir = textgrid_dir
-        self.audio_dir = audio_dir
+    def __init__(self, db):
+        super().__init__()
+        self.db = db  # Use the passed Database instance
         self.parser = TextGridParser()
         self.feature_extractor = OpenSmileFeatures()
-        self.db = Database()
+        self.audio_dir = AUDIO_DIR  # Ensure audio directory is set
 
     @staticmethod
     def clean_intervals(intervals):
@@ -57,6 +56,7 @@ class SpeechImporter:
             audio_path = os.path.join(self.audio_dir, file_name + ".wav")
 
         if self.db.recording_exists(file_name):
+            logging.info(f"Recording '{file_name}' already exists in the database. Skipping.")
             return
 
         try:
@@ -87,6 +87,13 @@ class SpeechImporter:
         recording_duration = max(word["end"] for word in words)
         recording_mean = self.aggregate_features(features)
 
+        # Prepare frame_values as lists
+        frame_values = {
+            "timestamps": features.index.round(6).tolist(),
+            "values": features.round(6).values.tolist(),
+            "feature_names": features.columns.tolist()
+        }
+
         recording_doc = {
             "recording_id": file_name,
             "parent_id": None,
@@ -96,67 +103,61 @@ class SpeechImporter:
             "duration": recording_duration,
             "features": {
                 "mean": recording_mean,
-                "frame_values": self.serialize_frame_features(features)  # Serialize all frames
+                "frame_values": frame_values  # Store frame_values directly
             }
         }
         self.db.insert_data("recordings", [recording_doc])
 
         # Word-level data
-        word_docs = [
-            {
-                "recording_id": file_name,
-                "parent_id": None,
-                "text": word["text"],
-                "start": word["start"],
-                "end": word["end"],
-                "duration": word["end"] - word["start"],
-                "features": {
-                    "mean": self.aggregate_features(
-                        features[(features.index >= word["start"]) & (features.index <= word["end"])]
-                    )
+        word_docs = []
+        for word in words:
+            word_features = features[(features.index >= word["start"]) & (features.index <= word["end"])]
+            if not word_features.empty:
+                word_doc = {
+                    "recording_id": file_name,
+                    "parent_id": None,
+                    "text": word["text"],
+                    "start": word["start"],
+                    "end": word["end"],
+                    "duration": word["end"] - word["start"],
+                    "features": {
+                        "mean": self.aggregate_features(word_features)
+                        # No frame_values at word level
+                    }
                 }
-            }
-            for word in words
-        ]
+                word_docs.append(word_doc)
+            else:
+                logging.warning(f"No features found for word '{word['text']}' in recording '{file_name}'.")
+
         self.db.insert_data("words", word_docs)
 
         # Phoneme-level data
-        phoneme_docs = [
-            {
-                "recording_id": file_name,
-                "parent_id": next(
+        phoneme_docs = []
+        for phoneme in phonemes:
+            phoneme_features = features[(features.index >= phoneme["start"]) & (features.index <= phoneme["end"])]
+            if not phoneme_features.empty:
+                parent_id = next(
                     (word_doc["_id"] for word_doc in word_docs if
                      word_doc["start"] <= phoneme["start"] < word_doc["end"]),
                     None
-                ),
-                "text": phoneme["text"],
-                "start": phoneme["start"],
-                "end": phoneme["end"],
-                "duration": phoneme["end"] - phoneme["start"],
-                "features": {
-                    "mean": self.aggregate_features(
-                        features[(features.index >= phoneme["start"]) & (features.index <= phoneme["end"])]
-                    )
+                )
+                phoneme_doc = {
+                    "recording_id": file_name,
+                    "parent_id": parent_id,
+                    "text": phoneme["text"],
+                    "start": phoneme["start"],
+                    "end": phoneme["end"],
+                    "duration": phoneme["end"] - phoneme["start"],
+                    "features": {
+                        "mean": self.aggregate_features(phoneme_features)
+                        # No frame_values at phoneme level
+                    }
                 }
-            }
-            for phoneme in phonemes
-        ]
+                phoneme_docs.append(phoneme_doc)
+            else:
+                logging.warning(f"No features found for phoneme '{phoneme['text']}' in recording '{file_name}'.")
+
         self.db.insert_data("phonemes", phoneme_docs)
-
-    @staticmethod
-    def serialize_frame_features(features):
-        """
-        Serialize frame-level features.
-
-        Args:
-            features (pd.DataFrame): Frame-level features for the entire recording.
-
-        Returns:
-            bytes: Serialized binary data of timestamps and feature values.
-        """
-        timestamps = features.index.to_numpy().round(6)
-        values = features.to_numpy().round(6)
-        return pickle.dumps({"timestamps": timestamps, "values": values})
 
     def import_files(self, files):
         """
@@ -172,7 +173,7 @@ class SpeechImporter:
 
         for file_path in files:
             base_name, ext = os.path.splitext(os.path.basename(file_path))
-            base_name = base_name.strip().lower()
+            base_name = base_name.strip()
             ext = ext.lower()
 
             if base_name not in file_pairs:
