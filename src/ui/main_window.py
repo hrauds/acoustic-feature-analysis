@@ -332,10 +332,7 @@ class MainWindow(QWidget):
             self.feature_list.blockSignals(False)
             return
 
-        if len(selections['recordings']) > 1 or (analysis_level != 'recording' and len(selected_items) > 1):
-            self.feature_list.setSelectionMode(QAbstractItemView.SingleSelection)
-        else:
-            self.feature_list.setSelectionMode(QAbstractItemView.MultiSelection)
+        self.feature_list.setSelectionMode(QAbstractItemView.MultiSelection)
 
         if analysis_level != 'recording' and selected_items:
             for rec_id, feature_list in features.items():
@@ -415,19 +412,34 @@ class MainWindow(QWidget):
         if selections['analysis_level'] != 'recording':
             items_selected = len(selections['items']) > 0
 
-        if (len(selections['recordings']) > 1 or (
-                selections['analysis_level'] != 'recording' and len(selections['items']) > 1)):
-            features_selected = len(selections['features']) == 1
+        features_selected_count = len(selections['features'])
+
+        # Timeline visualization
+        time_line_enabled = recordings_selected and analysis_level_selected and items_selected
+        if len(selections['recordings']) > 1 or (
+                selections['analysis_level'] != 'recording' and len(selections['items']) > 1):
+            time_line_enabled = time_line_enabled and features_selected_count == 1
         else:
-            features_selected = len(selections['features']) > 0
+            time_line_enabled = time_line_enabled and features_selected_count >= 1
 
-        can_visualize = recordings_selected and analysis_level_selected and items_selected and features_selected
+        # Radar chart visualization
+        radar_enabled = recordings_selected and analysis_level_selected and items_selected and features_selected_count >= 1
 
-        self.vowel_chart_btn.setEnabled(can_visualize)
-        self.time_line_btn.setEnabled(can_visualize)
-        self.histogram_btn.setEnabled(can_visualize)
-        self.boxplot_btn.setEnabled(can_visualize)
-        self.radar_btn.setEnabled(can_visualize)
+        # Histogram visualization
+        histogram_enabled = recordings_selected and analysis_level_selected and items_selected and features_selected_count == 1
+
+        # Boxplot visualization
+        boxplot_enabled = recordings_selected and analysis_level_selected and items_selected and features_selected_count == 1
+
+        # Vowel Chart visualization
+        vowel_chart_enabled = recordings_selected and analysis_level_selected and items_selected and features_selected_count >= 1
+
+        # Set the buttons
+        self.time_line_btn.setEnabled(time_line_enabled)
+        self.radar_btn.setEnabled(radar_enabled)
+        self.histogram_btn.setEnabled(histogram_enabled)
+        self.boxplot_btn.setEnabled(boxplot_enabled)
+        self.vowel_chart_btn.setEnabled(vowel_chart_enabled)
 
     def disable_visualization_buttons(self):
         self.vowel_chart_btn.setEnabled(False)
@@ -464,13 +476,7 @@ class MainWindow(QWidget):
         ax = self.canvas.figure.add_subplot(111)
 
         try:
-            selected_features = self.get_current_selections()['features']
-            if len(selected_features) != 1:
-                QMessageBox.warning(self, 'Error', "Please select exactly one feature to visualize.")
-                return
-            selected_feature = selected_features[0]
-
-            histogram_data = self.visualization.plot_histogram(ax, features, selected_feature)
+            histogram_data = self.visualization.plot_histogram(ax, features)
             self.canvas.draw()
 
             if histogram_data is not None:
@@ -489,13 +495,7 @@ class MainWindow(QWidget):
         ax = self.canvas.figure.add_subplot(111)
 
         try:
-            selected_features = self.get_current_selections()['features']
-            if len(selected_features) != 1:
-                QMessageBox.warning(self, 'Error', "Please select exactly one feature to visualize.")
-                return
-            selected_feature = selected_features[0]
-
-            boxplot_data = self.visualization.plot_boxplot(ax, features, selected_feature)
+            boxplot_data = self.visualization.plot_boxplot(ax, features)
             self.canvas.draw()
 
             if boxplot_data is not None:
