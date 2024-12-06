@@ -124,7 +124,7 @@ class MainWindow(QWidget):
         control_layout.addWidget(self.radar_btn)
 
         # Visualization panel and data panel split
-        vis_data_splitter = QSplitter(Qt.Horizontal)
+        vis_data_splitter = QSplitter(Qt.Vertical)
 
         # Visualization panel
         visualization_panel = QWidget()
@@ -146,11 +146,11 @@ class MainWindow(QWidget):
         # Add panels to splitter
         vis_data_splitter.addWidget(visualization_panel)
         vis_data_splitter.addWidget(data_tables_panel)
-        vis_data_splitter.setStretchFactor(0, 2)
+        vis_data_splitter.setStretchFactor(0, 3)
         vis_data_splitter.setStretchFactor(1, 1)
 
         # Main layout with splitter
-        main_splitter = QSplitter(Qt.Vertical)
+        main_splitter = QSplitter(Qt.Horizontal)
         main_splitter.addWidget(control_panel)
         main_splitter.addWidget(vis_data_splitter)
         main_splitter.setStretchFactor(0, 0)
@@ -160,6 +160,9 @@ class MainWindow(QWidget):
         main_layout = QVBoxLayout()
         main_layout.addWidget(main_splitter)
         self.setLayout(main_layout)
+
+        visualization_layout.setContentsMargins(10, 10, 10, 10)
+        data_tables_layout.setContentsMargins(10, 10, 10, 10)
 
     def load_existing_recordings(self):
         self.file_list_widget.clear()
@@ -524,16 +527,30 @@ class MainWindow(QWidget):
             QMessageBox.critical(self, 'Plotting Error', str(ve))
 
     def visualize_vowel_chart(self):
-        features = self.fetch_filtered_features()
-        if not features:
-            QMessageBox.warning(self, 'Error', "Please select recordings and items to visualize.")
+        selections = self.get_current_selections()
+        analysis_level = selections['analysis_level']
+        selected_recordings = selections['recordings']
+        selected_items = selections['items']
+
+        try:
+            if analysis_level == 'phoneme':
+                vowel_data = self.database.get_phonemes(selected_items, "phoneme_id")
+            elif analysis_level == 'word':
+                vowel_data = self.database.get_phonemes(selected_items, "word_id")
+            elif analysis_level == 'recording':
+                vowel_data = self.database.get_phonemes(selected_recordings, "recording_id")
+            else:
+                QMessageBox.warning(self, 'Error', "Invalid analysis level selected.")
+                return
+        except Exception as e:
+            QMessageBox.critical(self, 'Error', f"Failed to fetch vowel data: {str(e)}")
             return
 
         self.clear_visualisation()
         ax = self.canvas.figure.add_subplot(111)
 
         try:
-            vowel_df_original, vowel_df_normalized = self.visualization.plot_vowel_chart(ax, features)
+            vowel_df_original, vowel_df_normalized = self.visualization.plot_vowel_chart(ax, vowel_data)
             self.canvas.draw()
 
             if vowel_df_original is not None:
