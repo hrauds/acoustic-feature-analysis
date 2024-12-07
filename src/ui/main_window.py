@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import (
     QWidget, QPushButton, QLabel, QFileDialog, QVBoxLayout,
     QMessageBox, QListWidget, QAbstractItemView, QSplitter,
-    QTableWidget, QTableWidgetItem, QRadioButton, QButtonGroup, QListWidgetItem
+    QTableWidget, QTableWidgetItem, QRadioButton, QButtonGroup, QListWidgetItem, QMenu
 )
 from PyQt5.QtCore import Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -9,6 +9,7 @@ from matplotlib.figure import Figure
 from bson.objectid import ObjectId
 from src.ui.visualization import Visualization
 from src.speech_importer import SpeechImporter
+from src.visualization_exporter import VisualizationExporter
 
 
 class MainWindow(QWidget):
@@ -131,6 +132,19 @@ class MainWindow(QWidget):
         visualization_layout = QVBoxLayout(visualization_panel)
         visualization_layout.addWidget(self.canvas)
 
+        # Export button
+        self.export_menu_button = QPushButton("Export", self)
+        self.export_menu = QMenu(self)
+
+        save_picture_action = self.export_menu.addAction("Save as Picture")
+        export_json_action = self.export_menu.addAction("Save as JSON")
+
+        save_picture_action.triggered.connect(self.save_visualization_as_picture)
+        export_json_action.triggered.connect(self.export_visualization_data_as_json)
+
+        self.export_menu_button.setMenu(self.export_menu)
+        visualization_layout.addWidget(self.export_menu_button)
+
         # Data tables panel
         self.raw_data_table = QTableWidget(self)
         self.normalized_data_table = QTableWidget(self)
@@ -163,6 +177,8 @@ class MainWindow(QWidget):
 
         visualization_layout.setContentsMargins(10, 10, 10, 10)
         data_tables_layout.setContentsMargins(10, 10, 10, 10)
+
+
 
     def load_existing_recordings(self):
         self.file_list_widget.clear()
@@ -609,3 +625,26 @@ class MainWindow(QWidget):
         self.normalized_data_table.setRowCount(0)
         self.normalized_data_table.setColumnCount(0)
         self.canvas.draw()
+
+
+    def save_visualization_as_picture(self):
+        file_path, _ = QFileDialog.getSaveFileName(
+            self, "Save Visualization As", "", "PNG Image (*.png);;JPEG Image (*.jpg);;All Files (*)"
+        )
+        if file_path:
+            try:
+                VisualizationExporter.save_canvas_as_image(self.canvas, file_path)
+            except RuntimeError as e:
+                QMessageBox.critical(self, "Error", str(e))
+
+    def export_visualization_data_as_json(self):
+        file_path, _ = QFileDialog.getSaveFileName(
+            self, "Export Data As", "", "JSON Files (*.json);;All Files (*)"
+        )
+        if file_path:
+            try:
+                VisualizationExporter.export_table_data_as_json(
+                    self.raw_data_table, self.normalized_data_table, file_path
+                )
+            except RuntimeError as e:
+                QMessageBox.critical(self, "Error", str(e))
