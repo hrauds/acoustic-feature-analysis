@@ -136,17 +136,18 @@ class SpeechImporter:
         for phoneme in phonemes:
             phoneme_features = features[(features.index >= phoneme["start"]) & (features.index <= phoneme["end"])]
             if not phoneme_features.empty:
-                parent_id = next(
-                    (word_doc["_id"] for word_doc in word_docs if
+                parent_id, word_text = next(
+                    ((word_doc["_id"], word_doc["text"]) for word_doc in word_docs if
                      word_doc["start"] <= phoneme["start"] < word_doc["end"]),
-                    None
+                    (None, None)
                 )
                 phoneme_doc = {
-                    "recording_id": file_name,
-                    "parent_id": parent_id,
                     "text": phoneme["text"],
+                    "parent_id": parent_id,
+                    "word_text": word_text,
                     "start": phoneme["start"],
                     "end": phoneme["end"],
+                    "recording_id": file_name,
                     "duration": phoneme["end"] - phoneme["start"],
                     "features": {
                         "mean": self.aggregate_features(phoneme_features)
