@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
-
+from bson.objectid import ObjectId
 from src.ui.visualization import Visualization
 from src.speech_importer import SpeechImporter
 
@@ -230,8 +230,9 @@ class MainWindow(QWidget):
     def get_current_selections(self):
         selected_recordings = [item.text() for item in self.file_list_widget.selectedItems()]
         analysis_level = self.get_selected_analysis_level()
-        selected_items = [item.data(Qt.UserRole) for item in
+        selected_items = [ObjectId(item.data(Qt.UserRole)) for item in
                           self.item_list.selectedItems()] if analysis_level != 'recording' else []
+
         selected_features = [item.text() for item in self.feature_list.selectedItems()]
         return {
             'recordings': selected_recordings,
@@ -527,18 +528,24 @@ class MainWindow(QWidget):
             QMessageBox.critical(self, 'Plotting Error', str(ve))
 
     def visualize_vowel_chart(self):
+        """
+        Visualize the vowel chart based on current selections.
+        Fetches phoneme data filtered for vowels before visualization.
+        """
         selections = self.get_current_selections()
         analysis_level = selections['analysis_level']
         selected_recordings = selections['recordings']
-        selected_items = selections['items']
+        selected_items = selections['items']  # Can be words or phonemes based on the level
+        print(selected_recordings)
+        print(selected_items)
 
         try:
             if analysis_level == 'phoneme':
-                vowel_data = self.database.get_phonemes(selected_items, "phoneme_id")
+                vowel_data = self.database.get_vowels(selected_items, "_id")
             elif analysis_level == 'word':
-                vowel_data = self.database.get_phonemes(selected_items, "word_id")
+                vowel_data = self.database.get_vowels(selected_items, "parent_id")
             elif analysis_level == 'recording':
-                vowel_data = self.database.get_phonemes(selected_recordings, "recording_id")
+                vowel_data = self.database.get_vowels(selected_recordings, "recording_id")
             else:
                 QMessageBox.warning(self, 'Error', "Invalid analysis level selected.")
                 return
@@ -546,11 +553,27 @@ class MainWindow(QWidget):
             QMessageBox.critical(self, 'Error', f"Failed to fetch vowel data: {str(e)}")
             return
 
+        flat_vowel_data = []
+        for _, phoneme_list in vowel_data.items():
+            for phoneme in phoneme_list:
+                if "F1" in phoneme and "F2" in phoneme:
+                    flat_vowel_data.append({
+                        "F1": phoneme["F1"],
+                        "F2": phoneme["F2"],
+                        "Phoneme": phoneme["Phoneme"],
+                        "Recording": phoneme.get("Recording"),
+                        "Word": phoneme.get("Word")
+                    })
+
+        if not flat_vowel_data:
+            QMessageBox.information(self, 'No Vowels', "No vowel data found for the selected selections.")
+            return
+
         self.clear_visualisation()
         ax = self.canvas.figure.add_subplot(111)
 
         try:
-            vowel_df_original, vowel_df_normalized = self.visualization.plot_vowel_chart(ax, vowel_data)
+            vowel_df_original, vowel_df_normalized = self.visualization.plot_vowel_chart(ax, flat_vowel_data)
             self.canvas.draw()
 
             if vowel_df_original is not None:

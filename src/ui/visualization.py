@@ -315,7 +315,74 @@ class Visualization:
 
         return radar_df_original, radar_df_normalized
 
-    def plot_vowel_chart(self, ax, features_dict):
+    def is_vowel_phoneme(self, phoneme, vowel_set):
         """
+        Check if the given phoneme is a vowel by cleaning it and comparing against a set of vowel phonemes.
+
+        Args:
+            phoneme (str): The phoneme to check.
+            vowel_set (set): A set of vowel phonemes to match against.
+
+        Returns:
+            bool: True if the phoneme matches a vowel in the set, False otherwise.
         """
-        pass
+        allowed_characters = {'i', 'ii', 'e', 'ee', '{', '{{', 'y', 'yy', 'u', 'uu', 'o', 'oo', 'A', 'AA', '2', '22', '7', '77'}
+
+        phoneme_clean = ''.join(c for c in phoneme if c in allowed_characters)
+
+        return phoneme_clean in vowel_set
+
+    def plot_vowel_chart(self, ax, vowel_data):
+        """
+        Plot a vowel chart using F1 and F2 frequencies for selected vowels.
+
+        Args:
+            ax: Matplotlib axis object.
+            vowel_data (list): List of vowel data dictionaries.
+
+        Returns:
+            tuple: (vowel_df_original, vowel_df_normalized) DataFrames (original and normalized vowel data).
+        """
+        # Convert to a DataFrame
+        vowel_df_original = pd.DataFrame(vowel_data)
+
+        if vowel_df_original.empty:
+            raise ValueError("No valid vowel data to plot.")
+
+        # Lobanov normalization
+        vowel_df_normalized = Normalization.normalize_vowels(vowel_df_original)
+
+        # Plot normalized data
+        scatter = sns.scatterplot(
+            x='zsc_F2',
+            y='zsc_F1',
+            hue='Recording',
+            data=vowel_df_normalized,
+            ax=ax,
+            palette='husl',
+            legend='full'
+        )
+
+        # Vowel symbols
+        for _, row in vowel_df_normalized.iterrows():
+            ax.text(
+                row['zsc_F2'] + 0.02, row['zsc_F1'], row['Phoneme'],
+                horizontalalignment='left', fontsize=10, color='black', fontweight='bold'
+            )
+
+        # Invert axes
+        ax.invert_xaxis()
+        ax.invert_yaxis()
+
+        ax.set_xlabel("Normalized F2 (z-score)")
+        ax.set_ylabel("Normalized F1 (z-score)")
+        ax.set_title("Vowel Chart (Lobanov Normalization)")
+        ax.grid(True)
+
+        # Adjust legend
+        ax.legend(title='Recording', loc='upper right', bbox_to_anchor=(1.25, 1.0))
+
+        return vowel_df_original, vowel_df_normalized
+
+
+

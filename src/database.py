@@ -1,8 +1,9 @@
-# src/database.py
 import json
 import os
 import pickle
 import logging
+from collections import defaultdict
+
 from config import MONGO_URI, USE_MONGO_MOCK
 
 logging.basicConfig(level=logging.INFO)
@@ -234,6 +235,71 @@ class Database:
         except Exception as e:
             logging.error(f"Failed to deserialize frame values: {e}")
             return None
+
+    def get_vowels(self, ids, field):
+        """
+        Updated docstring and parameter name for clarity.
+        """
+        allowed_phonemes = {
+            'i', 'ii', 'e', 'ee', '{', '{{', 'y', 'yy', 'u',
+            'uu', 'o', 'oo', 'a', 'aa', '2', '22', '7', '77'
+        }
+
+        allowed_phonemes = {phoneme.lower() for phoneme in allowed_phonemes}
+
+        phoneme_dict = defaultdict(list)
+
+        try:
+            # Fields to retrieve
+            fields = {
+                "_id": 1,
+                "text": 1,
+                "parent_id": 1,
+                "word_text": 1,
+                "recording_id": 1,
+                "start": 1,
+                "end": 1,
+                "duration": 1,
+                "features.mean.F1frequency_sma3nz": 1,
+                "features.mean.F2frequency_sma3nz": 1,
+            }
+
+            logging.debug(f"Querying phonemes with {field} in {ids}")
+            cursor = self.phonemes_col.find({field: {"$in": ids}}, fields)
+
+            total_phonemes = 0
+            for phoneme in cursor:
+                total_phonemes += 1
+                id_value = phoneme.get(field)
+
+
+                phoneme_text = phoneme.get("text", "").lower()
+
+                if phoneme_text not in allowed_phonemes:
+                    logging.debug(f"Phoneme '{phoneme_text}' not in allowed_phonemes.")
+                    continue  # Skip phonemes not allowed
+
+                features = phoneme.get("features", {}).get("mean", {})
+                f1 = features.get("F1frequency_sma3nz")
+                f2 = features.get("F2frequency_sma3nz")
+
+                phoneme_data = {
+                    "Phoneme": phoneme_text,
+                    "F1": f1,
+                    "F2": f2,
+                    "Recording": phoneme.get("recording_id", "Unknown"),
+                    "Word": phoneme.get("word_text", "Unknown"),
+                    "start": phoneme.get("start"),
+                    "end": phoneme.get("end"),
+                    "duration": phoneme.get("duration")
+                }
+
+                phoneme_dict[id_value].append(phoneme_data)
+
+            return dict(phoneme_dict)
+
+        except errors.PyMongoError as e:
+            return dict(phoneme_dict)
 
     def close_connection(self):
         """
