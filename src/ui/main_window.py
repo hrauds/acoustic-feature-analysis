@@ -4,10 +4,10 @@ from PyQt5.QtWidgets import (
     QTableWidget, QTableWidgetItem, QRadioButton, QButtonGroup, QListWidgetItem, QMenu, QHBoxLayout
 )
 from PyQt5.QtCore import Qt
-from PyQt5.QtWebEngineWidgets import QWebEngineView
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineDownloadItem
 from src.ui.visualization import Visualization
 from src.speech_importer import SpeechImporter
-from src.visualization_exporter import VisualizationExporter
+from src.visualization_data_exporter import VisualizationDataExporter
 
 class MainWindow(QWidget):
     def __init__(self, db):
@@ -92,22 +92,16 @@ class MainWindow(QWidget):
         self.visualize_btn = QPushButton("Visualize", self)
         self.visualize_btn.clicked.connect(self.visualize_selected)
 
-        self.export_menu_button = QPushButton("Export", self)
-        self.export_menu = QMenu(self)
-
-        save_picture_action = self.export_menu.addAction("Save as Picture")
-        export_json_action = self.export_menu.addAction("Save as JSON")
-
-        save_picture_action.triggered.connect(self.save_visualization_as_picture)
-        export_json_action.triggered.connect(self.export_visualization_data_as_json)
-
-        self.export_menu_button.setMenu(self.export_menu)
+        self.export_menu_button = QPushButton("Export JSON", self)
+        self.export_menu_button.clicked.connect(self.export_visualization_data_as_json)
+        self.export_menu_button.setVisible(False)
 
         # Initially disable visualization buttons
         self.disable_visualization_buttons()
 
         # Visualization panel using QWebEngineView
         self.plot_view = QWebEngineView(self)
+        self.plot_view.page().profile().downloadRequested.connect(self.handle_download)
 
         # Data tables panel
         self.raw_data_table = QTableWidget(self)
@@ -525,7 +519,7 @@ class MainWindow(QWidget):
             # Show only specific mode bar buttons
             config = {
                 'modeBarButtons': [
-                    ['zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d']
+                    ['zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d', 'toImage']
                 ],
                 'displayModeBar': True,
                 'displaylogo': False
@@ -535,6 +529,9 @@ class MainWindow(QWidget):
 
             if all_table_data is not None:
                 self.create_table(all_table_data, self.raw_data_table)
+
+            self.export_menu_button.setVisible(True)
+
         except ValueError as ve:
             QMessageBox.critical(self, 'Plotting Error', str(ve))
 
@@ -548,7 +545,7 @@ class MainWindow(QWidget):
             fig, histogram_data = self.visualization.plot_histogram(features)
             config = {
                 'modeBarButtons': [
-                    ['zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d']
+                    ['zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d', 'toImage']
                 ],
                 'displayModeBar': True,
                 'displaylogo': False
@@ -558,6 +555,9 @@ class MainWindow(QWidget):
 
             if histogram_data is not None:
                 self.create_table(histogram_data, self.raw_data_table)
+
+            self.export_menu_button.setVisible(True)
+
 
         except ValueError as ve:
             QMessageBox.critical(self, 'Plotting Error', str(ve))
@@ -574,7 +574,7 @@ class MainWindow(QWidget):
 
             config = {
                 'modeBarButtons': [
-                    ['zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d']
+                    ['zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d', 'toImage']
                 ],
                 'displayModeBar': True,
                 'displaylogo': False
@@ -585,6 +585,9 @@ class MainWindow(QWidget):
 
             if boxplot_data is not None:
                 self.create_table(boxplot_data, self.raw_data_table)
+
+            self.export_menu_button.setVisible(True)
+
 
         except ValueError as ve:
             QMessageBox.critical(self, 'Plotting Error', str(ve))
@@ -601,7 +604,7 @@ class MainWindow(QWidget):
 
             config = {
                 'modeBarButtons': [
-                    ['zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d']
+                    ['zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d', 'toImage']
                 ],
                 'displayModeBar': True,
                 'displaylogo': False
@@ -613,6 +616,9 @@ class MainWindow(QWidget):
                 self.create_table(radar_df_original, self.raw_data_table)
             if radar_df_normalized is not None:
                 self.create_table(radar_df_normalized, self.normalized_data_table)
+
+            self.export_menu_button.setVisible(True)
+
         except ValueError as ve:
             QMessageBox.critical(self, 'Plotting Error', str(ve))
 
@@ -664,7 +670,7 @@ class MainWindow(QWidget):
 
             config = {
                 'modeBarButtons': [
-                    ['zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d']
+                    ['zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d', 'toImage']
                 ],
                 'displayModeBar': True,
                 'displaylogo': False
@@ -677,6 +683,9 @@ class MainWindow(QWidget):
                 self.create_table(vowel_df_original, self.raw_data_table)
             if vowel_df_normalized is not None:
                 self.create_table(vowel_df_normalized, self.normalized_data_table)
+
+            self.export_menu_button.setVisible(True)
+
         except ValueError as ve:
             QMessageBox.critical(self, 'Plotting Error', str(ve))
 
@@ -706,10 +715,34 @@ class MainWindow(QWidget):
         self.normalized_data_table.clearContents()
         self.normalized_data_table.setRowCount(0)
         self.normalized_data_table.setColumnCount(0)
+        self.export_menu_button.setVisible(False)
 
-    def save_visualization_as_picture(self):
-        pass
-    def save_plot_html_as_image(self, html, file_path):
-        pass
+    def handle_download(self, download_item: QWebEngineDownloadItem):
+        """
+        Handle Plotly's toImage download.
+        """
+        save_path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Save Snapshot",
+            download_item.suggestedFileName(),
+            "Images (*.png)"
+        )
+
+        if save_path:
+            download_item.setPath(save_path)
+            download_item.accept()
+            QMessageBox.information(self, "Download Started", f"Saving to {save_path}")
+        else:
+            download_item.cancel()
+
     def export_visualization_data_as_json(self):
-        pass
+        """
+        Exports the current data table to JSON file.
+        """
+        if self.normalized_data_table.rowCount() > 0:
+            VisualizationDataExporter.export_table_data_as_json(self.normalized_data_table)
+        elif self.raw_data_table.rowCount() > 0:
+            VisualizationDataExporter.export_table_data_as_json(self.raw_data_table)
+
+        else:
+            QMessageBox.information(self, "There is no data to export.")
