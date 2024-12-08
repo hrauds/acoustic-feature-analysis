@@ -4,6 +4,9 @@ import pickle
 import logging
 from collections import defaultdict
 
+from bson import ObjectId
+from bson.errors import InvalidId
+
 from config import MONGO_URI, USE_MONGO_MOCK
 
 logging.basicConfig(level=logging.INFO)
@@ -238,7 +241,14 @@ class Database:
 
     def get_vowels(self, ids, field):
         """
-        Updated docstring and parameter name for clarity.
+        Fetches vowel phonemes from the database based on provided IDs and field.
+
+        Parameters:
+            ids (list): List of IDs to query.
+            field (str): The field to query against (e.g., '_id', 'parent_id', 'recording_id').
+
+        Returns:
+            dict: A dictionary mapping IDs to lists of vowel phoneme data.
         """
         allowed_phonemes = {
             'i', 'ii', 'e', 'ee', '{', '{{', 'y', 'yy', 'u',
@@ -250,6 +260,16 @@ class Database:
         phoneme_dict = defaultdict(list)
 
         try:
+            if field in ["_id", "parent_id"]:
+                converted_ids = []
+                for id_str in ids:
+                    try:
+                        converted_ids.append(ObjectId(id_str))
+                    except InvalidId:
+                        logging.warning(f"Invalid ObjectId string: {id_str}.")
+                ids = converted_ids
+                logging.debug(f"Converted string IDs to ObjectId for '{field}' field.")
+
             # Fields to retrieve
             fields = {
                 "_id": 1,
@@ -271,7 +291,6 @@ class Database:
             for phoneme in cursor:
                 total_phonemes += 1
                 id_value = phoneme.get(field)
-
 
                 phoneme_text = phoneme.get("text", "").lower()
 
@@ -296,9 +315,14 @@ class Database:
 
                 phoneme_dict[id_value].append(phoneme_data)
 
+            logging.debug(f"Total phonemes fetched: {total_phonemes}")
             return dict(phoneme_dict)
 
         except errors.PyMongoError as e:
+            logging.error(f"PyMongoError during get_vowels: {e}")
+            return dict(phoneme_dict)
+        except Exception as e:
+            logging.error(f"Unexpected error during get_vowels: {e}")
             return dict(phoneme_dict)
 
     def close_connection(self):
