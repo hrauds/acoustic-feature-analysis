@@ -1,16 +1,13 @@
 from PyQt5.QtWidgets import (
     QWidget, QPushButton, QLabel, QFileDialog, QVBoxLayout,
     QMessageBox, QListWidget, QAbstractItemView, QSplitter,
-    QTableWidget, QTableWidgetItem, QRadioButton, QButtonGroup, QListWidgetItem, QMenu
+    QTableWidget, QTableWidgetItem, QRadioButton, QButtonGroup, QListWidgetItem, QMenu, QHBoxLayout
 )
 from PyQt5.QtCore import Qt
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
-from bson.objectid import ObjectId
+from PyQt5.QtWebEngineWidgets import QWebEngineView
 from src.ui.visualization import Visualization
 from src.speech_importer import SpeechImporter
 from src.visualization_exporter import VisualizationExporter
-
 
 class MainWindow(QWidget):
     def __init__(self, db):
@@ -24,7 +21,7 @@ class MainWindow(QWidget):
 
     def init_ui(self):
         self.setWindowTitle("Speech Analysis Application")
-        self.setGeometry(100, 100, 1400, 700)
+        self.setGeometry(100, 100, 1600, 800)  # Increased width for better layout
 
         # Upload Section
         self.label = QLabel("Upload audio and TextGrid files:", self)
@@ -72,27 +69,65 @@ class MainWindow(QWidget):
         self.feature_list.setSelectionMode(QAbstractItemView.MultiSelection)
         self.feature_list.itemSelectionChanged.connect(self.on_features_changed)
 
-        # Buttons for different visualizations
-        self.vowel_chart_btn = QPushButton("Vowel Chart")
-        self.vowel_chart_btn.clicked.connect(self.visualize_vowel_chart)
+        # Visualization type selection via radio buttons
+        self.visualization_type_label = QLabel("Select Visualization Type:", self)
+        self.visualization_type_label.setAlignment(Qt.AlignCenter)
 
-        self.time_line_btn = QPushButton("Time Line Graph")
-        self.time_line_btn.clicked.connect(self.visualize_time_line)
+        self.viz_radio_group = QButtonGroup(self)
+        self.time_line_radio = QRadioButton("Time Line Graph")
+        self.histogram_radio = QRadioButton("Histogram")
+        self.boxplot_radio = QRadioButton("Boxplot")
+        self.radar_radio = QRadioButton("Radar Chart")
+        self.vowel_chart_radio = QRadioButton("Vowel Chart")
 
-        self.histogram_btn = QPushButton("Histogram")
-        self.histogram_btn.clicked.connect(self.visualize_histogram)
+        self.time_line_radio.setChecked(True)  # Default selection
 
-        self.boxplot_btn = QPushButton("Boxplot")
-        self.boxplot_btn.clicked.connect(self.visualize_boxplot)
+        self.viz_radio_group.addButton(self.time_line_radio)
+        self.viz_radio_group.addButton(self.histogram_radio)
+        self.viz_radio_group.addButton(self.boxplot_radio)
+        self.viz_radio_group.addButton(self.radar_radio)
+        self.viz_radio_group.addButton(self.vowel_chart_radio)
 
-        self.radar_btn = QPushButton("Radar")
-        self.radar_btn.clicked.connect(self.visualize_radar)
+        # Visualization and Export buttons
+        self.visualize_btn = QPushButton("Visualize", self)
+        self.visualize_btn.clicked.connect(self.visualize_selected)
+
+        self.export_menu_button = QPushButton("Export", self)
+        self.export_menu = QMenu(self)
+
+        save_picture_action = self.export_menu.addAction("Save as Picture")
+        export_json_action = self.export_menu.addAction("Save as JSON")
+
+        save_picture_action.triggered.connect(self.save_visualization_as_picture)
+        export_json_action.triggered.connect(self.export_visualization_data_as_json)
+
+        self.export_menu_button.setMenu(self.export_menu)
 
         # Initially disable visualization buttons
         self.disable_visualization_buttons()
 
-        # Visualization canvas
-        self.canvas = FigureCanvas(Figure())
+        # Visualization panel using QWebEngineView
+        self.plot_view = QWebEngineView(self)
+
+        # Data tables panel
+        self.raw_data_table = QTableWidget(self)
+        self.normalized_data_table = QTableWidget(self)
+        raw_data_label = QLabel("Raw Data", self)
+        normalized_data_label = QLabel("Normalized Data", self)
+        data_tables_panel = QWidget()
+        data_tables_layout = QHBoxLayout(data_tables_panel)  # Changed to Horizontal layout
+
+        # Wrap each table with a vertical layout including labels
+        raw_data_layout = QVBoxLayout()
+        raw_data_layout.addWidget(raw_data_label)
+        raw_data_layout.addWidget(self.raw_data_table)
+
+        normalized_data_layout = QVBoxLayout()
+        normalized_data_layout.addWidget(normalized_data_label)
+        normalized_data_layout.addWidget(self.normalized_data_table)
+
+        data_tables_layout.addLayout(raw_data_layout)
+        data_tables_layout.addLayout(normalized_data_layout)
 
         # Control panel layout
         control_panel = QWidget()
@@ -117,12 +152,19 @@ class MainWindow(QWidget):
         control_layout.addWidget(self.feature_label)
         control_layout.addWidget(self.feature_list)
 
-        # Visualization buttons
-        control_layout.addWidget(self.vowel_chart_btn)
-        control_layout.addWidget(self.time_line_btn)
-        control_layout.addWidget(self.histogram_btn)
-        control_layout.addWidget(self.boxplot_btn)
-        control_layout.addWidget(self.radar_btn)
+        # Visualization type selection
+        control_layout.addWidget(self.visualization_type_label)
+        control_layout.addWidget(self.time_line_radio)
+        control_layout.addWidget(self.histogram_radio)
+        control_layout.addWidget(self.boxplot_radio)
+        control_layout.addWidget(self.radar_radio)
+        control_layout.addWidget(self.vowel_chart_radio)
+
+        # Visualization and Export buttons layout
+        viz_buttons_layout = QHBoxLayout()
+        viz_buttons_layout.addWidget(self.visualize_btn)
+        viz_buttons_layout.addWidget(self.export_menu_button)
+        control_layout.addLayout(viz_buttons_layout)
 
         # Visualization panel and data panel split
         vis_data_splitter = QSplitter(Qt.Vertical)
@@ -130,55 +172,28 @@ class MainWindow(QWidget):
         # Visualization panel
         visualization_panel = QWidget()
         visualization_layout = QVBoxLayout(visualization_panel)
-        visualization_layout.addWidget(self.canvas)
-
-        # Export button
-        self.export_menu_button = QPushButton("Export", self)
-        self.export_menu = QMenu(self)
-
-        save_picture_action = self.export_menu.addAction("Save as Picture")
-        export_json_action = self.export_menu.addAction("Save as JSON")
-
-        save_picture_action.triggered.connect(self.save_visualization_as_picture)
-        export_json_action.triggered.connect(self.export_visualization_data_as_json)
-
-        self.export_menu_button.setMenu(self.export_menu)
-        visualization_layout.addWidget(self.export_menu_button)
+        visualization_layout.addWidget(self.plot_view)
 
         # Data tables panel
-        self.raw_data_table = QTableWidget(self)
-        self.normalized_data_table = QTableWidget(self)
-        raw_data_label = QLabel("Raw Data", self)
-        normalized_data_label = QLabel("Normalized Data", self)
-        data_tables_panel = QWidget()
-        data_tables_layout = QVBoxLayout(data_tables_panel)
-        data_tables_layout.addWidget(raw_data_label)
-        data_tables_layout.addWidget(self.raw_data_table)
-        data_tables_layout.addWidget(normalized_data_label)
-        data_tables_layout.addWidget(self.normalized_data_table)
-
-        # Add panels to splitter
         vis_data_splitter.addWidget(visualization_panel)
         vis_data_splitter.addWidget(data_tables_panel)
-        vis_data_splitter.setStretchFactor(0, 3)
-        vis_data_splitter.setStretchFactor(1, 1)
+        vis_data_splitter.setStretchFactor(0, 6)
+        vis_data_splitter.setStretchFactor(1, 0)
 
         # Main layout with splitter
         main_splitter = QSplitter(Qt.Horizontal)
         main_splitter.addWidget(control_panel)
         main_splitter.addWidget(vis_data_splitter)
-        main_splitter.setStretchFactor(0, 0)
-        main_splitter.setStretchFactor(1, 1)
+        main_splitter.setStretchFactor(0, 1)
+        main_splitter.setStretchFactor(1, 3)
 
         # Final layout
         main_layout = QVBoxLayout()
         main_layout.addWidget(main_splitter)
         self.setLayout(main_layout)
 
-        visualization_layout.setContentsMargins(10, 10, 10, 10)
+        control_layout.setContentsMargins(10, 10, 10, 10)
         data_tables_layout.setContentsMargins(10, 10, 10, 10)
-
-
 
     def load_existing_recordings(self):
         self.file_list_widget.clear()
@@ -246,9 +261,8 @@ class MainWindow(QWidget):
     def get_current_selections(self):
         selected_recordings = [item.text() for item in self.file_list_widget.selectedItems()]
         analysis_level = self.get_selected_analysis_level()
-        selected_items = [ObjectId(item.data(Qt.UserRole)) for item in
+        selected_items = [item.data(Qt.UserRole) for item in
                           self.item_list.selectedItems()] if analysis_level != 'recording' else []
-
         selected_features = [item.text() for item in self.feature_list.selectedItems()]
         return {
             'recordings': selected_recordings,
@@ -287,7 +301,6 @@ class MainWindow(QWidget):
         if analysis_level != 'recording' and selected_items:
             filtered_all_features = {}
             for rec_id, features in all_features.items():
-                # Filter features that match selected items _id
                 filtered_features = [
                     feature for feature in features
                     if feature.get("_id") in selected_items
@@ -433,39 +446,73 @@ class MainWindow(QWidget):
 
         features_selected_count = len(selections['features'])
 
-        # Time Line Visualization
-        time_line_enabled = recordings_selected and analysis_level_selected and items_selected
-        if len(selections['recordings']) > 1 or (
-                selections['analysis_level'] != 'recording' and len(selections['items']) > 1):
-            time_line_enabled = time_line_enabled and features_selected_count == 1
-        else:
-            time_line_enabled = time_line_enabled and features_selected_count >= 1
+        # Visualization type selection
+        selected_viz = None
+        if self.time_line_radio.isChecked():
+            selected_viz = 'time_line'
+        elif self.histogram_radio.isChecked():
+            selected_viz = 'histogram'
+        elif self.boxplot_radio.isChecked():
+            selected_viz = 'boxplot'
+        elif self.radar_radio.isChecked():
+            selected_viz = 'radar'
+        elif self.vowel_chart_radio.isChecked():
+            selected_viz = 'vowel_chart'
 
-        # Radar Chart Visualization
-        radar_enabled = recordings_selected and analysis_level_selected and items_selected and features_selected_count >= 1
+        visualize_enabled = False
 
-        # Histogram Visualization
-        histogram_enabled = recordings_selected and analysis_level_selected and items_selected and features_selected_count == 1
+        if selected_viz in ['time_line', 'histogram', 'boxplot', 'radar']:
+            if recordings_selected and analysis_level_selected and items_selected:
+                if selected_viz in ['histogram', 'boxplot']:
+                    visualize_enabled = features_selected_count == 1
+                elif selected_viz == 'time_line':
+                    if (len(selections['recordings']) > 1 or
+                        (selections['analysis_level'] != 'recording' and len(selections['items']) > 1)):
+                        visualize_enabled = features_selected_count == 1
+                    else:
+                        visualize_enabled = features_selected_count >= 1
+                elif selected_viz == 'radar':
+                    visualize_enabled = features_selected_count >= 1
+        elif selected_viz == 'vowel_chart':
+            visualize_enabled = recordings_selected and analysis_level_selected
 
-        # Boxplot Visualization
-        boxplot_enabled = recordings_selected and analysis_level_selected and items_selected and features_selected_count == 1
-
-        # Vowel Chart Visualization
-        vowel_chart_enabled = recordings_selected and analysis_level_selected and items_selected
-
-        # Set the buttons
-        self.time_line_btn.setEnabled(time_line_enabled)
-        self.radar_btn.setEnabled(radar_enabled)
-        self.histogram_btn.setEnabled(histogram_enabled)
-        self.boxplot_btn.setEnabled(boxplot_enabled)
-        self.vowel_chart_btn.setEnabled(vowel_chart_enabled)
+        self.visualize_btn.setEnabled(visualize_enabled)
 
     def disable_visualization_buttons(self):
-        self.vowel_chart_btn.setEnabled(False)
-        self.time_line_btn.setEnabled(False)
-        self.histogram_btn.setEnabled(False)
-        self.boxplot_btn.setEnabled(False)
-        self.radar_btn.setEnabled(False)
+        self.visualize_btn.setEnabled(False)
+
+    def visualize_selected(self):
+        selected_viz = None
+        if self.time_line_radio.isChecked():
+            selected_viz = 'time_line'
+        elif self.histogram_radio.isChecked():
+            selected_viz = 'histogram'
+        elif self.boxplot_radio.isChecked():
+            selected_viz = 'boxplot'
+        elif self.radar_radio.isChecked():
+            selected_viz = 'radar'
+        elif self.vowel_chart_radio.isChecked():
+            selected_viz = 'vowel_chart'
+
+        if not selected_viz:
+            QMessageBox.warning(self, 'Error', "Please select a visualization type.")
+            return
+
+        features = self.fetch_filtered_features()
+        if not features and selected_viz != 'vowel_chart':
+            QMessageBox.warning(self, 'Error', "Please select recordings and features to visualize.")
+            return
+
+        if selected_viz == 'time_line':
+            self.visualize_time_line()
+        elif selected_viz == 'histogram':
+            self.visualize_histogram()
+        elif selected_viz == 'boxplot':
+            self.visualize_boxplot()
+        elif selected_viz == 'radar':
+            self.visualize_radar()
+        elif selected_viz == 'vowel_chart':
+            self.visualize_vowel_chart()
 
     def visualize_time_line(self):
         features = self.fetch_filtered_features()
@@ -473,12 +520,18 @@ class MainWindow(QWidget):
             QMessageBox.warning(self, 'Error', "Please select recordings and features to visualize.")
             return
 
-        self.clear_visualisation()
-        ax = self.canvas.figure.add_subplot(111)
-
         try:
-            all_table_data = self.visualization.plot_time_series(ax, features)
-            self.canvas.draw()
+            fig, all_table_data = self.visualization.plot_time_series(features)
+            # Show only specific mode bar buttons
+            config = {
+                'modeBarButtons': [
+                    ['zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d']
+                ],
+                'displayModeBar': True,
+                'displaylogo': False
+            }
+            html = fig.to_html(include_plotlyjs='cdn', config=config)
+            self.plot_view.setHtml(html)
 
             if all_table_data is not None:
                 self.create_table(all_table_data, self.raw_data_table)
@@ -491,15 +544,21 @@ class MainWindow(QWidget):
             QMessageBox.warning(self, 'Error', "Please select recordings and features to visualize.")
             return
 
-        self.clear_visualisation()
-        ax = self.canvas.figure.add_subplot(111)
-
         try:
-            histogram_data = self.visualization.plot_histogram(ax, features)
-            self.canvas.draw()
+            fig, histogram_data = self.visualization.plot_histogram(features)
+            config = {
+                'modeBarButtons': [
+                    ['zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d']
+                ],
+                'displayModeBar': True,
+                'displaylogo': False
+            }
+            html = fig.to_html(include_plotlyjs='cdn', config=config)
+            self.plot_view.setHtml(html)
 
             if histogram_data is not None:
                 self.create_table(histogram_data, self.raw_data_table)
+
         except ValueError as ve:
             QMessageBox.critical(self, 'Plotting Error', str(ve))
             print(f"Error while plotting histogram: {ve}")
@@ -510,15 +569,23 @@ class MainWindow(QWidget):
             QMessageBox.warning(self, 'Error', "Please select recordings and features to visualize.")
             return
 
-        self.clear_visualisation()
-        ax = self.canvas.figure.add_subplot(111)
-
         try:
-            boxplot_data = self.visualization.plot_boxplot(ax, features)
-            self.canvas.draw()
+            fig, boxplot_data = self.visualization.plot_boxplot(features)
+
+            config = {
+                'modeBarButtons': [
+                    ['zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d']
+                ],
+                'displayModeBar': True,
+                'displaylogo': False
+            }
+
+            html = fig.to_html(include_plotlyjs='cdn', config=config)
+            self.plot_view.setHtml(html)
 
             if boxplot_data is not None:
                 self.create_table(boxplot_data, self.raw_data_table)
+
         except ValueError as ve:
             QMessageBox.critical(self, 'Plotting Error', str(ve))
             print(f"Error while plotting boxplot: {ve}")
@@ -529,12 +596,18 @@ class MainWindow(QWidget):
             QMessageBox.warning(self, 'Error', "Please select recordings and features to visualize.")
             return
 
-        self.clear_visualisation()
-        ax = self.canvas.figure.add_subplot(111, polar=True)
-
         try:
-            radar_df_original, radar_df_normalized = self.visualization.plot_radar_chart(ax, features)
-            self.canvas.draw()
+            fig, (radar_df_original, radar_df_normalized) = self.visualization.plot_radar_chart(features)
+
+            config = {
+                'modeBarButtons': [
+                    ['zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d']
+                ],
+                'displayModeBar': True,
+                'displaylogo': False
+            }
+            html = fig.to_html(include_plotlyjs='cdn', config=config)
+            self.plot_view.setHtml(html)
 
             if radar_df_original is not None:
                 self.create_table(radar_df_original, self.raw_data_table)
@@ -546,7 +619,7 @@ class MainWindow(QWidget):
     def visualize_vowel_chart(self):
         """
         Visualize the vowel chart based on current selections.
-        Fetches phoneme data filtered for vowels before visualization.
+        Fetches vowel data for selected recordings.
         """
         selections = self.get_current_selections()
         analysis_level = selections['analysis_level']
@@ -570,13 +643,14 @@ class MainWindow(QWidget):
             return
 
         flat_vowel_data = []
+        print(flat_vowel_data)
         for _, phoneme_list in vowel_data.items():
             for phoneme in phoneme_list:
                 if "F1" in phoneme and "F2" in phoneme:
                     flat_vowel_data.append({
                         "F1": phoneme["F1"],
                         "F2": phoneme["F2"],
-                        "Phoneme": phoneme["Phoneme"],
+                        "Vowel": phoneme["Phoneme"],
                         "Recording": phoneme.get("Recording"),
                         "Word": phoneme.get("Word")
                     })
@@ -585,12 +659,19 @@ class MainWindow(QWidget):
             QMessageBox.information(self, 'No Vowels', "No vowel data found for the selected selections.")
             return
 
-        self.clear_visualisation()
-        ax = self.canvas.figure.add_subplot(111)
-
         try:
-            vowel_df_original, vowel_df_normalized = self.visualization.plot_vowel_chart(ax, flat_vowel_data)
-            self.canvas.draw()
+            fig, (vowel_df_original, vowel_df_normalized) = self.visualization.plot_vowel_chart(flat_vowel_data)
+
+            config = {
+                'modeBarButtons': [
+                    ['zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d']
+                ],
+                'displayModeBar': True,
+                'displaylogo': False
+            }
+
+            html = fig.to_html(include_plotlyjs='cdn', config=config)
+            self.plot_view.setHtml(html)
 
             if vowel_df_original is not None:
                 self.create_table(vowel_df_original, self.raw_data_table)
@@ -617,34 +698,18 @@ class MainWindow(QWidget):
                 table_widget.setItem(row, col, QTableWidgetItem(value))
 
     def clear_visualisation(self):
-        self.canvas.figure.clear()
+        # Clear the plot view by setting empty HTML
+        self.plot_view.setHtml("<html><body></body></html>")
         self.raw_data_table.clearContents()
         self.raw_data_table.setRowCount(0)
         self.raw_data_table.setColumnCount(0)
         self.normalized_data_table.clearContents()
         self.normalized_data_table.setRowCount(0)
         self.normalized_data_table.setColumnCount(0)
-        self.canvas.draw()
-
 
     def save_visualization_as_picture(self):
-        file_path, _ = QFileDialog.getSaveFileName(
-            self, "Save Visualization As", "", "PNG Image (*.png);;JPEG Image (*.jpg);;All Files (*)"
-        )
-        if file_path:
-            try:
-                VisualizationExporter.save_canvas_as_image(self.canvas, file_path)
-            except RuntimeError as e:
-                QMessageBox.critical(self, "Error", str(e))
-
+        pass
+    def save_plot_html_as_image(self, html, file_path):
+        pass
     def export_visualization_data_as_json(self):
-        file_path, _ = QFileDialog.getSaveFileName(
-            self, "Export Data As", "", "JSON Files (*.json);;All Files (*)"
-        )
-        if file_path:
-            try:
-                VisualizationExporter.export_table_data_as_json(
-                    self.raw_data_table, self.normalized_data_table, file_path
-                )
-            except RuntimeError as e:
-                QMessageBox.critical(self, "Error", str(e))
+        pass
