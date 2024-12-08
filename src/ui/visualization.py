@@ -1,23 +1,50 @@
 import numpy as np
 import pandas as pd
-import seaborn as sns
 import math
 from src.normalization import Normalization
-
+import plotly.graph_objects as go
+import plotly.express as px
 
 class Visualization:
     def __init__(self):
-        sns.set(style='ticks', context='notebook')
+        px.defaults.template = "plotly_white"
+        self.default_fontsize = 10
+        self.legend_fontsize = 10
+        self.title_fontsize = 12
+        self.label_fontsize = 10
 
-    def plot_time_series(self, ax, features_dict):
+    def configure_legend(self, fig):
+        """
+        Configure legend horizontal, positioned at the bottom.
+        """
+        fig.update_layout(
+            legend=dict(
+                orientation="h",
+                yanchor="top",
+                y=-0.2,
+                xanchor="center",
+                x=0.5,
+                font=dict(
+                    size=self.legend_fontsize,
+                    color="black"
+                ),
+                title=dict(
+                    text="",
+                    font=dict(size=self.legend_fontsize)
+                )
+            ),
+            margin=dict(l=40, r=40, t=60, b=80)  # Bottom margins for legend
+        )
+
+    def plot_time_series(self, features_dict):
         """
         Plot time-series data from frame_values for multiple recordings and features.
 
         Args:
-            ax: Matplotlib axis object to plot on.
             features_dict (dict): Dictionary containing features and frame values.
 
         Returns:
+            plotly.graph_objects.Figure: Interactive time-series figure.
             pd.DataFrame: Combined table data for all features across the timeline.
         """
         if not features_dict:
@@ -25,6 +52,9 @@ class Visualization:
 
         # Collect all DataFrames in a list
         data_frames = []
+
+        # Item number counter to handle multiple occurrences
+        item_nr = {}
 
         for recording_id, features in features_dict.items():
             for feature in features:
@@ -34,6 +64,11 @@ class Visualization:
 
                 if not frame_values or not feature_names:
                     continue
+
+                # Assign item number based on (Recording, Item) pair
+                key = (recording_id, unique_text)
+                item_nr[key] = item_nr.get(key, 0) + 1
+                nr = item_nr[key]
 
                 # Extract timestamps and values
                 timestamps = [fv[0] for fv in frame_values]
@@ -47,41 +82,70 @@ class Visualization:
                 df.insert(0, 'Time', timestamps)
                 df['Recording'] = recording_id
                 df['Item'] = unique_text
+                df['Nr'] = nr
                 data_frames.append(df)
 
         if not data_frames:
             raise ValueError("No valid frame_values found in features_dict.")
 
-        # Concatenate all dataframe
+        # Concatenate all dataframes
         combined_df = pd.concat(data_frames, ignore_index=True)
-        combined_df.set_index('Time', inplace=True)
-        combined_df.sort_index(inplace=True)
+        combined_df['Time'] = pd.to_numeric(combined_df['Time'], errors='coerce')
+        combined_df.dropna(subset=['Time'], inplace=True)
 
-        # Plot each feature
-        grouped = combined_df.groupby(['Recording', 'Item'])
-        for (recording_id, item), group in grouped:
-            for feature_name in feature_names:
-                if feature_name in group.columns:
-                    label = f"{recording_id} - {item} - {feature_name}"
-                    ax.plot(
-                        group.index,
-                        group[feature_name],
-                        label=label,
-                        marker='o',
-                        linestyle='-',
-                        linewidth=2,
-                        alpha=0.8
-                    )
+        # Sort
+        combined_df.sort_values(['Recording', 'Time'], inplace=True)
 
-        ax.set_title("Time-Series Visualization")
-        ax.set_xlabel("Time (seconds)")
-        ax.set_ylabel("Feature Value")
-        ax.legend(loc='upper left', bbox_to_anchor=(1, 1))
-        ax.grid(True)
+        # Create unique id for each item
+        combined_df['Recording-Item-Nr'] = (
+            combined_df['Recording'] + " - " + combined_df['Item'] + " - " + combined_df['Nr'].astype(str)
+        )
 
-        return combined_df.reset_index()
+        melted_df = combined_df.melt(
+            id_vars=['Time', 'Recording', 'Item', 'Nr', 'Recording-Item-Nr'],
+            var_name='Feature',
+            value_name='Value'
+        )
 
-    def plot_histogram(self, ax, features_dict):
+        # Unique recordings and features
+        unique_recordings = melted_df['Recording'].nunique()
+        unique_features = melted_df['Feature'].nunique()
+
+        # Multiple recordings and one feature
+        if unique_recordings > 1 and unique_features == 1:
+            color_column = 'Recording'
+
+        # One recording and multiple features
+        elif unique_recordings == 1 and unique_features > 1:
+            color_column = 'Feature'
+
+        # Plot using Plotly Express
+        fig = px.line(
+            melted_df,
+            x='Time',
+            y='Value',
+            color=color_column,
+            markers=True,
+            title="Time-Series Visualization",
+            labels={
+                'Time': 'Time (seconds)',
+                'Value': 'Feature Value',
+                'Recording-Item-Nr': 'Recording - Item - Nr',
+                'Feature': 'Feature',
+                'Recording': 'Recording',
+                'Item': 'Item',
+                'Nr': 'Nr'
+            },
+            hover_data={
+                'Recording-Item-Nr': False
+            },
+        )
+
+        self.configure_legend(fig)
+
+        return fig, combined_df.reset_index(drop=True)
+
+    def plot_histogram(self, features_dict):
         """
         Plot histograms of a selected feature for multiple recordings.
         """
@@ -112,7 +176,6 @@ class Visualization:
                 if not frame_values:
                     continue
                 feature_index = feature_names.index(selected_feature)
-                # Extract the feature values for the selected feature
                 values = [fv[1][feature_index] for fv in frame_values if len(fv[1]) > feature_index]
                 all_values.extend(values)
 
@@ -123,9 +186,17 @@ class Visualization:
         num_bins = int(1 + math.log2(len(all_values))) if len(all_values) > 0 else 10
         bins = np.linspace(all_values.min(), all_values.max(), num_bins + 1)
 
+        # Create bin labels for the DataFrame
+        bin_labels = []
+        for i in range(len(bins) - 1):
+            lower_bound = bins[i]
+            upper_bound = bins[i + 1]
+            label = f'{lower_bound:.2f} to {upper_bound:.2f}'
+            bin_labels.append(label)
+
         all_recording_data = {}
 
-        # Plot histograms for each (Recording, Text) pair
+        # Collect histogram counts per bin per recording
         for recording_id, features_list in features_dict.items():
             for feature in features_list:
                 feature_names = list(feature.get("mean", {}).keys())
@@ -139,30 +210,45 @@ class Visualization:
                 if not values:
                     continue
                 label = f"{recording_id} - {feature.get('text', 'Unknown')}"
-                ax.hist(values, bins=bins, alpha=0.5, label=label)
                 hist_values, _ = np.histogram(values, bins=bins)
                 all_recording_data[label] = hist_values
 
-        ax.set_xlabel(f"{selected_feature}")
-        ax.set_ylabel("Frequency")
-        ax.set_title(f"{selected_feature} Histogram")
-        ax.legend()
-
-        # Create bin labels
-        bin_labels = []
-        for i in range(len(bins) - 1):
-            lower_bound = bins[i]
-            upper_bound = bins[i + 1]
-            label = f'{lower_bound:.2f} to {upper_bound:.2f}'
-            bin_labels.append(label)
-
         # Create DataFrame from all_recording_data
         table_data = pd.DataFrame.from_dict(all_recording_data, orient='index', columns=bin_labels)
-        table_data.insert(0, 'Recording - Text', table_data.index)
+        table_data.reset_index(inplace=True)
+        table_data.rename(columns={'index': 'Recording - Text'}, inplace=True)
 
-        return table_data
+        melted_df = table_data.melt(
+            id_vars=['Recording - Text'],
+            var_name='Bin Range',
+            value_name='Frequency'
+        )
 
-    def plot_boxplot(self, ax, features_dict):
+        # Plot using Plotly Express
+        fig = px.histogram(
+            melted_df,
+            x='Bin Range',
+            y='Frequency',
+            color='Recording - Text',
+            barmode='group',
+            title=f"{selected_feature} Histogram",
+            labels={
+                'Bin Range': selected_feature,
+                'Frequency': 'Frequency',
+                'Recording - Text': 'Recording - Text'
+            },
+            hover_data={
+                'Recording - Text': True,
+                'Frequency': True,
+                'Bin Range': True
+            }
+        )
+
+        self.configure_legend(fig)
+
+        return fig, table_data
+
+    def plot_boxplot(self, features_dict):
         """
         Plot boxplots of a selected feature for multiple items (words or phonemes).
         """
@@ -182,11 +268,10 @@ class Visualization:
 
         selected_feature = all_feature_names[0]
 
-        data = []
-        labels = []
-        boxplot_table_data = []
-
         # Collect data per item (word or phoneme)
+        plot_data = []
+        summary_stats = []
+
         for recording_id, features_list in features_dict.items():
             for feature in features_list:
                 unique_text = feature.get("text", "Unknown")
@@ -200,11 +285,13 @@ class Visualization:
                 values = [fv[1][feature_index] for fv in frame_values if len(fv[1]) > feature_index]
 
                 if values:
-                    values = np.array(values)
-                    data.append(values)
                     label = f"{recording_id} - {unique_text}"
-                    labels.append(label)
-                    summary_stats = {
+                    plot_data.append(pd.DataFrame({
+                        'Value': values,
+                        'Recording - Item': label
+                    }))
+                    # Compute summary statistics
+                    summary_stats.append({
                         'Recording': recording_id,
                         'Item': unique_text,
                         'Min': np.min(values),
@@ -212,31 +299,42 @@ class Visualization:
                         'Median': np.median(values),
                         'Q3': np.percentile(values, 75),
                         'Max': np.max(values)
-                    }
-                    boxplot_table_data.append(summary_stats)
+                    })
 
-        if not data:
+        if not plot_data:
             raise ValueError("No data available for the selected feature.")
 
-        ax.boxplot(data, labels=labels, vert=True, patch_artist=True, whis=2.0,
-                   boxprops=dict(facecolor='lightblue', color='blue'),
-                   medianprops=dict(color='red'))
-        ax.set_ylabel(f'{selected_feature}')
-        ax.set_xlabel('Items')
-        ax.set_title(f'{selected_feature} Boxplot')
-        ax.grid(True)
+        plot_df = pd.concat(plot_data, ignore_index=True)
 
-        ax.tick_params(axis='x', rotation=45)
+        # Create interactive boxplot using Plotly Express
+        fig = px.box(
+            plot_df,
+            y='Value',
+            x='Recording - Item',
+            color='Recording - Item',
+            title=f"{selected_feature} Boxplot",
+            labels={
+                'Value': selected_feature,
+                'Recording - Item': 'Recording - Item'
+            },
+            points='all'  # Show all points
+        )
 
-        summary_table = pd.DataFrame(boxplot_table_data)
-        summary_table = summary_table[['Recording', 'Item', 'Min', 'Q1', 'Median', 'Q3', 'Max']]
+        self.configure_legend(fig)
 
-        return summary_table
+        # Create summary table DataFrame
+        summary_table = pd.DataFrame(summary_stats)
 
-    def plot_radar_chart(self, ax, features_dict):
+        return fig, summary_table
+
+    def plot_radar_chart(self, features_dict):
         """
         Plot a radar chart for multiple recordings and selected features.
+        Args:
+            features_dict (dict): Dictionary containing features and frame values.
+
         Returns:
+            plotly.graph_objects.Figure: Interactive radar chart figure.
             tuple: (original_data_df, normalized_data_df) DataFrames with the original and normalized data.
         """
         # Extract all available features from features_dict
@@ -289,59 +387,47 @@ class Visualization:
 
         # Create DataFrames for original and normalized data
         radar_df_original = pd.DataFrame(all_recording_data_original, columns=selected_features, index=recording_labels)
-        radar_df_normalized = pd.DataFrame(all_recording_data_normalized, columns=selected_features,
-                                           index=recording_labels)
+        radar_df_normalized = pd.DataFrame(all_recording_data_normalized, columns=selected_features, index=recording_labels)
         radar_df_original.reset_index(inplace=True)
         radar_df_original.rename(columns={'index': 'Recording'}, inplace=True)
         radar_df_normalized.reset_index(inplace=True)
         radar_df_normalized.rename(columns={'index': 'Recording'}, inplace=True)
 
         num_vars = len(selected_features)
-        angles = [n / float(num_vars) * 2 * math.pi for n in range(num_vars)]
+
+        # Calculate angles for radar chart
+        angles = [n / float(num_vars) * 360 for n in range(num_vars)]
         angles += angles[:1]
 
-        for idx, (index, row) in enumerate(radar_df_normalized.iterrows()):
-            values = row[selected_features].values.flatten().tolist()
+        # Create radar chart using Plotly
+        fig = go.Figure()
+
+        for idx, row in radar_df_normalized.iterrows():
+            values = row[selected_features].tolist()
             values += values[:1]
 
-            ax.plot(angles, values, label=row['Recording'], linewidth=2)
-            ax.fill(angles, values, alpha=0.25)
+            fig.add_trace(go.Scatterpolar(
+                r=values,
+                theta=selected_features + [selected_features[0]],
+                fill='toself',
+                name=row['Recording'],
+                hoverinfo='name+r+theta'
+            ))
 
-        ax.set_xticks(angles[:-1])
-        ax.set_xticklabels(selected_features)
+        self.configure_legend(fig)
 
-        ax.set_title("Radar Chart")
-        ax.legend(loc='upper right', bbox_to_anchor=(1.1, 1.1))
+        return fig, (radar_df_original, radar_df_normalized)
 
-        return radar_df_original, radar_df_normalized
-
-    def is_vowel_phoneme(self, phoneme, vowel_set):
+    def plot_vowel_chart(self, vowel_data):
         """
-        Check if the given phoneme is a vowel by cleaning it and comparing against a set of vowel phonemes.
+        Plot an interactive vowel chart using F1 and F2 frequencies for selected vowels.
 
         Args:
-            phoneme (str): The phoneme to check.
-            vowel_set (set): A set of vowel phonemes to match against.
-
-        Returns:
-            bool: True if the phoneme matches a vowel in the set, False otherwise.
-        """
-        allowed_characters = {'i', 'ii', 'e', 'ee', '{', '{{', 'y', 'yy', 'u', 'uu', 'o', 'oo', 'A', 'AA', '2', '22', '7', '77'}
-
-        phoneme_clean = ''.join(c for c in phoneme if c in allowed_characters)
-
-        return phoneme_clean in vowel_set
-
-    def plot_vowel_chart(self, ax, vowel_data):
-        """
-        Plot a vowel chart using F1 and F2 frequencies for selected vowels.
-
-        Args:
-            ax: Matplotlib axis object.
             vowel_data (list): List of vowel data dictionaries.
 
         Returns:
-            tuple: (vowel_df_original, vowel_df_normalized) DataFrames (original and normalized vowel data).
+            plotly.graph_objects.Figure: Interactive vowel chart figure.
+            tuple: (vowel_df_original, vowel_df_normalized) DataFrames with the original and normalized vowel data.
         """
         # Convert to a DataFrame
         vowel_df_original = pd.DataFrame(vowel_data)
@@ -349,40 +435,50 @@ class Visualization:
         if vowel_df_original.empty:
             raise ValueError("No valid vowel data to plot.")
 
+        # Assign Vowel Nr: the occurrence number of the vowel in the word
+        vowel_df_original['Vowel Nr'] = vowel_df_original.groupby(['Recording', 'Word']).cumcount() + 1
+
+        # Create a unique identifier for each vowel occurrence
+        vowel_df_original['Recording-Word-Vowel-VowelNr'] = (
+            vowel_df_original['Recording'] + " - " +
+            vowel_df_original['Word'] + " - " +
+            vowel_df_original['Vowel'] + " - " +
+            vowel_df_original['Vowel Nr'].astype(str)
+        )
+
         # Lobanov normalization
         vowel_df_normalized = Normalization.normalize_vowels(vowel_df_original)
 
-        # Plot normalized data
-        scatter = sns.scatterplot(
+        # Create interactive scatter plot using Plotly Express
+        fig = px.scatter(
+            vowel_df_normalized,
             x='zsc_F2',
             y='zsc_F1',
-            hue='Recording',
-            data=vowel_df_normalized,
-            ax=ax,
-            palette='husl',
-            legend='full'
+            color='Recording-Word-Vowel-VowelNr',
+            hover_data={
+                'Recording': True,
+                'Word': True,
+                'Vowel': True,
+                'Vowel Nr': True,
+                'zsc_F1': True,
+                'zsc_F2': True,
+                'Recording-Word-Vowel-VowelNr': False
+            },
+            title="Vowel Chart (Lobanov Normalization)",
+            labels={
+                'zsc_F2': 'Normalized F2 (z-score)',
+                'zsc_F1': 'Normalized F1 (z-score)',
+                'Recording-Word-Vowel-VowelNr': 'Recording - Word - Vowel - Vowel Nr'
+            },
+            text='Vowel'
         )
 
-        # Vowel symbols
-        for _, row in vowel_df_normalized.iterrows():
-            ax.text(
-                row['zsc_F2'] + 0.02, row['zsc_F1'], row['Phoneme'],
-                horizontalalignment='left', fontsize=10, color='black', fontweight='bold'
-            )
+        fig.update_traces(textposition='top center', textfont=dict(size=10))
 
-        # Invert axes
-        ax.invert_xaxis()
-        ax.invert_yaxis()
+        # Switch axes
+        fig.update_xaxes(autorange="reversed")
+        fig.update_yaxes(autorange="reversed")
 
-        ax.set_xlabel("Normalized F2 (z-score)")
-        ax.set_ylabel("Normalized F1 (z-score)")
-        ax.set_title("Vowel Chart (Lobanov Normalization)")
-        ax.grid(True)
+        self.configure_legend(fig)
 
-        # Adjust legend
-        ax.legend(title='Recording', loc='upper right', bbox_to_anchor=(1.25, 1.0))
-
-        return vowel_df_original, vowel_df_normalized
-
-
-
+        return fig, (vowel_df_original, vowel_df_normalized)
