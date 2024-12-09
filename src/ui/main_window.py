@@ -1,13 +1,15 @@
 from PyQt5.QtWidgets import (
     QWidget, QPushButton, QLabel, QFileDialog, QVBoxLayout,
     QMessageBox, QListWidget, QAbstractItemView, QSplitter,
-    QTableWidget, QTableWidgetItem, QRadioButton, QButtonGroup, QListWidgetItem, QMenu, QHBoxLayout
+    QTableWidget, QTableWidgetItem, QRadioButton, QButtonGroup, QListWidgetItem, QMenu, QHBoxLayout,
+    QGroupBox, QSpinBox
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineDownloadItem
 from src.ui.visualization import Visualization
 from src.speech_importer import SpeechImporter
 from src.visualization_data_exporter import VisualizationDataExporter
+
 
 class MainWindow(QWidget):
     def __init__(self, db):
@@ -21,29 +23,60 @@ class MainWindow(QWidget):
 
     def init_ui(self):
         self.setWindowTitle("Speech Analysis Application")
-        self.setGeometry(100, 100, 1600, 800)  # Increased width for better layout
+        main_splitter = QSplitter(Qt.Horizontal)
 
-        # Upload Section
+        # Control Panel
+        control_panel = QWidget()
+        control_layout = QVBoxLayout(control_panel)
+
+        # Import Section
         self.label = QLabel("Upload audio and TextGrid files:", self)
         self.label.setAlignment(Qt.AlignCenter)
 
         self.upload_btn = QPushButton("Import Files", self)
         self.upload_btn.clicked.connect(self.upload_files)
 
-        # List imported files
+        control_layout.addWidget(self.label)
+        control_layout.addWidget(self.upload_btn)
+
+        # Action Selection
+        action_group_box = QGroupBox("Select Action", self)
+        action_layout = QHBoxLayout()
+
+        self.visualize_radio = QRadioButton("Visualize")
+        self.find_similar_radio = QRadioButton("Find Similar Recordings")
+        self.visualize_radio.setChecked(True)
+
+        self.action_group = QButtonGroup(self)
+        self.action_group.addButton(self.visualize_radio)
+        self.action_group.addButton(self.find_similar_radio)
+        self.action_group.buttonClicked.connect(self.on_action_selection_changed)
+
+        action_layout.addWidget(self.visualize_radio)
+        action_layout.addWidget(self.find_similar_radio)
+        action_group_box.setLayout(action_layout)
+
+        control_layout.addWidget(action_group_box)
+
+        # Available recordings
+        control_layout.addWidget(QLabel("Available Recordings:", self))
         self.file_list_widget = QListWidget(self)
         self.file_list_widget.setSelectionMode(QAbstractItemView.MultiSelection)
         self.file_list_widget.itemSelectionChanged.connect(self.on_recordings_changed)
+        control_layout.addWidget(self.file_list_widget)
+
+        # Visualization controls
+        self.visualization_controls = QGroupBox("Visualization Controls", self)
+        viz_layout = QVBoxLayout()
 
         # Analysis level selection
         self.analysis_label = QLabel("Select Analysis Level:", self)
         self.analysis_label.setAlignment(Qt.AlignCenter)
 
-        # Radio buttons for analysis level
         self.recording_radio = QRadioButton("Recording")
         self.word_radio = QRadioButton("Word")
         self.phoneme_radio = QRadioButton("Phoneme")
-        self.recording_radio.setChecked(True)  # Default selection
+        self.recording_radio.setChecked(True)
 
         self.analysis_group = QButtonGroup(self)
         self.analysis_group.addButton(self.recording_radio)
@@ -51,17 +84,32 @@ class MainWindow(QWidget):
         self.analysis_group.addButton(self.phoneme_radio)
         self.analysis_group.buttonClicked.connect(self.on_analysis_level_changed)
 
-        # List specific items (words/phonemes)
+        viz_layout.addWidget(self.analysis_label)
+        viz_layout.addWidget(self.recording_radio)
+        viz_layout.addWidget(self.word_radio)
+        viz_layout.addWidget(self.phoneme_radio)
+
+        # Available items (words/phonemes)
+        self.item_group_box = QGroupBox("Available Items", self)
+        item_layout = QVBoxLayout()
+
         self.item_label = QLabel("Available Words/Phonemes:", self)
         self.item_label.setAlignment(Qt.AlignCenter)
+        self.item_label.setVisible(False)
 
         self.item_list = QListWidget(self)
         self.item_list.setSelectionMode(QAbstractItemView.MultiSelection)
-        self.item_list.setVisible(False)  # Initially hidden
-        self.item_label.setVisible(False)  # Initially hidden
+        self.item_list.setVisible(False)
         self.item_list.itemSelectionChanged.connect(self.on_items_changed)
 
-        # List available features
+        item_layout.addWidget(self.item_label)
+        item_layout.addWidget(self.item_list)
+        self.item_group_box.setLayout(item_layout)
+        self.item_group_box.setVisible(False)
+
+        viz_layout.addWidget(self.item_group_box)
+
+        # Available features
         self.feature_label = QLabel("Available Features:", self)
         self.feature_label.setAlignment(Qt.AlignCenter)
 
@@ -69,7 +117,10 @@ class MainWindow(QWidget):
         self.feature_list.setSelectionMode(QAbstractItemView.MultiSelection)
         self.feature_list.itemSelectionChanged.connect(self.on_features_changed)
 
-        # Visualization type selection via radio buttons
+        viz_layout.addWidget(self.feature_label)
+        viz_layout.addWidget(self.feature_list)
+
+        # Visualization type selection
         self.visualization_type_label = QLabel("Select Visualization Type:", self)
         self.visualization_type_label.setAlignment(Qt.AlignCenter)
 
@@ -79,8 +130,10 @@ class MainWindow(QWidget):
         self.boxplot_radio = QRadioButton("Boxplot")
         self.radar_radio = QRadioButton("Radar Chart")
         self.vowel_chart_radio = QRadioButton("Vowel Chart")
+        self.time_line_radio.setChecked(True)
+        self.viz_type = 'time_line'
 
-        self.time_line_radio.setChecked(True)  # Default selection
+        self.viz_radio_group.buttonClicked.connect(self.on_viz_type_changed)
 
         self.viz_radio_group.addButton(self.time_line_radio)
         self.viz_radio_group.addButton(self.histogram_radio)
@@ -88,7 +141,15 @@ class MainWindow(QWidget):
         self.viz_radio_group.addButton(self.radar_radio)
         self.viz_radio_group.addButton(self.vowel_chart_radio)
 
-        # Visualization and Export buttons
+        viz_layout.addWidget(self.visualization_type_label)
+        viz_layout.addWidget(self.time_line_radio)
+        viz_layout.addWidget(self.histogram_radio)
+        viz_layout.addWidget(self.boxplot_radio)
+        viz_layout.addWidget(self.radar_radio)
+        viz_layout.addWidget(self.vowel_chart_radio)
+
+        # Visualize/export buttons
+        viz_buttons_layout = QHBoxLayout()
         self.visualize_btn = QPushButton("Visualize", self)
         self.visualize_btn.clicked.connect(self.visualize_selected)
 
@@ -96,20 +157,83 @@ class MainWindow(QWidget):
         self.export_menu_button.clicked.connect(self.export_visualization_data_as_json)
         self.export_menu_button.setVisible(False)
 
-        # Initially disable visualization buttons
-        self.disable_visualization_buttons()
+        viz_buttons_layout.addWidget(self.visualize_btn)
+        viz_buttons_layout.addWidget(self.export_menu_button)
 
-        # Visualization panel using QWebEngineView
+        viz_layout.addLayout(viz_buttons_layout)
+
+        self.visualization_controls.setLayout(viz_layout)
+        control_layout.addWidget(self.visualization_controls)
+
+        # Find similar recordings control
+        self.find_similar_controls = QGroupBox("Find Similar Recordings", self)
+        similar_layout = QVBoxLayout()
+
+        # Base recording
+        base_recording_group_box = QGroupBox("Select Base Recording", self)
+        base_layout = QVBoxLayout()
+
+        self.base_recording_label = QLabel("Choose a Base Recording:", self)
+        self.base_recording_label.setAlignment(Qt.AlignCenter)
+
+        self.base_recording_list = QListWidget(self)
+        self.base_recording_list.setObjectName("base_recording_list")
+        self.base_recording_list.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.base_recording_list.itemSelectionChanged.connect(self.on_base_recording_changed)
+
+        base_layout.addWidget(self.base_recording_label)
+        base_layout.addWidget(self.base_recording_list)
+        base_recording_group_box.setLayout(base_layout)
+
+        similar_layout.addWidget(base_recording_group_box)
+
+        # Number of similar recordings
+        num_similar_group_box = QGroupBox("Number of Similar Recordings", self)
+        num_similar_layout = QHBoxLayout()
+
+        self.num_similar_label = QLabel("Enter N:", self)
+        self.num_similar_spinbox = QSpinBox(self)
+        self.num_similar_spinbox.setMinimum(1)
+        self.num_similar_spinbox.setMaximum(100)
+        self.num_similar_spinbox.setValue(5)
+
+        num_similar_layout.addWidget(self.num_similar_label)
+        num_similar_layout.addWidget(self.num_similar_spinbox)
+        num_similar_group_box.setLayout(num_similar_layout)
+
+        similar_layout.addWidget(num_similar_group_box)
+
+        # Find similar button
+        self.find_similar_btn = QPushButton("Find Similar", self)
+        self.find_similar_btn.clicked.connect(self.visualize_similarity)
+        self.find_similar_btn.setEnabled(False)
+
+        similar_layout.addWidget(self.find_similar_btn)
+
+        self.find_similar_controls.setLayout(similar_layout)
+        self.find_similar_controls.setVisible(False)
+
+        control_layout.addWidget(self.find_similar_controls)
+        control_layout.addStretch()
+
+        # Visualization and data tables
+        vis_data_splitter = QSplitter(Qt.Vertical)
+
+        # Visualization
         self.plot_view = QWebEngineView(self)
         self.plot_view.page().profile().downloadRequested.connect(self.handle_download)
 
-        # Data tables panel
+        visualization_panel = QWidget()
+        visualization_layout = QVBoxLayout(visualization_panel)
+        visualization_layout.addWidget(self.plot_view)
+
+        # Data tables
         self.raw_data_table = QTableWidget(self)
         self.normalized_data_table = QTableWidget(self)
         raw_data_label = QLabel("Raw Data", self)
         normalized_data_label = QLabel("Normalized Data", self)
         data_tables_panel = QWidget()
-        data_tables_layout = QHBoxLayout(data_tables_panel)  # Changed to Horizontal layout
+        data_tables_layout = QHBoxLayout(data_tables_panel)
 
         # Wrap each table with a vertical layout including labels
         raw_data_layout = QVBoxLayout()
@@ -123,71 +247,19 @@ class MainWindow(QWidget):
         data_tables_layout.addLayout(raw_data_layout)
         data_tables_layout.addLayout(normalized_data_layout)
 
-        # Control panel layout
-        control_panel = QWidget()
-        control_layout = QVBoxLayout(control_panel)
-
-        control_layout.addWidget(self.label)
-        control_layout.addWidget(self.upload_btn)
-
-        control_layout.addWidget(QLabel("Available Recordings:", self))
-        control_layout.addWidget(self.file_list_widget)
-
-        # Analysis level selection
-        control_layout.addWidget(self.analysis_label)
-        control_layout.addWidget(self.recording_radio)
-        control_layout.addWidget(self.word_radio)
-        control_layout.addWidget(self.phoneme_radio)
-
-        # Feature and item selection
-        control_layout.addWidget(self.item_label)
-        control_layout.addWidget(self.item_list)
-
-        control_layout.addWidget(self.feature_label)
-        control_layout.addWidget(self.feature_list)
-
-        # Visualization type selection
-        control_layout.addWidget(self.visualization_type_label)
-        control_layout.addWidget(self.time_line_radio)
-        control_layout.addWidget(self.histogram_radio)
-        control_layout.addWidget(self.boxplot_radio)
-        control_layout.addWidget(self.radar_radio)
-        control_layout.addWidget(self.vowel_chart_radio)
-
-        # Visualization and Export buttons layout
-        viz_buttons_layout = QHBoxLayout()
-        viz_buttons_layout.addWidget(self.visualize_btn)
-        viz_buttons_layout.addWidget(self.export_menu_button)
-        control_layout.addLayout(viz_buttons_layout)
-
-        # Visualization panel and data panel split
-        vis_data_splitter = QSplitter(Qt.Vertical)
-
-        # Visualization panel
-        visualization_panel = QWidget()
-        visualization_layout = QVBoxLayout(visualization_panel)
-        visualization_layout.addWidget(self.plot_view)
-
-        # Data tables panel
         vis_data_splitter.addWidget(visualization_panel)
         vis_data_splitter.addWidget(data_tables_panel)
         vis_data_splitter.setStretchFactor(0, 6)
         vis_data_splitter.setStretchFactor(1, 0)
 
-        # Main layout with splitter
-        main_splitter = QSplitter(Qt.Horizontal)
         main_splitter.addWidget(control_panel)
         main_splitter.addWidget(vis_data_splitter)
         main_splitter.setStretchFactor(0, 1)
         main_splitter.setStretchFactor(1, 3)
 
-        # Final layout
         main_layout = QVBoxLayout()
         main_layout.addWidget(main_splitter)
         self.setLayout(main_layout)
-
-        control_layout.setContentsMargins(10, 10, 10, 10)
-        data_tables_layout.setContentsMargins(10, 10, 10, 10)
 
     def load_existing_recordings(self):
         self.file_list_widget.clear()
@@ -228,6 +300,26 @@ class MainWindow(QWidget):
         self.update_visualization_buttons()
         self.clear_visualisation()
 
+        # Base recording list for find similar
+        selected_recordings = [item.text() for item in self.file_list_widget.selectedItems()]
+        if self.find_similar_controls.isVisible():
+            self.base_recording_list.clear()
+            self.base_recording_list.addItems(selected_recordings)
+
+    def on_action_selection_changed(self):
+        """
+        Toggle visibility of control sections based on selected action.
+        """
+        if self.visualize_radio.isChecked():
+            self.visualization_controls.setVisible(True)
+            self.find_similar_controls.setVisible(False)
+            self.clear_similarity_results()
+        elif self.find_similar_radio.isChecked():
+            self.visualization_controls.setVisible(False)
+            self.find_similar_controls.setVisible(True)
+            self.find_similar_btn.setEnabled(False)
+            self.clear_visualisation()
+
     def on_analysis_level_changed(self):
         self.update_feature_cache()
         self.update_feature_list()
@@ -244,13 +336,34 @@ class MainWindow(QWidget):
         self.update_visualization_buttons()
         self.clear_visualisation()
 
+    def on_viz_type_changed(self):
+        if self.time_line_radio.isChecked():
+            self.viz_type = 'time_line'
+        elif self.histogram_radio.isChecked():
+            self.viz_type = 'histogram'
+        elif self.boxplot_radio.isChecked():
+            self.viz_type = 'boxplot'
+        elif self.radar_radio.isChecked():
+            self.viz_type = 'radar'
+        elif self.vowel_chart_radio.isChecked():
+            self.viz_type = 'vowel_chart'
+
+        self.update_visualization_buttons()
+
     def get_selected_analysis_level(self):
         if self.recording_radio.isChecked():
             return 'recording'
         elif self.phoneme_radio.isChecked():
             return 'phoneme'
-        else:
+        elif self.word_radio.isChecked():
             return 'word'
+
+    def on_base_recording_changed(self):
+        """
+        Enable the find similar button if a base recording is selected.
+        """
+        selected = len(self.base_recording_list.selectedItems()) > 0
+        self.find_similar_btn.setEnabled(selected)
 
     def get_current_selections(self):
         selected_recordings = [item.text() for item in self.file_list_widget.selectedItems()]
@@ -258,6 +371,11 @@ class MainWindow(QWidget):
         selected_items = [item.data(Qt.UserRole) for item in
                           self.item_list.selectedItems()] if analysis_level != 'recording' else []
         selected_features = [item.text() for item in self.feature_list.selectedItems()]
+
+        print({'recordings': selected_recordings,
+            'analysis_level': analysis_level,
+            'items': selected_items,
+            'features': selected_features})
         return {
             'recordings': selected_recordings,
             'analysis_level': analysis_level,
@@ -390,16 +508,18 @@ class MainWindow(QWidget):
         self.item_list.clearSelection()
 
         if analysis_level == 'recording':
-            self.item_label.hide()
+            self.item_group_box.setVisible(False)
             self.item_list.hide()
+            self.item_label.hide()
             self.item_list.blockSignals(False)
             return
 
         features = self.cached_features
 
         if not features:
-            self.item_label.hide()
+            self.item_group_box.setVisible(False)
             self.item_list.hide()
+            self.item_label.hide()
             self.item_list.blockSignals(False)
             return
 
@@ -421,29 +541,23 @@ class MainWindow(QWidget):
                 item = QListWidgetItem(item_text)
                 item.setData(Qt.UserRole, feature_id)
                 self.item_list.addItem(item)
+            self.item_group_box.setVisible(True)
             self.item_label.show()
             self.item_list.show()
         else:
-            self.item_label.hide()
+            self.item_group_box.setVisible(False)
             self.item_list.hide()
+            self.item_label.hide()
 
         self.item_list.blockSignals(False)
+
+
+
 
     def update_visualization_buttons(self):
         selections = self.get_current_selections()
         analysis_level = selections['analysis_level']  # 'recording', 'word', or 'phoneme'
-        selected_viz = None
-
-        if self.time_line_radio.isChecked():
-            selected_viz = 'time_line'
-        elif self.histogram_radio.isChecked():
-            selected_viz = 'histogram'
-        elif self.boxplot_radio.isChecked():
-            selected_viz = 'boxplot'
-        elif self.radar_radio.isChecked():
-            selected_viz = 'radar'
-        elif self.vowel_chart_radio.isChecked():
-            selected_viz = 'vowel_chart'
+        selected_viz = self.viz_type
 
         visualize_enabled = False
         num_features = len(selections['features'])
@@ -471,25 +585,18 @@ class MainWindow(QWidget):
 
 
         elif selected_viz == 'vowel_chart':
-            visualize_enabled = len(selections['recordings']) > 0 and analysis_level in ['recording', 'word', 'phoneme'] and num_features > 0
+            visualize_enabled = len(selections['recordings']) > 0 and analysis_level in ['recording', 'word', 'phoneme']
+
+        print(visualize_enabled)
 
         self.visualize_btn.setEnabled(visualize_enabled)
+
 
     def disable_visualization_buttons(self):
         self.visualize_btn.setEnabled(False)
 
     def visualize_selected(self):
-        selected_viz = None
-        if self.time_line_radio.isChecked():
-            selected_viz = 'time_line'
-        elif self.histogram_radio.isChecked():
-            selected_viz = 'histogram'
-        elif self.boxplot_radio.isChecked():
-            selected_viz = 'boxplot'
-        elif self.radar_radio.isChecked():
-            selected_viz = 'radar'
-        elif self.vowel_chart_radio.isChecked():
-            selected_viz = 'vowel_chart'
+        selected_viz = self.viz_type
 
         if not selected_viz:
             QMessageBox.warning(self, 'Error', "Please select a visualization type.")
@@ -612,6 +719,7 @@ class MainWindow(QWidget):
                 'displayModeBar': True,
                 'displaylogo': False
             }
+
             html = fig.to_html(include_plotlyjs='cdn', config=config)
             self.plot_view.setHtml(html)
 
@@ -692,6 +800,9 @@ class MainWindow(QWidget):
         except ValueError as ve:
             QMessageBox.critical(self, 'Plotting Error', str(ve))
 
+    def visualize_similarity(self):
+        pass
+
     def create_table(self, dataframe, table_widget):
         table_widget.clearContents()
         table_widget.setRowCount(0)
@@ -749,3 +860,16 @@ class MainWindow(QWidget):
 
         else:
             QMessageBox.information(self, "There is no data to export.")
+
+
+
+
+    def clear_similarity_results(self):
+        """
+        Clears the similarity results from the tables and visualization.
+        """
+        self.raw_data_table.clearContents()
+        self.raw_data_table.setRowCount(0)
+        self.raw_data_table.setColumnCount(0)
+        self.plot_view.setHtml("<html><body></body></html>")
+        self.export_menu_button.setVisible(False)
