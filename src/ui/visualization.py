@@ -1,3 +1,5 @@
+import logging
+
 import numpy as np
 import pandas as pd
 import math
@@ -38,7 +40,7 @@ class Visualization:
 
     def plot_time_series(self, features_dict):
         """
-        Plot time-series data from frame_values for multiple recordings and features.
+        Plot time-series data from frame_values for multiple recordings, words, or phonemes.
 
         Args:
             features_dict (dict): Dictionary containing features and frame values.
@@ -49,6 +51,8 @@ class Visualization:
         """
         if not features_dict:
             raise ValueError("No features provided for plotting.")
+
+        logging.debug("Starting plot_time_series with features_dict: %s", features_dict)
 
         # Collect all DataFrames in a list
         data_frames = []
@@ -110,38 +114,59 @@ class Visualization:
         # Unique recordings and features
         unique_recordings = melted_df['Recording'].nunique()
         unique_features = melted_df['Feature'].nunique()
+        unique_items = melted_df['Item'].nunique()
 
-        # Multiple recordings and one feature
-        if unique_recordings > 1 and unique_features == 1:
+        # Determine color column based on the data
+        if 'Item' in melted_df.columns and unique_items > 1:
+            color_column = 'Item'
+
+        elif unique_recordings > 1 and unique_features == 1:
             color_column = 'Recording'
 
-        # One recording and multiple features
         elif unique_recordings == 1 and unique_features > 1:
             color_column = 'Feature'
 
+        elif unique_recordings > 1 and unique_features > 1:
+            # Combine Recording and Feature for coloring
+            melted_df['Recording-Feature'] = melted_df['Recording'] + " - " + melted_df['Feature']
+            color_column = 'Recording-Feature'
+
+        else:
+            color_column = 'Feature'
+
+        # Check if color_column exists in melted_df
+        if color_column not in melted_df.columns:
+            raise ValueError(f"Color column '{color_column}' does not exist in the data.")
+
         # Plot using Plotly Express
-        fig = px.line(
-            melted_df,
-            x='Time',
-            y='Value',
-            color=color_column,
-            markers=True,
-            title="Time-Series Visualization",
-            labels={
-                'Time': 'Time (seconds)',
-                'Value': 'Feature Value',
-                'Recording-Item-Nr': 'Recording - Item - Nr',
-                'Feature': 'Feature',
-                'Recording': 'Recording',
-                'Item': 'Item',
-                'Nr': 'Nr'
-            },
-            hover_data={
-                'Recording-Item-Nr': False
-            },
-        )
+        try:
+            fig = px.line(
+                melted_df,
+                x='Time',
+                y='Value',
+                color=color_column,
+                markers=True,
+                labels={
+                    'Time': 'Time (seconds)',
+                    'Value': 'Feature Value',
+                    'Recording-Item-Nr': 'Recording - Item - Nr',
+                    'Feature': 'Feature',
+                    'Recording': 'Recording',
+                    'Item': 'Item',
+                    'Nr': 'Nr',
+                    'Recording-Feature': 'Recording - Feature'
+                },
+                hover_data={
+                    'Recording-Item-Nr': False
+                },
+            )
+        except Exception as e:
+            logging.error("Plotly failed to create the figure: %s", e)
+            raise ValueError(f"Failed to create the plot: {e}")
 
         self.configure_legend(fig)
+
+        logging.debug("Successfully created time-series plot.")
 
         return fig, combined_df.reset_index(drop=True)
 
@@ -165,7 +190,7 @@ class Visualization:
 
         selected_feature = all_feature_names[0]
 
-        # Collect all values for the selected feature
+        # Collect all values for the selected feature across all recordings
         all_values = []
         for features_list in features_dict.values():
             for feature in features_list:
@@ -176,6 +201,7 @@ class Visualization:
                 if not frame_values:
                     continue
                 feature_index = feature_names.index(selected_feature)
+                # Extract feature values ensuring the index is within bounds
                 values = [fv[1][feature_index] for fv in frame_values if len(fv[1]) > feature_index]
                 all_values.extend(values)
 
@@ -183,16 +209,13 @@ class Visualization:
             raise ValueError("Selected feature not found in the data.")
 
         all_values = np.array(all_values)
-        num_bins = int(1 + math.log2(len(all_values))) if len(all_values) > 0 else 10
+
+        # Determine the number of bins using Sturges' formula
+        num_bins = int(math.ceil(1 + math.log2(len(all_values)))) if len(all_values) > 0 else 10
         bins = np.linspace(all_values.min(), all_values.max(), num_bins + 1)
 
-        # Create bin labels for the DataFrame
-        bin_labels = []
-        for i in range(len(bins) - 1):
-            lower_bound = bins[i]
-            upper_bound = bins[i + 1]
-            label = f'{lower_bound:.2f} to {upper_bound:.2f}'
-            bin_labels.append(label)
+        # Create bin labels for clarity
+        bin_labels = [f'{bins[i]:.2f} to {bins[i + 1]:.2f}' for i in range(len(bins) - 1)]
 
         all_recording_data = {}
 
@@ -224,16 +247,16 @@ class Visualization:
             value_name='Frequency'
         )
 
-        # Plot using Plotly Express
-        fig = px.histogram(
+        # Plot using Plotly Express as a bar chart
+        fig = px.bar(
             melted_df,
             x='Bin Range',
             y='Frequency',
             color='Recording - Text',
             barmode='group',
-            title=f"{selected_feature} Histogram",
+            title=f"{selected_feature} Frequency Distribution",
             labels={
-                'Bin Range': selected_feature,
+                'Bin Range': f"{selected_feature} Range",
                 'Frequency': 'Frequency',
                 'Recording - Text': 'Recording - Text'
             },
@@ -242,6 +265,12 @@ class Visualization:
                 'Frequency': True,
                 'Bin Range': True
             }
+        )
+
+        fig.update_layout(
+            yaxis_title="Frequency",
+            xaxis_title=f"{selected_feature} Range",
+            title=f"{selected_feature} Frequency Distribution",
         )
 
         self.configure_legend(fig)
@@ -312,7 +341,6 @@ class Visualization:
             y='Value',
             x='Recording - Item',
             color='Recording - Item',
-            title=f"{selected_feature} Boxplot",
             labels={
                 'Value': selected_feature,
                 'Recording - Item': 'Recording - Item'
