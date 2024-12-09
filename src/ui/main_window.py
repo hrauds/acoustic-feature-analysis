@@ -431,17 +431,9 @@ class MainWindow(QWidget):
 
     def update_visualization_buttons(self):
         selections = self.get_current_selections()
-        recordings_selected = len(selections['recordings']) > 0
-        analysis_level_selected = selections['analysis_level'] in ['recording', 'word', 'phoneme']
-        items_selected = True
-
-        if selections['analysis_level'] != 'recording':
-            items_selected = len(selections['items']) > 0
-
-        features_selected_count = len(selections['features'])
-
-        # Visualization type selection
+        analysis_level = selections['analysis_level']  # 'recording', 'word', or 'phoneme'
         selected_viz = None
+
         if self.time_line_radio.isChecked():
             selected_viz = 'time_line'
         elif self.histogram_radio.isChecked():
@@ -454,21 +446,32 @@ class MainWindow(QWidget):
             selected_viz = 'vowel_chart'
 
         visualize_enabled = False
+        num_features = len(selections['features'])
 
-        if selected_viz in ['time_line', 'histogram', 'boxplot', 'radar']:
-            if recordings_selected and analysis_level_selected and items_selected:
-                if selected_viz in ['histogram', 'boxplot']:
-                    visualize_enabled = features_selected_count == 1
-                elif selected_viz == 'time_line':
-                    if (len(selections['recordings']) > 1 or
-                        (selections['analysis_level'] != 'recording' and len(selections['items']) > 1)):
-                        visualize_enabled = features_selected_count == 1
-                    else:
-                        visualize_enabled = features_selected_count >= 1
-                elif selected_viz == 'radar':
-                    visualize_enabled = features_selected_count >= 1
+        if selected_viz in ['time_line', 'histogram', 'boxplot']:
+            if analysis_level == 'recording':
+                num_recordings = len(selections['recordings'])
+
+                if num_recordings > 1 and num_features == 1:
+                    visualize_enabled = True
+
+                elif num_recordings == 1 and num_features >= 1:
+                    visualize_enabled = True
+
+            elif analysis_level in ['word', 'phoneme']:
+                num_items = len(selections['items'])
+
+                if num_items > 1 and num_features == 1:
+                    visualize_enabled = True
+
+                elif num_items == 1 and num_features >= 1:
+                    visualize_enabled = True
+        elif selected_viz == 'radar':
+            visualize_enabled = len(selections['recordings']) > 0 and analysis_level in ['recording', 'word', 'phoneme'] and num_features > 0
+
+
         elif selected_viz == 'vowel_chart':
-            visualize_enabled = recordings_selected and analysis_level_selected
+            visualize_enabled = len(selections['recordings']) > 0 and analysis_level in ['recording', 'word', 'phoneme'] and num_features > 0
 
         self.visualize_btn.setEnabled(visualize_enabled)
 
