@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import (
     QWidget, QPushButton, QLabel, QFileDialog, QVBoxLayout,
     QMessageBox, QListWidget, QAbstractItemView, QSplitter,
-    QTableWidget, QTableWidgetItem, QRadioButton, QButtonGroup, QListWidgetItem, QMenu, QHBoxLayout,
+    QTableWidget, QTableWidgetItem, QRadioButton, QButtonGroup, QListWidgetItem, QHBoxLayout,
     QGroupBox, QSpinBox
 )
 from PyQt5.QtCore import Qt
@@ -9,7 +9,7 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineDownloadItem
 from src.ui.visualization import Visualization
 from src.speech_importer import SpeechImporter
 from src.visualization_data_exporter import VisualizationDataExporter
-
+from src.analysis_tools import prepare_feature_matrix
 
 class MainWindow(QWidget):
     def __init__(self, db):
@@ -29,7 +29,7 @@ class MainWindow(QWidget):
         control_panel = QWidget()
         control_layout = QVBoxLayout(control_panel)
 
-        # Import Section
+        # Import section
         self.label = QLabel("Upload audio and TextGrid files:", self)
         self.label.setAlignment(Qt.AlignCenter)
 
@@ -39,21 +39,21 @@ class MainWindow(QWidget):
         control_layout.addWidget(self.label)
         control_layout.addWidget(self.upload_btn)
 
-        # Action Selection
+        # Action selection
         action_group_box = QGroupBox("Select Action", self)
         action_layout = QHBoxLayout()
 
         self.visualize_radio = QRadioButton("Visualize")
-        self.find_similar_radio = QRadioButton("Find Similar Recordings")
+        self.analyze_radio = QRadioButton("Analyze Similarity")
         self.visualize_radio.setChecked(True)
 
         self.action_group = QButtonGroup(self)
         self.action_group.addButton(self.visualize_radio)
-        self.action_group.addButton(self.find_similar_radio)
+        self.action_group.addButton(self.analyze_radio)
         self.action_group.buttonClicked.connect(self.on_action_selection_changed)
 
         action_layout.addWidget(self.visualize_radio)
-        action_layout.addWidget(self.find_similar_radio)
+        action_layout.addWidget(self.analyze_radio)
         action_group_box.setLayout(action_layout)
 
         control_layout.addWidget(action_group_box)
@@ -89,7 +89,7 @@ class MainWindow(QWidget):
         viz_layout.addWidget(self.word_radio)
         viz_layout.addWidget(self.phoneme_radio)
 
-        # Available items (words/phonemes)
+        # Available items
         self.item_group_box = QGroupBox("Available Items", self)
         item_layout = QVBoxLayout()
 
@@ -120,7 +120,7 @@ class MainWindow(QWidget):
         viz_layout.addWidget(self.feature_label)
         viz_layout.addWidget(self.feature_list)
 
-        # Visualization type selection
+        # Visualization type
         self.visualization_type_label = QLabel("Select Visualization Type:", self)
         self.visualization_type_label.setAlignment(Qt.AlignCenter)
 
@@ -165,33 +165,25 @@ class MainWindow(QWidget):
         self.visualization_controls.setLayout(viz_layout)
         control_layout.addWidget(self.visualization_controls)
 
-        # Find similar recordings control
-        self.find_similar_controls = QGroupBox("Find Similar Recordings", self)
-        similar_layout = QVBoxLayout()
+        # Analysis control
+        self.analysis_controls = QGroupBox("Analyze Similarity", self)
+        analysis_layout = QVBoxLayout()
 
-        # Base recording
-        base_recording_group_box = QGroupBox("Select Base Recording", self)
-        base_layout = QVBoxLayout()
+        # Select target recording
+        target_recording_group_box = QGroupBox("Select Target Recording", self)
+        target_layout = QVBoxLayout()
+        self.target_recording_list = QListWidget(self)
+        self.target_recording_list.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.target_recording_list.itemSelectionChanged.connect(self.on_target_recording_changed)
 
-        self.base_recording_label = QLabel("Choose a Base Recording:", self)
-        self.base_recording_label.setAlignment(Qt.AlignCenter)
-
-        self.base_recording_list = QListWidget(self)
-        self.base_recording_list.setObjectName("base_recording_list")
-        self.base_recording_list.setSelectionMode(QAbstractItemView.SingleSelection)
-        self.base_recording_list.itemSelectionChanged.connect(self.on_base_recording_changed)
-
-        base_layout.addWidget(self.base_recording_label)
-        base_layout.addWidget(self.base_recording_list)
-        base_recording_group_box.setLayout(base_layout)
-
-        similar_layout.addWidget(base_recording_group_box)
+        target_layout.addWidget(self.target_recording_list)
+        target_recording_group_box.setLayout(target_layout)
+        analysis_layout.addWidget(target_recording_group_box)
 
         # Number of similar recordings
         num_similar_group_box = QGroupBox("Number of Similar Recordings", self)
         num_similar_layout = QHBoxLayout()
-
-        self.num_similar_label = QLabel("Enter N:", self)
+        self.num_similar_label = QLabel("N:", self)
         self.num_similar_spinbox = QSpinBox(self)
         self.num_similar_spinbox.setMinimum(1)
         self.num_similar_spinbox.setMaximum(100)
@@ -200,20 +192,51 @@ class MainWindow(QWidget):
         num_similar_layout.addWidget(self.num_similar_label)
         num_similar_layout.addWidget(self.num_similar_spinbox)
         num_similar_group_box.setLayout(num_similar_layout)
+        analysis_layout.addWidget(num_similar_group_box)
 
-        similar_layout.addWidget(num_similar_group_box)
+        # Analysis: Select visualisation
+        visualization_method_box = QGroupBox("Select Visualization", self)
+        visualization_method_layout = QVBoxLayout()
 
-        # Find similar button
-        self.find_similar_btn = QPushButton("Find Similar", self)
-        self.find_similar_btn.clicked.connect(self.visualize_similarity)
-        self.find_similar_btn.setEnabled(False)
+        self.cluster_radio = QRadioButton("Similarity Cluster (PCA, KNN)")
+        self.score_bars_radio = QRadioButton("Similarity Score Bars")
+        self.cluster_radio.setChecked(True)
 
-        similar_layout.addWidget(self.find_similar_btn)
+        self.analysis_viz_group = QButtonGroup(self)
+        self.analysis_viz_group.addButton(self.cluster_radio)
+        self.analysis_viz_group.addButton(self.score_bars_radio)
+        self.analysis_viz_group.buttonClicked.connect(self.on_analysis_viz_changed)
 
-        self.find_similar_controls.setLayout(similar_layout)
-        self.find_similar_controls.setVisible(False)
+        visualization_method_layout.addWidget(self.cluster_radio)
+        visualization_method_layout.addWidget(self.score_bars_radio)
 
-        control_layout.addWidget(self.find_similar_controls)
+        self.distance_method_group = QGroupBox("Distance Method", self)
+        distance_method_layout = QVBoxLayout()
+        self.pca_distance_radio = QRadioButton("PCA Distance")
+        self.cosine_distance_radio = QRadioButton("Original Feature Cosine Distance")
+
+        self.distance_group = QButtonGroup(self)
+        self.distance_group.addButton(self.pca_distance_radio)
+        self.distance_group.addButton(self.cosine_distance_radio)
+
+        distance_method_layout.addWidget(self.pca_distance_radio)
+        distance_method_layout.addWidget(self.cosine_distance_radio)
+        self.distance_method_group.setLayout(distance_method_layout)
+
+        visualization_method_layout.addWidget(self.distance_method_group)
+        visualization_method_box.setLayout(visualization_method_layout)
+        analysis_layout.addWidget(visualization_method_box)
+
+        # Analyze button
+        self.analyze_btn = QPushButton("Analyze", self)
+        self.analyze_btn.clicked.connect(self.analyze_similarity)
+        self.analyze_btn.setEnabled(False)
+        analysis_layout.addWidget(self.analyze_btn)
+
+        self.analysis_controls.setLayout(analysis_layout)
+        self.analysis_controls.setVisible(False)
+        control_layout.addWidget(self.analysis_controls)
+
         control_layout.addStretch()
 
         # Visualization and data tables
@@ -235,7 +258,6 @@ class MainWindow(QWidget):
         data_tables_panel = QWidget()
         data_tables_layout = QHBoxLayout(data_tables_panel)
 
-        # Wrap each table with a vertical layout including labels
         raw_data_layout = QVBoxLayout()
         raw_data_layout.addWidget(raw_data_label)
         raw_data_layout.addWidget(self.raw_data_table)
@@ -260,6 +282,20 @@ class MainWindow(QWidget):
         main_layout = QVBoxLayout()
         main_layout.addWidget(main_splitter)
         self.setLayout(main_layout)
+
+
+    def on_analysis_viz_changed(self):
+        if self.cluster_radio.isChecked():
+            self.distance_group.setExclusive(False)
+            self.pca_distance_radio.setChecked(False)
+            self.cosine_distance_radio.setChecked(False)
+            self.distance_group.setExclusive(True)
+
+            self.pca_distance_radio.setEnabled(False)
+            self.cosine_distance_radio.setEnabled(False)
+        else:
+            self.pca_distance_radio.setEnabled(True)
+            self.cosine_distance_radio.setEnabled(True)
 
     def load_existing_recordings(self):
         self.file_list_widget.clear()
@@ -300,11 +336,10 @@ class MainWindow(QWidget):
         self.update_visualization_buttons()
         self.clear_visualisation()
 
-        # Base recording list for find similar
         selected_recordings = [item.text() for item in self.file_list_widget.selectedItems()]
-        if self.find_similar_controls.isVisible():
-            self.base_recording_list.clear()
-            self.base_recording_list.addItems(selected_recordings)
+        if self.analysis_controls.isVisible():
+            self.target_recording_list.clear()
+            self.target_recording_list.addItems(selected_recordings)
 
     def on_action_selection_changed(self):
         """
@@ -312,13 +347,13 @@ class MainWindow(QWidget):
         """
         if self.visualize_radio.isChecked():
             self.visualization_controls.setVisible(True)
-            self.find_similar_controls.setVisible(False)
-            self.clear_similarity_results()
-        elif self.find_similar_radio.isChecked():
-            self.visualization_controls.setVisible(False)
-            self.find_similar_controls.setVisible(True)
-            self.find_similar_btn.setEnabled(False)
+            self.analysis_controls.setVisible(False)
             self.clear_visualisation()
+        elif self.analyze_radio.isChecked():
+            self.visualization_controls.setVisible(False)
+            self.analysis_controls.setVisible(True)
+            self.clear_visualisation()
+            self.analyze_btn.setEnabled(False)
 
     def on_analysis_level_changed(self):
         self.update_feature_cache()
@@ -358,24 +393,16 @@ class MainWindow(QWidget):
         elif self.word_radio.isChecked():
             return 'word'
 
-    def on_base_recording_changed(self):
-        """
-        Enable the find similar button if a base recording is selected.
-        """
-        selected = len(self.base_recording_list.selectedItems()) > 0
-        self.find_similar_btn.setEnabled(selected)
+    def on_target_recording_changed(self):
+        selected = len(self.target_recording_list.selectedItems()) > 0
+        self.analyze_btn.setEnabled(selected)
 
     def get_current_selections(self):
         selected_recordings = [item.text() for item in self.file_list_widget.selectedItems()]
         analysis_level = self.get_selected_analysis_level()
-        selected_items = [item.data(Qt.UserRole) for item in
-                          self.item_list.selectedItems()] if analysis_level != 'recording' else []
+        selected_items = [item.data(Qt.UserRole) for item in self.item_list.selectedItems()] if analysis_level != 'recording' else []
         selected_features = [item.text() for item in self.feature_list.selectedItems()]
 
-        print({'recordings': selected_recordings,
-            'analysis_level': analysis_level,
-            'items': selected_items,
-            'features': selected_features})
         return {
             'recordings': selected_recordings,
             'analysis_level': analysis_level,
@@ -403,6 +430,7 @@ class MainWindow(QWidget):
         selections = self.get_current_selections()
         selected_items = selections['items']
         selected_features = selections['features']
+        analysis_level = selections['analysis_level']
 
         # Create a copy of cached features
         all_features = self.cached_features.copy()
@@ -413,56 +441,43 @@ class MainWindow(QWidget):
         if analysis_level != 'recording' and selected_items:
             filtered_all_features = {}
             for rec_id, features in all_features.items():
-                filtered_features = [
-                    feature for feature in features
-                    if feature.get("_id") in selected_items
-                ]
-                if filtered_features:
-                    filtered_all_features[rec_id] = filtered_features
-
+                filtered_feats = [f for f in features if f.get("_id") in selected_items]
+                if filtered_feats:
+                    filtered_all_features[rec_id] = filtered_feats
             all_features = filtered_all_features
 
         # If specific features are selected, further filter the features
         if selected_features:
             filtered = {}
-            for rec_id, features in all_features.items():
-                filtered_features = []
-                for feature in features:
-                    # Filter the mean dictionary to include only selected features
-                    mean_filtered = {k: v for k, v in feature.get("mean", {}).items() if k in selected_features}
+            for rec_id, feats in all_features.items():
+                filtered_feats = []
+                for feat in feats:
+                    mean_filtered = {k: v for k, v in feat.get("mean", {}).items() if k in selected_features}
+                    feature_names = list(feat.get("mean", {}).keys())
+                    feature_indices = [i for i, k in enumerate(feature_names) if k in selected_features]
 
-                    # Get feature names
-                    feature_names_ordered = list(feature.get("mean", {}).keys())
-                    feature_indices = [i for i, k in enumerate(feature_names_ordered) if k in selected_features]
-
-                    # Filter frame_values to include only selected features
                     frame_values_filtered = []
-                    for timestamp, values in feature.get("frame_values", []):
+                    for timestamp, values in feat.get("frame_values", []):
                         if values and feature_indices:
-                            selected_values = [values[i] for i in feature_indices]
-                            frame_values_filtered.append((timestamp, selected_values))
+                            selected_vals = [values[i] for i in feature_indices]
+                            frame_values_filtered.append((timestamp, selected_vals))
                         else:
                             frame_values_filtered.append((timestamp, []))
 
-                    # Build the filtered feature dictionary
-                    filtered_feature = {
-                        "text": feature.get("text", ""),
+                    filtered_feat = {
+                        "text": feat.get("text", ""),
                         "mean": mean_filtered,
                         "frame_values": frame_values_filtered
                     }
-                    filtered_features.append(filtered_feature)
+                    filtered_feats.append(filtered_feat)
 
-                if filtered_features:
-                    filtered[rec_id] = filtered_features
-
+                if filtered_feats:
+                    filtered[rec_id] = filtered_feats
             all_features = filtered
-            print(f"Features after feature selection: {all_features}")
 
         return all_features
 
     def update_feature_list(self):
-        all_features = set()
-
         selections = self.get_current_selections()
         selected_items = selections['items']
         analysis_level = selections['analysis_level']
@@ -478,15 +493,16 @@ class MainWindow(QWidget):
 
         self.feature_list.setSelectionMode(QAbstractItemView.MultiSelection)
 
+        all_features = set()
         if analysis_level != 'recording' and selected_items:
-            for rec_id, feature_list in features.items():
-                for feature in feature_list:
-                    if feature.get("_id") in selected_items:
-                        all_features.update(feature.get("mean", {}).keys())
+            for rec_id, feat_list in features.items():
+                for feat in feat_list:
+                    if feat.get("_id") in selected_items:
+                        all_features.update(feat.get("mean", {}).keys())
         else:
-            for feature_list in features.values():
-                for feature in feature_list:
-                    all_features.update(feature.get("mean", {}).keys())
+            for feat_list in features.values():
+                for feat in feat_list:
+                    all_features.update(feat.get("mean", {}).keys())
 
         self.feature_list.blockSignals(True)
         self.feature_list.clear()
@@ -524,22 +540,21 @@ class MainWindow(QWidget):
             return
 
         items_by_recording = []
-        for rec_id, feature_list in features.items():
-            recording_items = []
-            for feature in feature_list:
-                item_text = feature.get('text', '').strip()
-                timestamp = feature.get('frame_values', [])[0][0] if feature.get('frame_values') else None
+        for rec_id, feat_list in features.items():
+            rec_items = []
+            for feat in feat_list:
+                item_text = feat.get('text', '').strip()
+                timestamp = feat.get('frame_values', [])[0][0] if feat.get('frame_values') else None
                 if item_text and timestamp is not None:
-                    feature_id = feature.get('_id')
-                    recording_items.append((timestamp, f"{rec_id} - {item_text}", feature_id))
-
-            recording_items = sorted(recording_items, key=lambda x: x[0])
-            items_by_recording.extend(recording_items)
+                    feature_id = feat.get('_id')
+                    rec_items.append((timestamp, f"{rec_id} - {item_text}", feature_id))
+            rec_items = sorted(rec_items, key=lambda x: x[0])
+            items_by_recording.extend(rec_items)
 
         if items_by_recording:
-            for _, item_text, feature_id in items_by_recording:
-                item = QListWidgetItem(item_text)
-                item.setData(Qt.UserRole, feature_id)
+            for _, it_text, feat_id in items_by_recording:
+                item = QListWidgetItem(it_text)
+                item.setData(Qt.UserRole, feat_id)
                 self.item_list.addItem(item)
             self.item_group_box.setVisible(True)
             self.item_label.show()
@@ -551,43 +566,29 @@ class MainWindow(QWidget):
 
         self.item_list.blockSignals(False)
 
-
-
-
     def update_visualization_buttons(self):
         selections = self.get_current_selections()
-        analysis_level = selections['analysis_level']  # 'recording', 'word', or 'phoneme'
+        analysis_level = selections['analysis_level']
         selected_viz = self.viz_type
+        num_features = len(selections['features'])
 
         visualize_enabled = False
-        num_features = len(selections['features'])
 
         if selected_viz in ['time_line', 'histogram', 'boxplot']:
             if analysis_level == 'recording':
                 num_recordings = len(selections['recordings'])
-
-                if num_recordings > 1 and num_features == 1:
+                if (num_recordings > 1 and num_features == 1) or (num_recordings == 1 and num_features >= 1):
                     visualize_enabled = True
-
-                elif num_recordings == 1 and num_features >= 1:
-                    visualize_enabled = True
-
-            elif analysis_level in ['word', 'phoneme']:
+            else:
                 num_items = len(selections['items'])
-
-                if num_items > 1 and num_features == 1:
-                    visualize_enabled = True
-
-                elif num_items == 1 and num_features >= 1:
+                if (num_items > 1 and num_features == 1) or (num_items == 1 and num_features >= 1):
                     visualize_enabled = True
         elif selected_viz == 'radar':
-            visualize_enabled = len(selections['recordings']) > 0 and analysis_level in ['recording', 'word', 'phoneme'] and num_features > 0
-
-
+            if len(selections['recordings']) > 0 and analysis_level in ['recording', 'word', 'phoneme'] and num_features > 0:
+                visualize_enabled = True
         elif selected_viz == 'vowel_chart':
-            visualize_enabled = len(selections['recordings']) > 0 and analysis_level in ['recording', 'word', 'phoneme']
-
-        print(visualize_enabled)
+            if len(selections['recordings']) > 0 and analysis_level in ['recording', 'word', 'phoneme']:
+                visualize_enabled = True
 
         self.visualize_btn.setEnabled(visualize_enabled)
 
@@ -621,27 +622,10 @@ class MainWindow(QWidget):
     def visualize_time_line(self):
         features = self.fetch_filtered_features()
         if not features:
-            QMessageBox.warning(self, 'Error', "Please select recordings and features to visualize.")
             return
-
         try:
             fig, all_table_data = self.visualization.plot_time_series(features)
-            # Show only specific mode bar buttons
-            config = {
-                'modeBarButtons': [
-                    ['zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d', 'toImage']
-                ],
-                'displayModeBar': True,
-                'displaylogo': False
-            }
-            html = fig.to_html(include_plotlyjs='cdn', config=config)
-            self.plot_view.setHtml(html)
-
-            if all_table_data is not None:
-                self.create_table(all_table_data, self.raw_data_table)
-
-            self.export_menu_button.setVisible(True)
-
+            self.display_figure(fig, all_table_data)
         except ValueError as ve:
             QMessageBox.critical(self, 'Plotting Error', str(ve))
 
@@ -653,22 +637,7 @@ class MainWindow(QWidget):
 
         try:
             fig, histogram_data = self.visualization.plot_histogram(features)
-            config = {
-                'modeBarButtons': [
-                    ['zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d', 'toImage']
-                ],
-                'displayModeBar': True,
-                'displaylogo': False
-            }
-            html = fig.to_html(include_plotlyjs='cdn', config=config)
-            self.plot_view.setHtml(html)
-
-            if histogram_data is not None:
-                self.create_table(histogram_data, self.raw_data_table)
-
-            self.export_menu_button.setVisible(True)
-
-
+            self.display_figure(fig, histogram_data)
         except ValueError as ve:
             QMessageBox.critical(self, 'Plotting Error', str(ve))
             print(f"Error while plotting histogram: {ve}")
@@ -681,24 +650,7 @@ class MainWindow(QWidget):
 
         try:
             fig, boxplot_data = self.visualization.plot_boxplot(features)
-
-            config = {
-                'modeBarButtons': [
-                    ['zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d', 'toImage']
-                ],
-                'displayModeBar': True,
-                'displaylogo': False
-            }
-
-            html = fig.to_html(include_plotlyjs='cdn', config=config)
-            self.plot_view.setHtml(html)
-
-            if boxplot_data is not None:
-                self.create_table(boxplot_data, self.raw_data_table)
-
-            self.export_menu_button.setVisible(True)
-
-
+            self.display_figure(fig, boxplot_data)
         except ValueError as ve:
             QMessageBox.critical(self, 'Plotting Error', str(ve))
             print(f"Error while plotting boxplot: {ve}")
@@ -711,25 +663,7 @@ class MainWindow(QWidget):
 
         try:
             fig, (radar_df_original, radar_df_normalized) = self.visualization.plot_radar_chart(features)
-
-            config = {
-                'modeBarButtons': [
-                    ['zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d', 'toImage']
-                ],
-                'displayModeBar': True,
-                'displaylogo': False
-            }
-
-            html = fig.to_html(include_plotlyjs='cdn', config=config)
-            self.plot_view.setHtml(html)
-
-            if radar_df_original is not None:
-                self.create_table(radar_df_original, self.raw_data_table)
-            if radar_df_normalized is not None:
-                self.create_table(radar_df_normalized, self.normalized_data_table)
-
-            self.export_menu_button.setVisible(True)
-
+            self.display_figure(fig, radar_df_original, radar_df_normalized)
         except ValueError as ve:
             QMessageBox.critical(self, 'Plotting Error', str(ve))
 
@@ -741,9 +675,7 @@ class MainWindow(QWidget):
         selections = self.get_current_selections()
         analysis_level = selections['analysis_level']
         selected_recordings = selections['recordings']
-        selected_items = selections['items']  # Can be words or phonemes based on the level
-        print(selected_recordings)
-        print(selected_items)
+        selected_items = selections['items']
 
         try:
             if analysis_level == 'phoneme':
@@ -760,7 +692,6 @@ class MainWindow(QWidget):
             return
 
         flat_vowel_data = []
-        print(flat_vowel_data)
         for _, phoneme_list in vowel_data.items():
             for phoneme in phoneme_list:
                 if "F1" in phoneme and "F2" in phoneme:
@@ -778,30 +709,70 @@ class MainWindow(QWidget):
 
         try:
             fig, (vowel_df_original, vowel_df_normalized) = self.visualization.plot_vowel_chart(flat_vowel_data)
-
-            config = {
-                'modeBarButtons': [
-                    ['zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d', 'toImage']
-                ],
-                'displayModeBar': True,
-                'displaylogo': False
-            }
-
-            html = fig.to_html(include_plotlyjs='cdn', config=config)
-            self.plot_view.setHtml(html)
-
-            if vowel_df_original is not None:
-                self.create_table(vowel_df_original, self.raw_data_table)
-            if vowel_df_normalized is not None:
-                self.create_table(vowel_df_normalized, self.normalized_data_table)
-
-            self.export_menu_button.setVisible(True)
-
+            self.display_figure(fig, vowel_df_original, vowel_df_normalized)
         except ValueError as ve:
             QMessageBox.critical(self, 'Plotting Error', str(ve))
 
-    def visualize_similarity(self):
-        pass
+    def analyze_similarity(self):
+        target_items = self.target_recording_list.selectedItems()
+        if not target_items:
+            QMessageBox.warning(self, "Error", "Please select a target recording.")
+            return
+        target_recording = target_items[0].text()
+
+        features = self.fetch_filtered_features()
+        if not features:
+            QMessageBox.warning(self, "Error", "No features available for similarity.")
+            return
+        df = prepare_feature_matrix(features)
+        if df.empty:
+            QMessageBox.warning(self, "Error", "No valid features found for similarity.")
+            return
+
+        top_n = self.num_similar_spinbox.value()
+
+        # Similarity cluster
+        if self.cluster_radio.isChecked():
+            try:
+                fig, cluster_df = self.visualization.analyze_similarity_clusters(target_recording, df, top_n)
+                self.display_figure(fig, cluster_df)
+            except ValueError as ve:
+                QMessageBox.warning(self, "Error", str(ve))
+
+        # Similarity score bars
+        elif self.score_bars_radio.isChecked():
+            use_pca_distance = self.pca_distance_radio.isChecked()
+            method = 'pca' if use_pca_distance else 'cosine'
+            try:
+                fig, sim_df = self.visualization.analyze_similarity_scores(target_recording, df, top_n, method=method)
+                self.display_figure(fig, sim_df)
+            except ValueError as ve:
+                QMessageBox.warning(self, "Error", str(ve))
+
+    def display_figure(self, fig, raw_df=None, norm_df=None):
+        config = {
+            'modeBarButtons': [
+                ['zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d', 'toImage']
+            ],
+            'displayModeBar': True,
+            'displaylogo': False
+        }
+        html = fig.to_html(include_plotlyjs='cdn', config=config)
+        self.plot_view.setHtml(html)
+
+        self.raw_data_table.clearContents()
+        self.raw_data_table.setRowCount(0)
+        self.raw_data_table.setColumnCount(0)
+        self.normalized_data_table.clearContents()
+        self.normalized_data_table.setRowCount(0)
+        self.normalized_data_table.setColumnCount(0)
+
+        if raw_df is not None and not raw_df.empty:
+            self.create_table(raw_df, self.raw_data_table)
+        if norm_df is not None and not isinstance(norm_df, bool) and not norm_df.empty:
+            self.create_table(norm_df, self.normalized_data_table)
+
+        self.export_menu_button.setVisible(True)
 
     def create_table(self, dataframe, table_widget):
         table_widget.clearContents()
@@ -859,17 +830,4 @@ class MainWindow(QWidget):
             VisualizationDataExporter.export_table_data_as_json(self.raw_data_table)
 
         else:
-            QMessageBox.information(self, "There is no data to export.")
-
-
-
-
-    def clear_similarity_results(self):
-        """
-        Clears the similarity results from the tables and visualization.
-        """
-        self.raw_data_table.clearContents()
-        self.raw_data_table.setRowCount(0)
-        self.raw_data_table.setColumnCount(0)
-        self.plot_view.setHtml("<html><body></body></html>")
-        self.export_menu_button.setVisible(False)
+            QMessageBox.information(self, "No data to export.")
