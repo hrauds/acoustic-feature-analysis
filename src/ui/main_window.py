@@ -9,7 +9,7 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineDownloadItem
 from src.ui.visualization import Visualization
 from src.speech_importer import SpeechImporter
 from src.visualization_data_exporter import VisualizationDataExporter
-from src.analysis_tools import prepare_feature_matrix
+from src.similarity_analyzer import SimilarityAnalyzer
 
 class MainWindow(QWidget):
     def __init__(self, db):
@@ -20,6 +20,7 @@ class MainWindow(QWidget):
         self.cached_features = {}  # Cache for storing fetched features
         self.init_ui()
         self.load_existing_recordings()
+        self.similarity_analyzer = SimilarityAnalyzer()
 
     def init_ui(self):
         self.setWindowTitle("Speech Analysis Application")
@@ -724,27 +725,25 @@ class MainWindow(QWidget):
         if not features:
             QMessageBox.warning(self, "Error", "No features available for similarity.")
             return
-        df = prepare_feature_matrix(features)
+
+        df = self.similarity_analyzer.prepare_feature_matrix(features)
         if df.empty:
             QMessageBox.warning(self, "Error", "No valid features found for similarity.")
             return
 
         top_n = self.num_similar_spinbox.value()
 
-        # Similarity cluster
-        if self.cluster_radio.isChecked():
-            try:
-                fig, cluster_df = self.visualization.analyze_similarity_clusters(target_recording, df, top_n)
-                self.display_figure(fig, cluster_df)
-            except ValueError as ve:
-                QMessageBox.warning(self, "Error", str(ve))
-
         # Similarity score bars
-        elif self.score_bars_radio.isChecked():
+        if self.score_bars_radio.isChecked():
             use_pca_distance = self.pca_distance_radio.isChecked()
-            method = 'pca' if use_pca_distance else 'cosine'
+            distance = 'pca' if use_pca_distance else 'cosine'
+
             try:
-                fig, sim_df = self.visualization.analyze_similarity_scores(target_recording, df, top_n, method=method)
+                # Get similarity scores for bars from SimilarityAnalyzer
+                base, similar_list = self.similarity_analyzer.analyze_scores(target_recording, df, top_n, method=distance)
+
+                # Plot similarity bars
+                fig, sim_df = self.visualization.plot_similarity(base, similar_list)
                 self.display_figure(fig, sim_df)
             except ValueError as ve:
                 QMessageBox.warning(self, "Error", str(ve))
