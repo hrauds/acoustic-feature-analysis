@@ -6,6 +6,7 @@ import math
 from src.normalization import Normalization
 import plotly.graph_objects as go
 import plotly.express as px
+from src.similarity_analyzer import SimilarityAnalyzer
 
 class Visualization:
     def __init__(self):
@@ -14,6 +15,7 @@ class Visualization:
         self.legend_fontsize = 10
         self.title_fontsize = 12
         self.label_fontsize = 10
+        self.analyzer = SimilarityAnalyzer()
 
     def configure_legend(self, fig):
         """
@@ -510,3 +512,14 @@ class Visualization:
         self.configure_legend(fig)
 
         return fig, (vowel_df_original, vowel_df_normalized)
+
+    def plot_similarity(self, target_recording, similar_list):
+        if not similar_list:
+            raise ValueError("No similar recordings found.")
+        df_sim = pd.DataFrame(similar_list, columns=["Recording_ID", "Similarity"])
+        fig = px.bar(df_sim, x="Recording_ID", y="Similarity",
+                     title=f"Similar recordings to {target_recording}")
+        return fig, df_sim
+
+    def plot_clusters_with_similar(self, X_pca, labels, recording_ids, base_recording, similar_recordings):
+        pass
