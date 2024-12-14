@@ -17,7 +17,6 @@ class MainWindow(QWidget):
         self.visualization = Visualization()
         self.database = db
         self.speech_importer = SpeechImporter(db)
-        self.cached_features = {}  # Cache for storing fetched features
         self.init_ui()
         self.load_existing_recordings()
         self.similarity_analyzer = SimilarityAnalyzer()
@@ -126,7 +125,7 @@ class MainWindow(QWidget):
         self.visualization_type_label.setAlignment(Qt.AlignCenter)
 
         self.viz_radio_group = QButtonGroup(self)
-        self.time_line_radio = QRadioButton("Time Line Graph")
+        self.time_line_radio = QRadioButton("Timeline")
         self.histogram_radio = QRadioButton("Histogram")
         self.boxplot_radio = QRadioButton("Boxplot")
         self.radar_radio = QRadioButton("Radar Chart")
@@ -199,32 +198,19 @@ class MainWindow(QWidget):
         visualization_method_box = QGroupBox("Select Visualization", self)
         visualization_method_layout = QVBoxLayout()
 
-        self.cluster_radio = QRadioButton("Similarity Cluster (PCA, KNN)")
-        self.score_bars_radio = QRadioButton("Similarity Score Bars")
+        self.cluster_radio = QRadioButton("Features (PCA) Cosine Similarity with Clusters (KNN)")
+        self.original_feature_score_radio = QRadioButton("Features Cosine Similarity Bars")
+        self.pca_based_radio = QRadioButton("Features (PCA) Cosine Similarity Bars")
         self.cluster_radio.setChecked(True)
 
         self.analysis_viz_group = QButtonGroup(self)
         self.analysis_viz_group.addButton(self.cluster_radio)
-        self.analysis_viz_group.addButton(self.score_bars_radio)
-        self.analysis_viz_group.buttonClicked.connect(self.on_analysis_viz_changed)
+        self.analysis_viz_group.addButton(self.original_feature_score_radio)
+        self.analysis_viz_group.addButton(self.pca_based_radio)
 
         visualization_method_layout.addWidget(self.cluster_radio)
-        visualization_method_layout.addWidget(self.score_bars_radio)
-
-        self.distance_method_group = QGroupBox("Distance Method", self)
-        distance_method_layout = QVBoxLayout()
-        self.pca_distance_radio = QRadioButton("PCA Distance")
-        self.cosine_distance_radio = QRadioButton("Original Feature Cosine Distance")
-
-        self.distance_group = QButtonGroup(self)
-        self.distance_group.addButton(self.pca_distance_radio)
-        self.distance_group.addButton(self.cosine_distance_radio)
-
-        distance_method_layout.addWidget(self.pca_distance_radio)
-        distance_method_layout.addWidget(self.cosine_distance_radio)
-        self.distance_method_group.setLayout(distance_method_layout)
-
-        visualization_method_layout.addWidget(self.distance_method_group)
+        visualization_method_layout.addWidget(self.original_feature_score_radio)
+        visualization_method_layout.addWidget(self.pca_based_radio)
         visualization_method_box.setLayout(visualization_method_layout)
         analysis_layout.addWidget(visualization_method_box)
 
@@ -254,7 +240,7 @@ class MainWindow(QWidget):
         # Data tables
         self.raw_data_table = QTableWidget(self)
         self.normalized_data_table = QTableWidget(self)
-        raw_data_label = QLabel("Raw Data", self)
+        raw_data_label = QLabel("Original Data", self)
         normalized_data_label = QLabel("Normalized Data", self)
         data_tables_panel = QWidget()
         data_tables_layout = QHBoxLayout(data_tables_panel)
@@ -284,20 +270,6 @@ class MainWindow(QWidget):
         main_layout.addWidget(main_splitter)
         self.setLayout(main_layout)
 
-
-    def on_analysis_viz_changed(self):
-        if self.cluster_radio.isChecked():
-            self.distance_group.setExclusive(False)
-            self.pca_distance_radio.setChecked(False)
-            self.cosine_distance_radio.setChecked(False)
-            self.distance_group.setExclusive(True)
-
-            self.pca_distance_radio.setEnabled(False)
-            self.cosine_distance_radio.setEnabled(False)
-        else:
-            self.pca_distance_radio.setEnabled(True)
-            self.cosine_distance_radio.setEnabled(True)
-
     def load_existing_recordings(self):
         self.file_list_widget.clear()
         try:
@@ -305,7 +277,6 @@ class MainWindow(QWidget):
             for recording_id in recordings:
                 file_item = QListWidgetItem(recording_id)
                 self.file_list_widget.addItem(file_item)
-            print(f"Loaded recordings: {recordings}")
         except Exception as e:
             QMessageBox.critical(self, 'Error', f"Failed to load recordings from database: {str(e)}")
 
@@ -331,7 +302,6 @@ class MainWindow(QWidget):
             QMessageBox.information(self, 'Info', "No files selected for import.")
 
     def on_recordings_changed(self):
-        self.update_feature_cache()
         self.update_feature_list()
         self.update_item_list()
         self.update_visualization_buttons()
@@ -343,9 +313,6 @@ class MainWindow(QWidget):
             self.target_recording_list.addItems(selected_recordings)
 
     def on_action_selection_changed(self):
-        """
-        Toggle visibility of control sections based on selected action.
-        """
         if self.visualize_radio.isChecked():
             self.visualization_controls.setVisible(True)
             self.analysis_controls.setVisible(False)
@@ -357,7 +324,6 @@ class MainWindow(QWidget):
             self.analyze_btn.setEnabled(False)
 
     def on_analysis_level_changed(self):
-        self.update_feature_cache()
         self.update_feature_list()
         self.update_item_list()
         self.update_visualization_buttons()
@@ -411,34 +377,25 @@ class MainWindow(QWidget):
             'features': selected_features
         }
 
-    def update_feature_cache(self):
+    def fetch_filtered_features(self):
         selections = self.get_current_selections()
         selected_recordings = selections['recordings']
         analysis_level = selections['analysis_level']
 
-        if not selected_recordings:
-            self.cached_features = {}
-            return
+        if not selected_recordings and self.viz_type != 'vowel_chart':
+            return {}
 
+        # Fetch all features for selected recordings/analysis_level
         try:
-            self.cached_features = self.database.get_features_for_recordings(selected_recordings, analysis_level)
+            all_features = self.database.get_features_for_recordings(selected_recordings, analysis_level)
         except Exception as e:
             QMessageBox.critical(self, 'Error', f"Failed to fetch features: {str(e)}")
-            self.cached_features = {}
+            return {}
 
-    def fetch_filtered_features(self):
-        # Get current selections from the UI
-        selections = self.get_current_selections()
         selected_items = selections['items']
         selected_features = selections['features']
-        analysis_level = selections['analysis_level']
 
-        # Create a copy of cached features
-        all_features = self.cached_features.copy()
-
-        # Get the selected analysis level
-        analysis_level = selections['analysis_level']
-
+        # Filter items if we are at word/phoneme level
         if analysis_level != 'recording' and selected_items:
             filtered_all_features = {}
             for rec_id, features in all_features.items():
@@ -447,7 +404,7 @@ class MainWindow(QWidget):
                     filtered_all_features[rec_id] = filtered_feats
             all_features = filtered_all_features
 
-        # If specific features are selected, further filter the features
+        # Filter features if specific features are selected
         if selected_features:
             filtered = {}
             for rec_id, feats in all_features.items():
@@ -480,20 +437,33 @@ class MainWindow(QWidget):
 
     def update_feature_list(self):
         selections = self.get_current_selections()
-        selected_items = selections['items']
         analysis_level = selections['analysis_level']
+        selected_recordings = selections['recordings']
+        selected_items = selections['items']
 
-        features = self.cached_features
+        self.feature_list.blockSignals(True)
+        self.feature_list.clear()
+        self.feature_list.clearSelection()
 
-        if not features:
-            self.feature_list.blockSignals(True)
-            self.feature_list.clear()
+        if not selected_recordings:
             self.feature_list.setEnabled(False)
             self.feature_list.blockSignals(False)
             return
 
-        self.feature_list.setSelectionMode(QAbstractItemView.MultiSelection)
+        try:
+            features = self.database.get_features_for_recordings(selected_recordings, analysis_level)
+        except Exception as e:
+            QMessageBox.critical(self, 'Error', f"Failed to fetch features: {str(e)}")
+            self.feature_list.setEnabled(False)
+            self.feature_list.blockSignals(False)
+            return
 
+        if not features:
+            self.feature_list.setEnabled(False)
+            self.feature_list.blockSignals(False)
+            return
+
+        # Filter by selected items if word/phoneme
         all_features = set()
         if analysis_level != 'recording' and selected_items:
             for rec_id, feat_list in features.items():
@@ -505,33 +475,39 @@ class MainWindow(QWidget):
                 for feat in feat_list:
                     all_features.update(feat.get("mean", {}).keys())
 
-        self.feature_list.blockSignals(True)
-        self.feature_list.clear()
-        self.feature_list.clearSelection()
-
         if all_features:
             sorted_features = sorted(all_features)
             self.feature_list.addItems(sorted_features)
             self.feature_list.setEnabled(True)
         else:
             self.feature_list.setEnabled(False)
+
         self.feature_list.blockSignals(False)
 
     def update_item_list(self):
         analysis_level = self.get_selected_analysis_level()
+        selected_recordings = [item.text() for item in self.file_list_widget.selectedItems()]
 
         self.item_list.blockSignals(True)
         self.item_list.clear()
         self.item_list.clearSelection()
 
-        if analysis_level == 'recording':
+        if analysis_level == 'recording' or not selected_recordings:
             self.item_group_box.setVisible(False)
             self.item_list.hide()
             self.item_label.hide()
             self.item_list.blockSignals(False)
             return
 
-        features = self.cached_features
+        try:
+            features = self.database.get_features_for_recordings(selected_recordings, analysis_level)
+        except Exception as e:
+            QMessageBox.critical(self, 'Error', f"Failed to fetch features: {str(e)}")
+            self.item_group_box.setVisible(False)
+            self.item_list.hide()
+            self.item_label.hide()
+            self.item_list.blockSignals(False)
+            return
 
         if not features:
             self.item_group_box.setVisible(False)
@@ -592,7 +568,6 @@ class MainWindow(QWidget):
                 visualize_enabled = True
 
         self.visualize_btn.setEnabled(visualize_enabled)
-
 
     def disable_visualization_buttons(self):
         self.visualize_btn.setEnabled(False)
@@ -669,10 +644,6 @@ class MainWindow(QWidget):
             QMessageBox.critical(self, 'Plotting Error', str(ve))
 
     def visualize_vowel_chart(self):
-        """
-        Visualize the vowel chart based on current selections.
-        Fetches vowel data for selected recordings.
-        """
         selections = self.get_current_selections()
         analysis_level = selections['analysis_level']
         selected_recordings = selections['recordings']
@@ -716,12 +687,16 @@ class MainWindow(QWidget):
 
     def analyze_similarity(self):
         target_items = self.target_recording_list.selectedItems()
+        selections = self.get_current_selections()
+        selected = selections.get("recordings")
+
         if not target_items:
             QMessageBox.warning(self, "Error", "Please select a target recording.")
             return
-        target_recording = target_items[0].text()
 
-        features = self.fetch_filtered_features()
+        target_recording = target_items[0].text()
+        features = self.database.get_mean_features(selected)
+
         if not features:
             QMessageBox.warning(self, "Error", "No features available for similarity.")
             return
@@ -733,17 +708,42 @@ class MainWindow(QWidget):
 
         top_n = self.num_similar_spinbox.value()
 
-        # Similarity score bars
-        if self.score_bars_radio.isChecked():
-            use_pca_distance = self.pca_distance_radio.isChecked()
-            distance = 'pca' if use_pca_distance else 'cosine'
-
+        if self.cluster_radio.isChecked():
             try:
-                # Get similarity scores for bars from SimilarityAnalyzer
-                base, similar_list = self.similarity_analyzer.analyze_scores(target_recording, df, top_n, method=distance)
+                (X_pca_vis, labels, recording_ids, target_rec, similar_list,
+                 cos_sims, cos_dists) = self.similarity_analyzer.analyze_clusters(target_recording, df, top_n)
+                fig, cluster_df = self.visualization.plot_clusters_with_distances(
+                    X_pca_vis, labels, recording_ids, target_rec, similar_list, cos_sims, cos_dists
+                )
+                self.display_figure(fig, cluster_df)
 
-                # Plot similarity bars
-                fig, sim_df = self.visualization.plot_similarity(base, similar_list)
+            except ValueError as ve:
+                QMessageBox.warning(self, "Error", str(ve))
+
+        elif self.original_feature_score_radio.isChecked():
+            try:
+                target_rec, similar_list = self.similarity_analyzer.analyze_scores(
+                    target_recording, df, top_n, method='cosine'
+                )
+                fig, sim_df = self.visualization.plot_similarity_bars(
+                    target_rec, similar_list, measure_name="Original Feature Cosine Similarity"
+                )
+                self.display_figure(fig, sim_df)
+            except ValueError as ve:
+                QMessageBox.warning(self, "Error", str(ve))
+
+        elif self.pca_based_radio.isChecked():
+            try:
+                target_rec, distance_list = self.similarity_analyzer.analyze_scores(
+                    target_recording, df, top_n, method='pca_cosine_distance'
+                )
+
+                similarity_list = [(r, 1 - d) for r, d in distance_list]
+                similarity_list.sort(key=lambda x: x[1], reverse=True)
+
+                fig, sim_df = self.visualization.plot_similarity_bars(
+                    target_rec, similarity_list, measure_name="PCA Cosine Similarity"
+                )
                 self.display_figure(fig, sim_df)
             except ValueError as ve:
                 QMessageBox.warning(self, "Error", str(ve))
@@ -827,6 +827,5 @@ class MainWindow(QWidget):
             VisualizationDataExporter.export_table_data_as_json(self.normalized_data_table)
         elif self.raw_data_table.rowCount() > 0:
             VisualizationDataExporter.export_table_data_as_json(self.raw_data_table)
-
         else:
             QMessageBox.information(self, "No data to export.")

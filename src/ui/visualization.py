@@ -129,14 +129,12 @@ class Visualization:
             color_column = 'Feature'
 
         elif unique_recordings > 1 and unique_features > 1:
-            # Combine Recording and Feature for coloring
             melted_df['Recording-Feature'] = melted_df['Recording'] + " - " + melted_df['Feature']
             color_column = 'Recording-Feature'
 
         else:
             color_column = 'Feature'
 
-        # Check if color_column exists in melted_df
         if color_column not in melted_df.columns:
             raise ValueError(f"Color column '{color_column}' does not exist in the data.")
 
@@ -513,13 +511,44 @@ class Visualization:
 
         return fig, (vowel_df_original, vowel_df_normalized)
 
-    def plot_similarity(self, target_recording, similar_list):
-        if not similar_list:
-            raise ValueError("No similar recordings found.")
-        df_sim = pd.DataFrame(similar_list, columns=["Recording_ID", "Similarity"])
-        fig = px.bar(df_sim, x="Recording_ID", y="Similarity",
-                     title=f"Similar recordings to {target_recording}")
-        return fig, df_sim
+    def plot_similarity_bars(self, target_recording, measure_pairs, measure_name="Cosine Similarity"):
+        """
+        """
+        if not measure_pairs:
+            raise ValueError("No recordings found for plotting.")
+        df_measures = pd.DataFrame(measure_pairs, columns=["Recording_ID", measure_name])
+        fig = px.bar(df_measures, x="Recording_ID", y=measure_name,
+                     title=f"Top Similar to {target_recording} by {measure_name}")
+        return fig, df_measures
 
-    def plot_clusters_with_similar(self, X_pca, labels, recording_ids, base_recording, similar_recordings):
-        pass
+        return fig, df_measures
+
+    def plot_clusters_with_distances(self, X_pca, labels, recording_ids, target_recording, top_closest_list, cos_sims,
+                                     cos_dists):
+        """
+        Plot clusters and show top similar points.
+        Show both cosine similarity and cosine distance in tooltips.
+        """
+        df_plot = pd.DataFrame(X_pca, columns=["PC1", "PC2"])
+        df_plot["recording_id"] = recording_ids
+        df_plot["cluster"] = labels.astype(str)
+        df_plot["highlight"] = "None"
+        df_plot["cosine_similarity"] = cos_sims
+        df_plot["cosine_distance"] = cos_dists
+
+        if target_recording in df_plot["recording_id"].values:
+            df_plot.loc[df_plot["recording_id"] == target_recording, "highlight"] = "Target"
+
+        closest_ids = [r for r, _ in top_closest_list]
+        df_plot.loc[df_plot["recording_id"].isin(closest_ids), "highlight"] = "Closest"
+
+        fig = px.scatter(
+            df_plot, x="PC1", y="PC2", color="cluster",
+            hover_data=["recording_id", "cosine_similarity", "cosine_distance"],
+            symbol="highlight",
+            symbol_map={"None": "circle", "Target": "star", "Closest": "diamond"},
+            title="Clusters with Closest Recordings Highlighted (PCA Cosine Measures)"
+        )
+        fig.update_traces(marker=dict(size=10), selector=dict(mode="markers", legendgroup="Target"))
+        return fig, df_plot
+
