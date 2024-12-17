@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import (
     QWidget, QPushButton, QLabel, QFileDialog, QVBoxLayout,
     QMessageBox, QListWidget, QAbstractItemView, QSplitter,
     QTableWidget, QTableWidgetItem, QRadioButton, QButtonGroup, QListWidgetItem, QHBoxLayout,
-    QGroupBox, QSpinBox
+    QGroupBox, QSpinBox, QMenu
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineDownloadItem
@@ -10,6 +10,7 @@ from src.ui.visualization import Visualization
 from src.speech_importer import SpeechImporter
 from src.visualization_data_exporter import VisualizationDataExporter
 from src.similarity_analyzer import SimilarityAnalyzer
+from src.ui.recording_manager_window import RecordingsManager
 
 class MainWindow(QWidget):
     def __init__(self, db):
@@ -29,15 +30,11 @@ class MainWindow(QWidget):
         control_panel = QWidget()
         control_layout = QVBoxLayout(control_panel)
 
-        # Import section
-        self.label = QLabel("Upload audio and TextGrid files:", self)
-        self.label.setAlignment(Qt.AlignCenter)
+        # Manage Recordings button
+        self.manage_recordings_btn = QPushButton("Manage Recordings", self)
+        self.manage_recordings_btn.clicked.connect(self.open_recordings_manager)
 
-        self.upload_btn = QPushButton("Import Files", self)
-        self.upload_btn.clicked.connect(self.upload_files)
-
-        control_layout.addWidget(self.label)
-        control_layout.addWidget(self.upload_btn)
+        control_layout.addWidget(self.manage_recordings_btn)
 
         # Action selection
         action_group_box = QGroupBox("Select Action", self)
@@ -194,7 +191,7 @@ class MainWindow(QWidget):
         num_similar_group_box.setLayout(num_similar_layout)
         analysis_layout.addWidget(num_similar_group_box)
 
-        # Analysis: Select visualisation
+        # Analysis: Select visualization
         visualization_method_box = QGroupBox("Select Visualization", self)
         visualization_method_layout = QVBoxLayout()
 
@@ -270,6 +267,14 @@ class MainWindow(QWidget):
         main_layout.addWidget(main_splitter)
         self.setLayout(main_layout)
 
+    def open_recordings_manager(self):
+        """
+        Open the Recordings manager window.
+        """
+        self.manager_window = RecordingsManager(self.database, self)
+        self.manager_window.recordings_updated.connect(self.load_existing_recordings)
+        self.manager_window.exec_()
+
     def load_existing_recordings(self):
         self.file_list_widget.clear()
         try:
@@ -279,27 +284,6 @@ class MainWindow(QWidget):
                 self.file_list_widget.addItem(file_item)
         except Exception as e:
             QMessageBox.critical(self, 'Error', f"Failed to load recordings from database: {str(e)}")
-
-    def upload_files(self):
-        files, _ = QFileDialog.getOpenFileNames(
-            self, "Select Audio and TextGrid Files", "", "Audio and TextGrid Files (*.wav *.TextGrid);;All Files (*)"
-        )
-
-        if files:
-            try:
-                missing_pairs = self.speech_importer.import_files(files)
-                self.load_existing_recordings()
-                if missing_pairs:
-                    QMessageBox.warning(
-                        self,
-                        'Warning',
-                        f"The following files are missing their pairs: {', '.join(missing_pairs)}"
-                    )
-                QMessageBox.information(self, 'Success', "File import completed.")
-            except Exception as e:
-                QMessageBox.critical(self, 'Error', f"File import failed: {str(e)}")
-        else:
-            QMessageBox.information(self, 'Info', "No files selected for import.")
 
     def on_recordings_changed(self):
         self.update_feature_list()
