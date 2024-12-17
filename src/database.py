@@ -1,7 +1,7 @@
 import json
 import os
-import pickle
 import logging
+import sys
 from collections import defaultdict
 
 from bson import ObjectId
@@ -18,9 +18,6 @@ else:
 
 class Database:
     def __init__(self):
-        """
-        Initialize the database connection and define collections.
-        """
         try:
             if USE_MONGO_MOCK:
                 self.client = mongomock.MongoClient()
@@ -41,6 +38,12 @@ class Database:
         """
         Initialize the mock database with sample data.
         """
+        # Determine base path: use _MEIPASS if in PyInstaller mode
+        try:
+            base_path = sys._MEIPASS  # PyInstaller temp directory
+        except AttributeError:
+            base_path = os.path.abspath(".")  # Development environment
+
         collection_files = {
             'recordings': 'speech_analysis.recordings.json',
             'words': 'speech_analysis.words.json',
@@ -48,20 +51,19 @@ class Database:
         }
 
         for collection_name, filename in collection_files.items():
-            filepath = os.path.join('data', filename)
+            filepath = os.path.join(base_path, 'data', filename)
             if not os.path.exists(filepath):
                 logging.warning(f"Sample data file not found at {filepath}")
                 continue
 
             try:
-                with open(filepath, 'r') as f:
+                with open(filepath, 'r', encoding='utf-8') as f:
                     data = json.load(f)
                     collection = getattr(self, f"{collection_name}_col")
                     collection.insert_many(data)
                     logging.info(f"Initialized '{collection_name}' collection with sample data from {filename}.")
             except Exception as e:
                 logging.error(f"Failed to initialize sample data for '{collection_name}': {e}")
-
 
     def insert_data(self, collection_name, data_list):
         """
@@ -212,8 +214,7 @@ class Database:
                         })
 
                     features[recording_id] = formatted_features
-                    logging.info(
-                        f"Fetched {len(formatted_features)} features for recording '{recording_id}' at level '{analysis_level}'.")
+
                 else:
                     logging.warning(f"No features found for recording '{recording_id}' at level '{analysis_level}'.")
 
@@ -222,22 +223,47 @@ class Database:
             logging.error(f"Error fetching features for recordings {recording_ids} at level {analysis_level}: {e}")
             return {}
 
-    @staticmethod
-    def deserialize_frame_values(frame_values):
-        """
-        Deserialize the frame values stored in the database.
 
-        Args:
-            frame_values (bytes): Serialized frame values.
 
-        Returns:
-            dict: Deserialized frame values with timestamps and feature values.
+    def get_mean_features(self, recording_ids):
         """
+        """
+        features = {}
         try:
-            return pickle.loads(frame_values)
+            collection = self.recordings_col
+            query = {"recording_id": {"$in": recording_ids}}
+            cursor = collection.find(query)
+            features_list = list(cursor)
+
+            grouped_features = defaultdict(list)
+            for feature in features_list:
+                recording_id = feature.get("recording_id")
+                if not recording_id:
+                    logging.warning(f"Feature without a recording_id found: {feature}")
+                    continue
+                mean = feature.get("features", {}).get("mean", {})
+                formatted_mean = {key: float(value) for key, value in mean.items() if value is not None}
+
+                formatted_feature = {
+                    "_id": str(feature.get("_id")),
+                    "text": feature.get("text"),
+                    "start": feature.get("start"),
+                    "end": feature.get("end"),
+                    "mean": formatted_mean
+                }
+                grouped_features[recording_id].append(formatted_feature)
+
+            # Assign grouped features to the result dictionary
+            features = dict(grouped_features)
+
+            return features
+
         except Exception as e:
-            logging.error(f"Failed to deserialize frame values: {e}")
-            return None
+            logging.error(
+                f"Error fetching mean features for recordings {recording_ids}")
+            return {}
+
+
 
     def get_vowels(self, ids, field):
         """
@@ -254,7 +280,6 @@ class Database:
             'i', 'ii', 'e', 'ee', '{', '{{', 'y', 'yy', 'u',
             'uu', 'o', 'oo', 'a', 'aa', '2', '22', '7', '77'
         }
-
         allowed_phonemes = {phoneme.lower() for phoneme in allowed_phonemes}
 
         phoneme_dict = defaultdict(list)
@@ -285,8 +310,10 @@ class Database:
             }
 
             logging.debug(f"Querying phonemes with {field} in {ids}")
+            print(f"Querying phonemes with {field} in {ids}")
             cursor = self.phonemes_col.find({field: {"$in": ids}}, fields)
 
+            # Phoneme validation
             total_phonemes = 0
             for phoneme in cursor:
                 total_phonemes += 1
@@ -294,7 +321,8 @@ class Database:
 
                 phoneme_text = phoneme.get("text", "").lower()
 
-                if phoneme_text not in allowed_phonemes:
+                # Check if any allowed phoneme is a substring of phoneme_text
+                if not any(allowed_phoneme in phoneme_text for allowed_phoneme in allowed_phonemes):
                     logging.debug(f"Phoneme '{phoneme_text}' not in allowed_phonemes.")
                     continue  # Skip phonemes not allowed
 
@@ -315,7 +343,6 @@ class Database:
 
                 phoneme_dict[id_value].append(phoneme_data)
 
-            logging.debug(f"Total phonemes fetched: {total_phonemes}")
             return dict(phoneme_dict)
 
         except errors.PyMongoError as e:
@@ -335,3 +362,41 @@ class Database:
         except errors.PyMongoError as e:
             logging.error(f"Failed to close MongoDB connection: {e}")
             raise e
+
+    def delete_recordings(self, recording_ids):
+        """
+        Delete all documents with the given recording_ids from the
+        'phonemes', 'words', and 'recordings' collections.
+        """
+        if not isinstance(recording_ids, list):
+            raise TypeError("recording_ids must be a list of strings.")
+
+        if not recording_ids:
+            logging.warning("No recording_ids provided for deletion.")
+            return {"message": "No recording_ids provided for deletion."}
+
+        if not all(isinstance(rid, str) for rid in recording_ids):
+            raise ValueError("All recording_ids in the list must be strings.")
+
+        logging.debug(f"Attempting to delete recording_id(s): {recording_ids}")
+
+        query = {"recording_id": {"$in": recording_ids}}
+
+        collections = {
+            'phonemes': self.phonemes_col,
+            'words': self.words_col,
+            'recordings': self.recordings_col
+        }
+
+        deletion_results = {}
+
+        for collection_name, collection in collections.items():
+            try:
+                result = collection.delete_many(query)
+                deletion_results[collection_name] = {"deleted_count": result.deleted_count}
+                logging.debug(f"Deleted {result.deleted_count} documents from '{collection_name}' collection.")
+            except errors.PyMongoError as e:
+                logging.error(f"MongoDB error in '{collection_name}' collection: {e}")
+                raise RuntimeError(f"Failed to delete from '{collection_name}' collection: {e}") from e
+
+        return deletion_results
