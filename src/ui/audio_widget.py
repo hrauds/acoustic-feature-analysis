@@ -5,9 +5,6 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtWidgets import (QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QLabel, QSlider, QComboBox, QMessageBox, QStyle)
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from src.ui.visualization import Visualization
-import plotly.graph_objects as go
-import numpy as np
-from scipy.io import wavfile
 
 class AudioWidget(QWidget):
     audio_loaded_signal = pyqtSignal(str)
@@ -55,6 +52,8 @@ class AudioWidget(QWidget):
         main_layout.addLayout(controls_layout)
 
         self.waveform_view = QWebEngineView()
+        self.waveform_view.setMaximumHeight(110)
+        self.waveform_view.setMinimumHeight(110)
         main_layout.addWidget(self.waveform_view)
 
     def update_recording_list(self, recordings):
@@ -106,53 +105,10 @@ class AudioWidget(QWidget):
             self.player.stop()
             self.audio_loaded = True
 
-            sample_rate, data = wavfile.read(audio_file_path)
 
-            # Convert stereo to mono
-            if len(data.shape) > 1:
-                data = np.mean(data, axis=1)
-
-            # Downsample the data to max 10000 points
-            target_points = 10000
-            if len(data) > target_points:
-                step = len(data) // target_points
-                data = data[::step]
-                time = np.linspace(0, len(data) / sample_rate, len(data))
-            else:
-                time = np.arange(len(data)) / sample_rate
-
-            fig = go.Figure()
-            fig.add_trace(go.Scatter(
-                x=time,
-                y=data,
-                mode='lines',
-                name='waveform',
-                line=dict(color='#1f77b4', width=1)
-            ))
-
-            fig.update_layout(
-                showlegend=False,
-                margin=dict(l=40, r=20, t=20, b=40),
-                height=150,
-                plot_bgcolor='white',
-                paper_bgcolor='white',
-                xaxis=dict(
-                    showgrid=True,
-                    gridcolor='#eee',
-                    zeroline=False
-                ),
-                yaxis=dict(
-                    showgrid=True,
-                    gridcolor='#eee',
-                    zeroline=False
-                )
-            )
-
-            html = fig.to_html(
-                include_plotlyjs='cdn',
-                config={'displayModeBar': False}
-            )
-
+            # here you need to get start and end from the database
+            fig = self.visualization.plot_audio_waveform(audio_file_path)
+            html = fig.to_html(include_plotlyjs='cdn', config={'displayModeBar': False})
             self.waveform_view.setHtml(html)
             self.waveform_view.show()
 
@@ -163,7 +119,6 @@ class AudioWidget(QWidget):
             logging.error(f"Failed to load audio or create waveform: {e}")
             QMessageBox.critical(self, 'Error', f"Failed to load audio: {str(e)}")
             self.clear()
-
 
     def show_message(self, message):
         QMessageBox.warning(self, "Audio Error", message)
@@ -208,7 +163,6 @@ class AudioWidget(QWidget):
         total_time_str = format_milliseconds(duration) if duration > 0 else "00:00.000"
         self.time_label.setText(f"{current_time_str} / {total_time_str}")
 
-
     def update_waveform_visualization(self, audio_path):
         if not os.path.exists(audio_path):
             return
@@ -221,4 +175,3 @@ class AudioWidget(QWidget):
         except Exception as e:
             logging.error(f"Failed to plot waveform: {e}")
             QMessageBox.critical(self, 'Error', f"Failed to plot waveform: {str(e)}")
-
