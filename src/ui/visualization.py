@@ -364,7 +364,7 @@ class Visualization:
 
         Returns:
             plotly.graph_objects.Figure: Interactive radar chart figure.
-            tuple: (original_data_df, normalized_data_df) DataFrames with the original and normalized data.
+            pd.DataFrame: Combined DataFrame with original and normalized data.
         """
         # Extract all available features from features_dict
         all_feature_names = set()
@@ -392,11 +392,13 @@ class Visualization:
                     continue
                 feature_indices = [feature_names.index(f) for f in selected_features]
                 unique_text = feature.get("text", "Unknown")
+
                 # Extract frame values for the selected features
                 for fv in frame_values:
                     if len(fv[1]) >= len(feature_indices):
                         values = [fv[1][i] for i in feature_indices]
                         frame_values_list.append(values)
+
                 if frame_values_list:
                     # Convert to DataFrame
                     df = pd.DataFrame(frame_values_list, columns=selected_features)
@@ -416,23 +418,47 @@ class Visualization:
 
         # Create DataFrames for original and normalized data
         radar_df_original = pd.DataFrame(all_recording_data_original, columns=selected_features, index=recording_labels)
-        radar_df_normalized = pd.DataFrame(all_recording_data_normalized, columns=selected_features, index=recording_labels)
+        radar_df_normalized = pd.DataFrame(all_recording_data_normalized, columns=selected_features,
+                                           index=recording_labels)
+
         radar_df_original.reset_index(inplace=True)
         radar_df_original.rename(columns={'index': 'Recording'}, inplace=True)
         radar_df_normalized.reset_index(inplace=True)
         radar_df_normalized.rename(columns={'index': 'Recording'}, inplace=True)
 
-        num_vars = len(selected_features)
+        # Rename normalized columns to have a _normalized end
+        normalized_col_map = {col: f"{col}_normalized" for col in selected_features}
+        radar_df_normalized.rename(columns=normalized_col_map, inplace=True)
 
-        # Calculate angles for radar chart
-        angles = [n / float(num_vars) * 360 for n in range(num_vars)]
-        angles += angles[:1]
+        # Combine original and normalized data into one DataFrame
+        radar_df_combined = pd.merge(radar_df_original, radar_df_normalized, on='Recording')
 
-        # Create radar chart using Plotly
+        # Transpose the table so features are rows and recordings are columns
+        radar_df_combined_transposed = radar_df_combined.set_index('Recording').transpose().reset_index()
+        radar_df_combined_transposed.rename(columns={'index': 'Feature'}, inplace=True)
+
+        # Sort features: for each selected feature, include the normalized version if it exists
+        sorted_features = []
+        features_in_data = radar_df_combined_transposed['Feature'].tolist()
+
+        for feature in selected_features:
+            sorted_features.append(feature)
+            normalized_feature = f"{feature}_normalized"
+            if normalized_feature in features_in_data:
+                sorted_features.append(normalized_feature)
+
+        # Ensure that all sorted_features exist in the data to avoid KeyError
+        sorted_features = [feat for feat in sorted_features if feat in features_in_data]
+
+        # Reorder the DataFrame based on sorted_features
+        radar_df_combined_transposed = radar_df_combined_transposed.set_index('Feature').loc[
+            sorted_features].reset_index()
+
         fig = go.Figure()
 
         for idx, row in radar_df_normalized.iterrows():
-            values = row[selected_features].tolist()
+            # Extract normalized values in the order of selected_features
+            values = [row[f"{feature}_normalized"] for feature in selected_features]
             values += values[:1]
 
             fig.add_trace(go.Scatterpolar(
@@ -445,7 +471,7 @@ class Visualization:
 
         self.configure_legend(fig)
 
-        return fig, (radar_df_original, radar_df_normalized)
+        return fig, radar_df_combined_transposed
 
     def plot_vowel_chart(self, vowel_data):
         """
@@ -456,61 +482,78 @@ class Visualization:
 
         Returns:
             plotly.graph_objects.Figure: Interactive vowel chart figure.
-            tuple: (vowel_df_original, vowel_df_normalized) DataFrames with the original and normalized vowel data.
+            pd.DataFrame: Combined DataFrame with original and normalized vowel data.
         """
-        # Convert to a DataFrame
+        if not vowel_data:
+            raise ValueError("No vowel data provided.")
+
         vowel_df_original = pd.DataFrame(vowel_data)
+        required_columns = {'Recording', 'Word', 'Vowel', 'F1', 'F2'}
+        if vowel_df_original.empty or not required_columns.issubset(vowel_df_original.columns):
+            missing = required_columns.difference(vowel_df_original.columns)
+            raise ValueError(f"Vowel data is incomplete or missing required columns: {missing}")
 
-        if vowel_df_original.empty:
-            raise ValueError("No valid vowel data to plot.")
+        logging.debug("Original Vowel DataFrame:\n%s", vowel_df_original.head())
 
-        # Assign Vowel Nr: the occurrence number of the vowel in the word
-        vowel_df_original['Vowel Nr'] = vowel_df_original.groupby(['Recording', 'Word']).cumcount() + 1
+        try:
+            # Assign Vowel Nr and unique identifier
+            vowel_df_original['Vowel Nr'] = vowel_df_original.groupby(['Recording', 'Word']).cumcount() + 1
+            vowel_df_original['Recording-Word-Vowel-VowelNr'] = (
+                    vowel_df_original['Recording'] + " - " +
+                    vowel_df_original['Word'] + " - " +
+                    vowel_df_original['Vowel'] + " - " +
+                    vowel_df_original['Vowel Nr'].astype(str)
+            )
 
-        # Create a unique identifier for each vowel occurrence
-        vowel_df_original['Recording-Word-Vowel-VowelNr'] = (
-            vowel_df_original['Recording'] + " - " +
-            vowel_df_original['Word'] + " - " +
-            vowel_df_original['Vowel'] + " - " +
-            vowel_df_original['Vowel Nr'].astype(str)
-        )
+            logging.debug("Vowel DataFrame with Identifiers:\n%s", vowel_df_original.head())
 
-        # Lobanov normalization
-        vowel_df_normalized = Normalization.normalize_vowels(vowel_df_original)
+            # Normalize vowel data
+            normalized_vowel_df = Normalization.normalize_vowels(vowel_df_original)
+            logging.debug("Normalized Vowel DataFrame:\n%s", normalized_vowel_df.head())
 
-        # Create interactive scatter plot using Plotly Express
-        fig = px.scatter(
-            vowel_df_normalized,
-            x='zsc_F2',
-            y='zsc_F1',
-            color='Recording-Word-Vowel-VowelNr',
-            hover_data={
-                'Recording': True,
-                'Word': True,
-                'Vowel': True,
-                'Vowel Nr': True,
-                'zsc_F1': True,
-                'zsc_F2': True,
-                'Recording-Word-Vowel-VowelNr': False
-            },
-            title="Vowel Chart (Lobanov Normalization)",
-            labels={
-                'zsc_F2': 'Normalized F2 (z-score)',
-                'zsc_F1': 'Normalized F1 (z-score)',
-                'Recording-Word-Vowel-VowelNr': 'Recording - Word - Vowel - Vowel Nr'
-            },
-            text='Vowel'
-        )
+            if normalized_vowel_df.empty:
+                raise ValueError("Normalization produced no data.")
 
-        fig.update_traces(textposition='top center', textfont=dict(size=10))
+            # Assign the normalized columns
+            vowel_df_original['zsc_F1'] = normalized_vowel_df['zsc_F1']
+            vowel_df_original['zsc_F2'] = normalized_vowel_df['zsc_F2']
 
-        # Switch axes
-        fig.update_xaxes(autorange="reversed")
-        fig.update_yaxes(autorange="reversed")
+            logging.debug("Vowel DataFrame with Normalized Columns:\n%s", vowel_df_original.head())
 
-        self.configure_legend(fig)
+            # Create scatter plot
+            fig = px.scatter(
+                vowel_df_original,
+                x='zsc_F2',
+                y='zsc_F1',
+                color='Recording-Word-Vowel-VowelNr',
+                hover_data={
+                    'Recording': True,
+                    'Word': True,
+                    'Vowel': True,
+                    'Vowel Nr': True,
+                    'zsc_F1': True,
+                    'zsc_F2': True,
+                    'Recording-Word-Vowel-VowelNr': False
+                },
+                title="Vowel Chart (Lobanov Normalization)",
+                labels={
+                    'zsc_F2': 'Normalized F2 (z-score)',
+                    'zsc_F1': 'Normalized F1 (z-score)',
+                    'Recording-Word-Vowel-VowelNr': 'Recording - Word - Vowel - Vowel Nr'
+                },
+                text='Vowel'
+            )
 
-        return fig, (vowel_df_original, vowel_df_normalized)
+            fig.update_traces(textposition='top center', textfont=dict(size=10))
+            fig.update_xaxes(autorange="reversed")
+            fig.update_yaxes(autorange="reversed")
+
+            self.configure_legend(fig)
+            return fig, vowel_df_original
+
+        except Exception as e:
+            logging.error("Error while plotting vowel chart: %s", e, exc_info=True)
+            raise ValueError(f"Failed to plot vowel chart: {e}")
 
     def plot_similarity_bars(self, target_recording, measure_pairs, measure_name="Cosine Similarity"):
         """
@@ -599,5 +642,48 @@ class Visualization:
             )
         )
 
-
         return fig
+
+    def create_plotly_table(self, dataframe):
+        """
+        Create a Plotly table from a pandas DataFrame.
+        Args:
+            dataframe (pd.DataFrame): The data to display in the table.
+        Returns:
+            str: HTML string of the Plotly table.
+        """
+        try:
+            col_widths = []
+            for col in dataframe.columns:
+                # Get max length of column name and values
+                header_length = len(str(col))
+                max_content_length = dataframe[col].astype(str).str.len().max()
+                col_widths.append(max(header_length, max_content_length) * 8 + 20)
+
+            fig = go.Figure(data=[go.Table(
+                header=dict(
+                    values=list(dataframe.columns),
+                    fill_color='paleturquoise',
+                    align='left'
+                ),
+                cells=dict(
+                    values=[dataframe[col] for col in dataframe.columns],
+                    fill_color='lavender',
+                    align='left'
+                ),
+                columnwidth=col_widths
+            )])
+
+            fig.update_layout(
+                autosize=True,
+                margin=dict(l=10, r=10, t=30, b=10),
+                template='simple_white',
+            )
+
+            html = fig.to_html(include_plotlyjs='cdn', full_html=False, config=dict(displaylogo=False))
+
+            return html
+
+        except Exception as e:
+            logging.error("Error creating Plotly table: %s", e, exc_info=True)
+            raise
