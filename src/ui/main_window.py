@@ -1,8 +1,7 @@
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (
     QWidget, QPushButton, QLabel, QFileDialog,
-    QVBoxLayout, QMessageBox, QListWidget, QAbstractItemView,
-    QTableWidget, QTableWidgetItem, QRadioButton, QButtonGroup,
+    QVBoxLayout, QMessageBox, QListWidget, QAbstractItemView, QRadioButton, QButtonGroup,
     QListWidgetItem, QHBoxLayout, QGroupBox, QSpinBox, QSplitter
 )
 from PyQt5.QtCore import Qt
@@ -35,7 +34,6 @@ class MainWindow(QWidget):
         # Main horizontal splitter: Left control panel | Right
         main_hsplit = QSplitter(Qt.Horizontal, self)
 
-        # Left Control Panel
         control_panel = QWidget()
         control_layout = QVBoxLayout(control_panel)
 
@@ -144,7 +142,8 @@ class MainWindow(QWidget):
         target_recording_group_box.setLayout(target_layout)
         analysis_layout.addWidget(target_recording_group_box)
 
-        num_similar_group_box = QGroupBox("Select nr of similars to find", self)
+        # Number of Similar Recordings Group Box
+        num_similar_group_box = QGroupBox("Select Nr of Similars to Find", self)
         num_similar_layout = QHBoxLayout()
         self.num_similar_label = QLabel("Nr of similar:", self)
         self.num_similar_spinbox = QSpinBox(self)
@@ -195,30 +194,21 @@ class MainWindow(QWidget):
         middle_widget = QWidget()
         middle_layout = QVBoxLayout(middle_widget)
         self.plot_view = QWebEngineView(self)
-        self.plot_view.setMinimumHeight(100)
+        self.plot_view.setMinimumHeight(200)
         self.plot_view.page().profile().downloadRequested.connect(self.handle_download)
         middle_layout.addWidget(self.plot_view)
         right_vsplit.addWidget(middle_widget)
 
-        # Bottom section: Data tables
+        # Bottom section: Data table
         bottom_widget = QWidget()
-        bottom_layout = QHBoxLayout(bottom_widget)
-        self.raw_data_table = QTableWidget(self)
-        self.normalized_data_table = QTableWidget(self)
+        bottom_layout = QVBoxLayout(bottom_widget)
 
-        raw_data_layout = QVBoxLayout()
-        raw_data_label = QLabel("Original Data", self)
-        raw_data_layout.addWidget(raw_data_label)
-        raw_data_layout.addWidget(self.raw_data_table)
+        # Plotly Table View
+        self.table_view = QWebEngineView(self)
+        self.table_view.setMinimumHeight(100)
+        bottom_layout.addWidget(self.table_view)
 
-        normalized_data_layout = QVBoxLayout()
-        normalized_data_label = QLabel("Normalized Data", self)
-        normalized_data_layout.addWidget(normalized_data_label)
-        normalized_data_layout.addWidget(self.normalized_data_table)
-
-        bottom_layout.addLayout(raw_data_layout)
-        bottom_layout.addLayout(normalized_data_layout)
-
+        bottom_widget.setLayout(bottom_layout)
         right_vsplit.addWidget(bottom_widget)
 
         right_vsplit.setStretchFactor(0, 1)  # Audio widget
@@ -526,7 +516,7 @@ class MainWindow(QWidget):
         elif selected_viz == 'vowel_chart':
             self.visualize_vowel_chart()
 
-    def display_figure(self, fig, raw_df=None, norm_df=None):
+    def display_figure(self, fig, data_df=None):
         config = {
             'modeBarButtons': [
                 ['zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d', 'toImage']
@@ -537,18 +527,11 @@ class MainWindow(QWidget):
         html = fig.to_html(include_plotlyjs='cdn', config=config)
         self.plot_view.setHtml(html)
 
-        self.raw_data_table.clearContents()
-        self.raw_data_table.setRowCount(0)
-        self.raw_data_table.setColumnCount(0)
-        self.normalized_data_table.clearContents()
-        self.normalized_data_table.setRowCount(0)
-        self.normalized_data_table.setColumnCount(0)
-
-        if raw_df is not None and not raw_df.empty:
-            self.create_table(raw_df, self.raw_data_table)
-        if norm_df is not None and not isinstance(norm_df, bool) and not norm_df.empty:
-            self.create_table(norm_df, self.normalized_data_table)
-
+        # Update the Plotly table
+        if data_df is not None and not data_df.empty:
+            self.current_data_df = data_df.copy()  # Store the DataFrame for export
+            table_html = self.visualization.create_plotly_table(data_df)
+            self.table_view.setHtml(table_html)
         self.export_menu_button.setVisible(True)
 
     def visualize_time_line(self):
@@ -589,8 +572,8 @@ class MainWindow(QWidget):
             QMessageBox.warning(self, 'Error', "Please select recordings and features to visualize.")
             return
         try:
-            fig, (radar_df_original, radar_df_normalized) = self.visualization.plot_radar_chart(features)
-            self.display_figure(fig, radar_df_original, radar_df_normalized)
+            fig, radar_df = self.visualization.plot_radar_chart(features)
+            self.display_figure(fig, radar_df)
         except ValueError as ve:
             QMessageBox.critical(self, 'Plotting Error', str(ve))
 
@@ -631,8 +614,8 @@ class MainWindow(QWidget):
             return
 
         try:
-            fig, (vowel_df_original, vowel_df_normalized) = self.visualization.plot_vowel_chart(flat_vowel_data)
-            self.display_figure(fig, vowel_df_original, vowel_df_normalized)
+            fig, vowel_df = self.visualization.plot_vowel_chart(flat_vowel_data)
+            self.display_figure(fig, vowel_df)
         except ValueError as ve:
             QMessageBox.critical(self, 'Plotting Error', str(ve))
 
@@ -696,31 +679,18 @@ class MainWindow(QWidget):
             except ValueError as ve:
                 QMessageBox.warning(self, "Error", str(ve))
 
-    def create_table(self, dataframe, table_widget):
-        table_widget.clearContents()
-        table_widget.setRowCount(0)
-        table_widget.setColumnCount(0)
-
-        if dataframe.empty:
-            return
-
-        table_widget.setRowCount(len(dataframe))
-        table_widget.setColumnCount(len(dataframe.columns))
-        table_widget.setHorizontalHeaderLabels(dataframe.columns)
-
-        for row in range(len(dataframe)):
-            for col in range(len(dataframe.columns)):
-                value = str(dataframe.iat[row, col])
-                table_widget.setItem(row, col, QTableWidgetItem(value))
+    def create_table(self, dataframe):
+        """
+        Create and display a Plotly table in the QWebEngineView.
+        """
+        # Generate the Plotly table HTML
+        table_html = self.visualization.create_plotly_table(dataframe)
+        self.table_view.setHtml(table_html)
 
     def clear_visualisation(self):
         self.plot_view.setHtml("<html><body></body></html>")
-        self.raw_data_table.clearContents()
-        self.raw_data_table.setRowCount(0)
-        self.raw_data_table.setColumnCount(0)
-        self.normalized_data_table.clearContents()
-        self.normalized_data_table.setRowCount(0)
-        self.normalized_data_table.setColumnCount(0)
+        self.table_view.setHtml("<html><body></body></html>")
+        self.current_data_df = None
         self.export_menu_button.setVisible(False)
 
     def handle_download(self, download_item: QWebEngineDownloadItem):
@@ -738,9 +708,8 @@ class MainWindow(QWidget):
             download_item.cancel()
 
     def export_visualization_data_as_json(self):
-        if self.normalized_data_table.rowCount() > 0:
-            VisualizationDataExporter.export_table_data_as_json(self.normalized_data_table)
-        elif self.raw_data_table.rowCount() > 0:
-            VisualizationDataExporter.export_table_data_as_json(self.raw_data_table)
+        if self.data_table.rowCount() > 0:
+            VisualizationDataExporter.export_table_data_as_json(self.data_table)
         else:
             QMessageBox.information(self, "No data to export.")
+
