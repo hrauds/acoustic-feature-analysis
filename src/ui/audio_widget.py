@@ -1,10 +1,8 @@
 import logging
 import os
 from PyQt5.QtCore import Qt, QUrl, QTime, QSize, pyqtSignal
-from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtWidgets import (QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QLabel, QSlider, QComboBox, QMessageBox, QStyle)
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
-from src.ui.visualization import Visualization
 
 class AudioWidget(QWidget):
     audio_loaded_signal = pyqtSignal(str)
@@ -20,11 +18,10 @@ class AudioWidget(QWidget):
         self.player.durationChanged.connect(self.on_duration_changed)
         self.player.setNotifyInterval(50)
 
-        self.visualization = Visualization()
 
         main_layout = QVBoxLayout(self)
 
-        self.recording_combo_label = QLabel("Select Recording to Play:", self)
+        self.recording_combo_label = QLabel("Play Recording:", self)
         main_layout.addWidget(self.recording_combo_label)
 
         self.recording_combo = QComboBox()
@@ -50,11 +47,6 @@ class AudioWidget(QWidget):
         controls_layout.addWidget(self.time_label)
 
         main_layout.addLayout(controls_layout)
-
-        self.waveform_view = QWebEngineView()
-        self.waveform_view.setMaximumHeight(110)
-        self.waveform_view.setMinimumHeight(110)
-        main_layout.addWidget(self.waveform_view)
 
     def update_recording_list(self, recordings):
         self.recording_combo.clear()
@@ -99,18 +91,11 @@ class AudioWidget(QWidget):
             self.clear()
 
     def load_audio(self, audio_file_path):
-        """Load audio player and waveform visualization"""
+        """Load audio player."""
         try:
             self.player.setMedia(QMediaContent(QUrl.fromLocalFile(audio_file_path)))
             self.player.stop()
             self.audio_loaded = True
-
-
-            # here you need to get start and end from the database
-            fig = self.visualization.plot_audio_waveform(audio_file_path)
-            html = fig.to_html(include_plotlyjs='cdn', config={'displayModeBar': False})
-            self.waveform_view.setHtml(html)
-            self.waveform_view.show()
 
             if self.current_recording_id:
                 self.audio_loaded_signal.emit(self.current_recording_id)
@@ -162,16 +147,3 @@ class AudioWidget(QWidget):
         current_time_str = format_milliseconds(position)
         total_time_str = format_milliseconds(duration) if duration > 0 else "00:00.000"
         self.time_label.setText(f"{current_time_str} / {total_time_str}")
-
-    def update_waveform_visualization(self, audio_path):
-        if not os.path.exists(audio_path):
-            return
-
-        try:
-            fig = self.visualization.plot_audio_waveform(audio_path)
-            html = fig.to_html(include_plotlyjs='cdn')
-            self.waveform_view.setHtml(html)
-            self.waveform_view.show()
-        except Exception as e:
-            logging.error(f"Failed to plot waveform: {e}")
-            QMessageBox.critical(self, 'Error', f"Failed to plot waveform: {str(e)}")
