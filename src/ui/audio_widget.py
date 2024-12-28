@@ -28,41 +28,47 @@ class AudioWidget(QWidget):
         self.player.durationChanged.connect(self.on_duration_changed)
         self.player.setNotifyInterval(50)
 
+        self.init_ui()
+
+    def init_ui(self):
         main_layout = QVBoxLayout(self)
         self.setLayout(main_layout)
 
         top_layout = QHBoxLayout()
-        self.recording_label = QLabel("Select Recording:", self)
-        top_layout.addWidget(self.recording_label)
-
+        self.recording_label = QLabel("Select Recording:")
         self.recording_combo = QComboBox()
         self.recording_combo.currentIndexChanged.connect(self.on_recording_selected)
-        top_layout.addWidget(self.recording_combo)
-
-        top_layout.addStretch()
 
         self.play_pause_btn = QPushButton()
-        self.play_pause_btn.setFlat(False)
-        self.play_pause_btn.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
-        self.play_pause_btn.setIconSize(QSize(20, 20))
         self.play_pause_btn.setFixedSize(30, 30)
+        self.play_pause_btn.setIconSize(QSize(20, 20))
+        self.play_pause_btn.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
         self.play_pause_btn.clicked.connect(self.toggle_playback)
-        top_layout.addWidget(self.play_pause_btn)
 
+        top_layout.addWidget(self.recording_label)
+        top_layout.addWidget(self.recording_combo)
+        top_layout.addStretch()
+        top_layout.addWidget(self.play_pause_btn)
         main_layout.addLayout(top_layout)
 
+        # Plot widget
         self.plot_widget = pg.PlotWidget()
-        self.plot_widget.setMinimumHeight(200)
         self.plot_widget.setBackground('w')
-        main_layout.addWidget(self.plot_widget)
-
-        self.plot_item = self.plot_widget.getPlotItem()
-        self.plot_item.showGrid(x=True, y=True, alpha=0.2)
-        self.plot_item.getAxis('bottom').setPen(pg.mkPen('black'))
-        self.plot_item.getAxis('left').setPen(pg.mkPen('black'))
-        self.plot_item.getAxis('bottom').setTextPen('black')
-        self.plot_item.getAxis('left').setTextPen('black')
         self.plot_widget.setMouseEnabled(x=True, y=False)
+
+        # Configure grid and axis styles
+        plot_item = self.plot_widget.getPlotItem()
+        plot_item.showGrid(x=True, y=True, alpha=0.3)
+
+        transparent_pen = pg.mkPen(color=(0, 0, 0, 0))
+        plot_item.getAxis('bottom').setPen(transparent_pen)
+        plot_item.getAxis('left').setPen(transparent_pen)
+
+        font = pg.QtGui.QFont("Arial", 10)
+        plot_item.getAxis('bottom').setStyle(tickFont=font)
+        plot_item.getAxis('left').setStyle(tickFont=font)
+
+        main_layout.addWidget(self.plot_widget)
 
         self.waveform_curve = None
         self.playhead_line = None
@@ -77,12 +83,9 @@ class AudioWidget(QWidget):
             super().keyPressEvent(event)
 
     def update_recording_list(self, recordings):
-        """Populate combo box with recordings in data/ folder."""
+        """Update the recording selection combo box."""
         self.recording_combo.clear()
-        available = [
-            r for r in recordings
-            if os.path.exists(os.path.join('data', f"{r}.wav"))
-        ]
+        available = [r for r in recordings if os.path.exists(os.path.join('data', f"{r}.wav"))]
         if available:
             self.recording_combo.addItems(available)
             self.load_audio_for_current_selection()
@@ -104,7 +107,7 @@ class AudioWidget(QWidget):
         self.wave_y_data = None
 
     def load_audio_for_current_selection(self):
-        """Load the selected .wav from data/ folder."""
+        """Load the selected .wav file."""
         if self.recording_combo.count() == 0:
             self.clear()
             return
@@ -123,6 +126,7 @@ class AudioWidget(QWidget):
             self.clear()
 
     def load_audio(self, audio_file_path):
+        """Load the .wav file and extract waveform data."""
         try:
             self.player.setMedia(QMediaContent(QUrl.fromLocalFile(audio_file_path)))
             self.player.stop()
@@ -134,8 +138,7 @@ class AudioWidget(QWidget):
                 data = wf.readframes(n_frames)
 
             samples = np.frombuffer(data, dtype=np.int16)
-            # If stereo, average
-            if n_channels > 1:
+            if n_channels > 1:  # Stereo: average channels
                 samples = samples.reshape(-1, n_channels).mean(axis=1).astype(np.int16)
 
             self.wave_y_data = samples
@@ -149,17 +152,14 @@ class AudioWidget(QWidget):
         QMessageBox.warning(self, "Audio Error", msg)
 
     def on_state_changed(self, state):
-        """Update the play/pause icon."""
         if state == QMediaPlayer.PlayingState:
             self.play_pause_btn.setIcon(self.style().standardIcon(QStyle.SP_MediaPause))
         else:
             self.play_pause_btn.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
 
     def on_position_changed(self, pos_ms):
-        """Update the red line to match the playback time in seconds."""
-        if self.playhead_line is not None:
-            sec = pos_ms / 1000.0
-            self.playhead_line.setPos(sec)
+        if self.playhead_line:
+            self.playhead_line.setPos(pos_ms / 1000.0)
 
     def on_duration_changed(self, duration_ms):
         if not self.audio_loaded or self.wave_y_data is None:
@@ -208,4 +208,3 @@ class AudioWidget(QWidget):
 
         if 0 <= x_val <= duration_s:
             self.player.setPosition(int(x_val * 1000))
-
