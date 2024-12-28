@@ -23,6 +23,9 @@ class MainWindow(QWidget):
         self.database = db
         self.speech_importer = SpeechImporter(db)
         self.similarity_analyzer = SimilarityAnalyzer()
+        self.setWindowTitle("Speech Analysis Application")
+        self.resize(1920, 1080)
+        self.showMaximized()
 
         global_font = QFont("Arial", 12)
         self.setFont(global_font)
@@ -31,8 +34,6 @@ class MainWindow(QWidget):
         self.load_existing_recordings()
 
     def init_ui(self):
-        self.setWindowTitle("Speech Analysis Application")
-        self.resize(1400, 900)
 
         # Main Split Layout: Control Panel and Visualization Area
         main_split_layout = QSplitter(Qt.Horizontal, self)
@@ -262,36 +263,39 @@ class MainWindow(QWidget):
         return analysis_widget
 
     def create_visualization_section(self):
-        """Sets up the visualization area with audio, plot, and table views."""
-        visualization_section = QWidget()
-        visualization_layout = QVBoxLayout(visualization_section)
+        """Sets up the visualization area with expandable sections."""
+        visualization_splitter = QSplitter(Qt.Vertical)
 
-        # Audio Widget
+        # Audio Widget Section
         audio_widget_group = QGroupBox("Play Recordings")
         audio_widget_layout = QVBoxLayout(audio_widget_group)
-
         self.audio_widget = AudioWidget()
+        self.audio_widget.setMinimumHeight(150)
         audio_widget_layout.addWidget(self.audio_widget)
-        visualization_layout.addWidget(audio_widget_group)
+        visualization_splitter.addWidget(audio_widget_group)
 
-        # Plot View
-        plot_view_container = QWidget()
-        plot_view_layout = QVBoxLayout(plot_view_container)
+        # Feature Visualization Section
+        feature_visualization_group = QGroupBox("Feature Visualization")
+        feature_visualization_layout = QVBoxLayout(feature_visualization_group)
         self.plot_view = QWebEngineView(self)
         self.plot_view.setMinimumHeight(300)
-        self.plot_view.page().profile().downloadRequested.connect(self.handle_download)
-        plot_view_layout.addWidget(self.plot_view)
-        visualization_layout.addWidget(plot_view_container)
+        feature_visualization_layout.addWidget(self.plot_view)
+        visualization_splitter.addWidget(feature_visualization_group)
 
-        # Table View
-        table_view_container = QWidget()
-        table_view_layout = QVBoxLayout(table_view_container)
+        # Table View Section
+        table_view_group = QGroupBox("Table View")
+        table_view_layout = QVBoxLayout(table_view_group)
         self.table_view = QWebEngineView(self)
-        self.table_view.setMinimumHeight(150)
+        self.table_view.setMinimumHeight(120)
         table_view_layout.addWidget(self.table_view)
-        visualization_layout.addWidget(table_view_container)
+        visualization_splitter.addWidget(table_view_group)
 
-        return visualization_section
+        # Adjust splitter stretch factors
+        visualization_splitter.setStretchFactor(0, 1)  # Audio Widget
+        visualization_splitter.setStretchFactor(1, 8)  # Feature Visualization
+        visualization_splitter.setStretchFactor(2, 1)  # Table View
+
+        return visualization_splitter
 
     def open_recordings_manager(self):
         self.recording_manager_window = RecordingsManager(self.database, self)
