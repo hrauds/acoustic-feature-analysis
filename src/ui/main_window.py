@@ -267,8 +267,12 @@ class MainWindow(QWidget):
         visualization_layout = QVBoxLayout(visualization_section)
 
         # Audio Widget
+        audio_widget_group = QGroupBox("Play Recordings")
+        audio_widget_layout = QVBoxLayout(audio_widget_group)
+
         self.audio_widget = AudioWidget()
-        visualization_layout.addWidget(self.audio_widget)
+        audio_widget_layout.addWidget(self.audio_widget)
+        visualization_layout.addWidget(audio_widget_group)
 
         # Plot View
         plot_view_container = QWidget()
