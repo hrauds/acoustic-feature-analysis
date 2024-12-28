@@ -1,5 +1,4 @@
 import logging
-import os
 import pandas as pd
 import math
 from src.normalization import Normalization
@@ -7,14 +6,13 @@ import plotly.express as px
 from src.similarity_analyzer import SimilarityAnalyzer
 import plotly.graph_objects as go
 import numpy as np
-from scipy.io import wavfile
 
 class Visualization:
     def __init__(self):
         px.defaults.template = "plotly_white"
         self.default_fontsize = 10
         self.legend_fontsize = 10
-        self.title_fontsize = 12
+        self.title_fontsize = 10
         self.label_fontsize = 10
         self.analyzer = SimilarityAnalyzer()
 
@@ -595,54 +593,6 @@ class Visualization:
         )
         fig.update_traces(marker=dict(size=10), selector=dict(mode="markers", legendgroup="Target"))
         return fig, df_plot
-
-    def plot_audio_waveform(self, audio_path):
-        """
-        Plot the waveform of an audio file.
-        """
-        if not os.path.exists(audio_path):
-            raise ValueError(f"Audio file not found: {audio_path}")
-
-        sample_rate, data = wavfile.read(audio_path)
-
-        # Convert stereo to mono if needed
-        if data.ndim > 1:
-            data = data.mean(axis=1)
-
-        # Downsample the data
-        target_points = 10000
-        step = max(1, len(data) // target_points)
-        data = data[::step]
-        time = np.arange(len(data)) / (sample_rate / step)  # Adjust time for downsampling
-
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(
-            x=time,
-            y=data,
-            mode='lines',
-            name='waveform',
-            line=dict(color='#1f77b4', width=1)
-        ))
-
-        fig.update_layout(
-            showlegend=False,
-            margin=dict(l=40, r=10, t=10, b=10),
-            height=100,
-            plot_bgcolor='white',
-            paper_bgcolor='white',
-            xaxis=dict(
-                showgrid=True,
-                gridcolor='#eee',
-                zeroline=False,
-            ),
-            yaxis=dict(
-                showgrid=True,
-                gridcolor='#eee',
-                zeroline=False,
-            )
-        )
-
-        return fig
 
     def create_plotly_table(self, dataframe):
         """
