@@ -116,13 +116,25 @@ class SimilarityAnalyzer:
         """
         Scale features and reduce dimensionality with PCA.
         """
+        # Check if DataFrame is empty or has zero columns
         if df.empty or df.shape[1] == 0:
             return None, None, None
-        n_components = min(n_components, df.shape[1])
+
+        # change n_components based on data
+        num_samples = df.shape[0]
+        num_features = df.shape[1]
+        max_components = min(n_components, num_features, num_samples - 1)
+
+        if max_components < 2:
+            raise ValueError(
+                f"Not enough data for PCA. Please select more recordings to analyze."
+            )
+
         scaler = StandardScaler()
         X_scaled = scaler.fit_transform(df.values)
-        pca = PCA(n_components=n_components, random_state=42)
+        pca = PCA(n_components=max_components, random_state=42)
         X_pca = pca.fit_transform(X_scaled)
+
         return X_pca, pca, scaler
 
     def cluster(self, X_pca, n_clusters=4):
