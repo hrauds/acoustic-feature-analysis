@@ -263,10 +263,8 @@ class MainWindow(QWidget):
         return analysis_widget
 
     def create_visualization_section(self):
-        """Sets up the visualization area with expandable sections."""
         visualization_splitter = QSplitter(Qt.Vertical)
 
-        # Audio Widget Section
         audio_widget_group = QGroupBox("Play Recordings")
         audio_widget_layout = QVBoxLayout(audio_widget_group)
         self.audio_widget = AudioWidget()
@@ -274,15 +272,16 @@ class MainWindow(QWidget):
         audio_widget_layout.addWidget(self.audio_widget)
         visualization_splitter.addWidget(audio_widget_group)
 
-        # Feature Visualization Section
         feature_visualization_group = QGroupBox("Feature Visualization")
         feature_visualization_layout = QVBoxLayout(feature_visualization_group)
         self.plot_view = QWebEngineView(self)
         self.plot_view.setMinimumHeight(300)
+
+        self.plot_view.page().profile().downloadRequested.connect(self.handle_download)
+
         feature_visualization_layout.addWidget(self.plot_view)
         visualization_splitter.addWidget(feature_visualization_group)
 
-        # Table View Section
         table_view_group = QGroupBox("Table View")
         table_view_layout = QVBoxLayout(table_view_group)
         self.table_view = QWebEngineView(self)
@@ -811,6 +810,9 @@ class MainWindow(QWidget):
         self.export_btn.setVisible(False)
 
     def handle_download(self, download_item: QWebEngineDownloadItem):
+        """
+        Called when the user tries to download.
+        """
         save_path, _ = QFileDialog.getSaveFileName(
             self,
             "Save Snapshot",
@@ -825,7 +827,24 @@ class MainWindow(QWidget):
             download_item.cancel()
 
     def export_visualization_data_as_json(self):
-        if self.data_table.rowCount() > 0:
-            VisualizationDataExporter.export_table_data_as_json(self.data_table)
+        """
+        Export the current DataFrame as JSON.
+        """
+        if self.current_data_df is not None and not self.current_data_df.empty:
+            save_path, _ = QFileDialog.getSaveFileName(
+                self,
+                "Export Graph Data (JSON)",
+                "graph_data.json",
+                "JSON Files (*.json)"
+            )
+            if save_path:
+                try:
+                    import json
+                    data_records = self.current_data_df.to_dict(orient="records")
+                    with open(save_path, "w", encoding="utf-8") as f:
+                        json.dump(data_records, f, ensure_ascii=False, indent=2)
+                    QMessageBox.information(self, "Export Complete", f"JSON saved to {save_path}")
+                except Exception as ex:
+                    QMessageBox.critical(self, "Export Error", f"Failed to export JSON:\n{str(ex)}")
         else:
-            QMessageBox.information(self, "No data to export.")
+            QMessageBox.information(self, "No data to export", "No current DataFrame to export.")
