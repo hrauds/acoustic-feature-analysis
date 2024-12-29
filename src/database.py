@@ -144,16 +144,6 @@ class Database:
             raise
 
     def get_features_for_recordings(self, recording_ids, analysis_level):
-        """
-        Get features for the given recording IDs and analysis level.
-
-        Args:
-            recording_ids (list): List of recording IDs.
-            analysis_level (str): Analysis level ('recording', 'word', 'phoneme').
-
-        Returns:
-            dict: Dictionary with recording IDs as keys and feature data as values.
-        """
         features = {}
         try:
             if analysis_level not in ['recording', 'word', 'phoneme']:
@@ -173,48 +163,44 @@ class Database:
 
                 if features_list:
                     formatted_features = []
-
-                    # Get serialized frame data from the recordings collection
                     recording_doc = self.recordings_col.find_one({"recording_id": recording_id})
                     if not recording_doc:
                         logging.warning(f"Recording data not found for ID '{recording_id}'")
                         continue
 
-                    # full_frame_values = self.deserialize_frame_values(recording_doc["features"]["frame_values"])
                     full_frame_values = recording_doc["features"]["frame_values"]
-
 
                     for feature in features_list:
                         start, end = feature.get("start"), feature.get("end")
 
-                        # Slice frame values based on the interval
+                        # Slice the main frame_values
                         sliced_frame_values = [
                             (float(timestamp), [float(value) for value in values])
                             for timestamp, values in zip(full_frame_values["timestamps"], full_frame_values["values"])
                             if start <= timestamp <= end
                         ]
 
-                        # Downsample frame values for recording and word levels
+                        # Downsample for certain levels
                         if analysis_level in ['recording', 'word']:
-                            if analysis_level == 'recording':
-                                step = 10
-                            else:
-                                step = 2
+                            step = 10 if analysis_level == 'recording' else 2
                             sliced_frame_values = sliced_frame_values[::step]
+
+                        word_text = feature.get("word_text", "")
 
                         formatted_features.append({
                             "_id": str(feature.get("_id")),
-                            "text": feature.get("text"),
+                            "text": feature.get("text", ""),
+                            "word_text": word_text,
                             "start": start,
                             "end": end,
                             "mean": {
-                                key: float(value) for key, value in feature.get("features", {}).get("mean", {}).items()
+                                k: float(v)
+                                for k, v in feature.get("features", {}).get("mean", {}).items()
                             },
                             "frame_values": sliced_frame_values
                         })
 
                     features[recording_id] = formatted_features
-
                 else:
                     logging.warning(f"No features found for recording '{recording_id}' at level '{analysis_level}'.")
 
@@ -223,12 +209,7 @@ class Database:
             logging.error(f"Error fetching features for recordings {recording_ids} at level {analysis_level}: {e}")
             return {}
 
-
-
     def get_mean_features(self, recording_ids):
-        """
-        """
-        features = {}
         try:
             collection = self.recordings_col
             query = {"recording_id": {"$in": recording_ids}}
@@ -253,7 +234,6 @@ class Database:
                 }
                 grouped_features[recording_id].append(formatted_feature)
 
-            # Assign grouped features to the result dictionary
             features = dict(grouped_features)
 
             return features

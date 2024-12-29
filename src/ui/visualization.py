@@ -39,133 +39,143 @@ class Visualization:
             margin=dict(l=40, r=40, t=60, b=80)  # Bottom margins for legend
         )
 
-    def plot_time_series(self, features_dict):
+    def plot_time_series(self, features_dict, analysis_level):
         """
         Plot time-series data from frame_values for multiple recordings, words, or phonemes.
-
-        Args:
-            features_dict (dict): Dictionary containing features and frame values.
-
-        Returns:
-            plotly.graph_objects.Figure: Interactive time-series figure.
-            pd.DataFrame: Combined table data for all features across the timeline.
         """
         if not features_dict:
             raise ValueError("No features provided for plotting.")
 
-        logging.debug("Starting plot_time_series with features_dict: %s", features_dict)
+        logging.debug(f"Starting plot_time_series, analysis_level={analysis_level}")
 
-        # Collect all DataFrames in a list
         data_frames = []
 
-        # Item number counter to handle multiple occurrences
-        item_nr = {}
+        word_counters = {}
+        phoneme_counters = {}
 
-        for recording_id, features in features_dict.items():
-            for feature in features:
-                feature_names = list(feature.get("mean", {}).keys())
-                frame_values = feature.get("frame_values", [])
-                unique_text = feature.get("text", "Unknown")
-
+        for recording_id, feature_list in features_dict.items():
+            for feat in feature_list:
+                frame_values = feat.get("frame_values", [])
+                feature_names = list(feat.get("mean", {}).keys())
                 if not frame_values or not feature_names:
                     continue
 
-                # Assign item number based on (Recording, Item) pair
-                key = (recording_id, unique_text)
-                item_nr[key] = item_nr.get(key, 0) + 1
-                nr = item_nr[key]
+                item_text = feat.get("text", "")
+                parent_word = feat.get("word_text", "")
+                start_val = feat.get("start", 0.0)
+                end_val = feat.get("end", 0.0)
 
-                # Extract timestamps and values
                 timestamps = [fv[0] for fv in frame_values]
-                values = np.array([fv[1] for fv in frame_values])
-
-                if values.size == 0:
+                matrix = [fv[1] for fv in frame_values]
+                if not matrix:
                     continue
 
-                # Create a DataFrame for all features of this item
-                df = pd.DataFrame(values, columns=feature_names)
-                df.insert(0, 'Time', timestamps)
-                df['Recording'] = recording_id
-                df['Item'] = unique_text
-                df['Nr'] = nr
-                data_frames.append(df)
+                df_vals = pd.DataFrame(matrix, columns=feature_names)
+                df_vals.insert(0, 'Timestamp', timestamps)
+                df_vals['Recording'] = recording_id
+
+                if analysis_level == 'recording':
+                    pass
+
+                elif analysis_level == 'word':
+                    df_vals['Word'] = item_text
+                    key = recording_id
+                    word_counters[key] = word_counters.get(key, 0) + 1
+                    df_vals['WordNr'] = word_counters[key]
+
+                elif analysis_level == 'phoneme':
+                    df_vals['Word'] = parent_word
+                    df_vals['Phoneme'] = item_text
+                    key = (recording_id, parent_word)
+                    phoneme_counters[key] = phoneme_counters.get(key, 0) + 1
+                    df_vals['PhonemeNr'] = phoneme_counters[key]
+
+                df_vals['Start'] = start_val
+                df_vals['End'] = end_val
+
+                data_frames.append(df_vals)
 
         if not data_frames:
             raise ValueError("No valid frame_values found in features_dict.")
 
-        # Concatenate all dataframes
         combined_df = pd.concat(data_frames, ignore_index=True)
-        combined_df['Time'] = pd.to_numeric(combined_df['Time'], errors='coerce')
-        combined_df.dropna(subset=['Time'], inplace=True)
 
-        # Sort
-        combined_df.sort_values(['Recording', 'Time'], inplace=True)
+        combined_df['Timestamp'] = pd.to_numeric(combined_df['Timestamp'], errors='coerce')
+        combined_df.dropna(subset=['Timestamp'], inplace=True)
+        combined_df.sort_values(['Recording', 'Timestamp'], inplace=True)
 
-        # Create unique id for each item
-        combined_df['Recording-Item-Nr'] = (
-            combined_df['Recording'] + " - " + combined_df['Item'] + " - " + combined_df['Nr'].astype(str)
-        )
+        id_vars = ['Timestamp', 'Recording', 'Start', 'End']
+
+        if analysis_level == 'word':
+            id_vars.extend(['Word', 'WordNr'])
+        elif analysis_level == 'phoneme':
+            id_vars.extend(['Word', 'Phoneme', 'PhonemeNr'])
 
         melted_df = combined_df.melt(
-            id_vars=['Time', 'Recording', 'Item', 'Nr', 'Recording-Item-Nr'],
+            id_vars=id_vars,
             var_name='Feature',
             value_name='Value'
         )
 
-        # Unique recordings and features
-        unique_recordings = melted_df['Recording'].nunique()
-        unique_features = melted_df['Feature'].nunique()
-        unique_items = melted_df['Item'].nunique()
+        def make_label(row):
+            if analysis_level == 'recording':
+                return f"{row['Recording']}"
 
-        # Determine color column based on the data
-        if 'Item' in melted_df.columns and unique_items > 1:
-            color_column = 'Item'
+            elif analysis_level == 'word':
+                return f"{row['Recording']} - {row['Word']} (#{int(row['WordNr'])})"
 
-        elif unique_recordings > 1 and unique_features == 1:
-            color_column = 'Recording'
+            elif analysis_level == 'phoneme':
+                return (
+                    f"{row['Recording']} - {row['Word']} - {row['Phoneme']} (#{int(row['PhonemeNr'])})"
+                )
 
-        elif unique_recordings == 1 and unique_features > 1:
-            color_column = 'Feature'
+        melted_df['BaseLegendLabel'] = melted_df.apply(make_label, axis=1)
 
-        elif unique_recordings > 1 and unique_features > 1:
-            melted_df['Recording-Feature'] = melted_df['Recording'] + " - " + melted_df['Feature']
-            color_column = 'Recording-Feature'
-
+        # If multiple features, append the feature name
+        if melted_df['Feature'].nunique() > 1:
+            melted_df['Label'] = melted_df['BaseLegendLabel'] + " - " + melted_df['Feature']
         else:
-            color_column = 'Feature'
+            melted_df['Label'] = melted_df['BaseLegendLabel']
 
-        if color_column not in melted_df.columns:
-            raise ValueError(f"Color column '{color_column}' does not exist in the data.")
+        color_column = 'Label'
 
-        # Plot using Plotly Express
+        hover_data_cols = ['Feature', 'Recording']
+
+        if analysis_level == 'word':
+            hover_data_cols.extend(['Word', 'WordNr'])
+        elif analysis_level == 'phoneme':
+            hover_data_cols.extend(['Word', 'Phoneme', 'PhonemeNr'])
+
+        # hover_data
+        hover_dict = {}
+        for col in hover_data_cols:
+            if col in melted_df.columns:
+                hover_dict[col] = True
+
         try:
             fig = px.line(
-                melted_df,
-                x='Time',
+                data_frame=melted_df,
+                x='Timestamp',
                 y='Value',
                 color=color_column,
                 markers=True,
                 labels={
-                    'Time': 'Time (seconds)',
+                    'Timestamp': 'Time (s)',
                     'Value': 'Feature Value',
-                    'Recording-Item-Nr': 'Recording - Item - Nr',
-                    'Feature': 'Feature',
-                    'Recording': 'Recording',
-                    'Item': 'Item',
-                    'Nr': 'Nr',
-                    'Recording-Feature': 'Recording - Feature'
+                    'Feature': 'Acoustic Feature',
+                    'Recording': 'Recording ID',
+                    'Word': 'Word Text',
+                    'WordNr': 'Word #',
+                    'Phoneme': 'Phoneme',
+                    'PhonemeNr': 'Phoneme #'
                 },
-                hover_data={
-                    'Recording-Item-Nr': False
-                },
+                hover_data=hover_dict
             )
         except Exception as e:
-            logging.error("Plotly failed to create the figure: %s", e)
+            logging.error(f"Plotly failed to create figure: {e}")
             raise ValueError(f"Failed to create the plot: {e}")
 
         self.configure_legend(fig)
-
-        logging.debug("Successfully created time-series plot.")
 
         return fig, combined_df.reset_index(drop=True)
 

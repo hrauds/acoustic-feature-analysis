@@ -449,7 +449,11 @@ class MainWindow(QWidget):
                             frame_values_filtered.append((timestamp, []))
 
                     filtered_feat = {
+                        "_id": feat.get("_id", ""),
+                        "start": feat.get("start", ""),
+                        "end": feat.get("end", ""),
                         "text": feat.get("text", ""),
+                        "word_text": feat.get("word_text", ""),
                         "mean": mean_filtered,
                         "frame_values": frame_values_filtered
                     }
@@ -537,15 +541,40 @@ class MainWindow(QWidget):
             self.item_selection_box.list_widget.blockSignals(False)
             return
 
+        word_counters = {}
+        phoneme_counters = {}
+
         items_by_recording = []
         for rec_id, feat_list in features.items():
             rec_items = []
             for feat in feat_list:
                 item_text = feat.get('text', '').strip()
-                timestamp = feat.get('frame_values', [])[0][0] if feat.get('frame_values') else None
-                if item_text and timestamp is not None:
-                    fid = feat.get('_id')
-                    rec_items.append((timestamp, f"{rec_id} - {item_text}", fid))
+                fid = feat.get('_id')
+                word_text = feat.get('word_text', '')
+
+                frame_vals = feat.get('frame_values', [])
+                if not frame_vals:
+                    continue
+
+                timestamp = frame_vals[0][0] if frame_vals else None
+                if not item_text or timestamp is None:
+                    continue
+
+                if level == 'word':
+                    word_counters[rec_id] = word_counters.get(rec_id, 0) + 1
+                    w_num = word_counters[rec_id]
+                    unique_label = f"{rec_id}: {item_text} (#{w_num})"
+
+                elif level == 'phoneme':
+                    key = (rec_id, word_text)
+                    phoneme_counters[key] = phoneme_counters.get(key, 0) + 1
+                    p_num = phoneme_counters[key]
+                    unique_label = (
+                        f"{rec_id}: {word_text} - {item_text} (#{p_num})"
+                    )
+
+                rec_items.append((timestamp, unique_label, fid))
+
             rec_items.sort(key=lambda x: x[0])
             items_by_recording.extend(rec_items)
 
@@ -632,7 +661,8 @@ class MainWindow(QWidget):
         if not features:
             return
         try:
-            fig, table_data = self.visualization.plot_time_series(features)
+            analysis_level = self.get_selected_analysis_level()
+            fig, table_data = self.visualization.plot_time_series(features, analysis_level)
             self.display_figure(fig, table_data)
         except ValueError as ve:
             QMessageBox.critical(self, 'Plotting Error', str(ve))
