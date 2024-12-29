@@ -2,9 +2,10 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (
     QWidget, QPushButton, QLabel, QFileDialog,
     QVBoxLayout, QMessageBox, QRadioButton, QButtonGroup,
-    QHBoxLayout, QSpinBox, QSplitter, QGroupBox, QListWidgetItem, QGridLayout
+    QHBoxLayout, QSpinBox, QSplitter, QGroupBox, QListWidgetItem, QGridLayout,
+    QToolButton, QStyle
 )
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineDownloadItem
 
 from src.ui.selection_box import SelectionBox
@@ -155,7 +156,6 @@ class MainWindow(QWidget):
         self.update_feature_list()
         self.update_item_list()
         self.update_visualization_buttons()
-
         self.clear_visualisation()
 
     def create_analysis_level_selection(self):
@@ -232,36 +232,75 @@ class MainWindow(QWidget):
         analysis_widget = QWidget(self)
         analysis_layout = QVBoxLayout(analysis_widget)
 
-        # Target Recording Selection
+        target_row = QHBoxLayout()
         self.target_recording_selection = SelectionBox("Select Target Recording:", multi_selection=False, parent=self)
         self.target_recording_selection.selection_changed.connect(self.on_target_recording_changed)
-        analysis_layout.addWidget(self.target_recording_selection)
+        info_button_target = self.create_info_button_tooltip(
+            "Select Target Recording:\n\n"
+            "Pick one recording to find most similar recordings to.\n"
+            "Make sure it is included in 'Select Recordings' above.\n"
+            "All other selected recordings will be compared to this target."
+        )
+        target_row.addWidget(self.target_recording_selection)
+        target_row.addWidget(info_button_target)
+        analysis_layout.addLayout(target_row)
 
-        # Number of Similar Items
-        num_similar_group = QWidget(self)
-        num_similar_layout = QVBoxLayout(num_similar_group)
+        num_row = QHBoxLayout()
         self.num_similar_label = QLabel("Number of similar items:", self)
         self.num_similar_spinbox = QSpinBox(self)
         self.num_similar_spinbox.setRange(1, 100)
         self.num_similar_spinbox.setValue(5)
-        num_similar_layout.addWidget(self.num_similar_label)
-        num_similar_layout.addWidget(self.num_similar_spinbox)
-        analysis_layout.addWidget(num_similar_group)
+        info_button_num = self.create_info_button_tooltip(
+            "Number of similar items:\n\n"
+            "How many of the top most similar recordings do you want to display?\n"
+        )
+        num_row.addWidget(self.num_similar_label)
+        num_row.addWidget(self.num_similar_spinbox)
+        num_row.addWidget(info_button_num)
+        analysis_layout.addLayout(num_row)
 
-        # Visualization Method
-        visualization_method_group = QWidget(self)
-        visualization_method_layout = QVBoxLayout(visualization_method_group)
+        method_box = QGroupBox("Select Visualization Method", self)
+        method_box_layout = QVBoxLayout(method_box)
+
         self.cluster_radio = QRadioButton("Cluster Analysis (PCA + KMeans)")
         self.feature_score_radio = QRadioButton("Feature Similarity Bars")
-        self.pca_based_radio = QRadioButton("PCA-Based Similarity Bars")
+        self.pca_based_radio = QRadioButton("Feature Similarity Bars (PCA-Based)")
         self.cluster_radio.setChecked(True)
+
         self.analysis_visualization_group = QButtonGroup(self)
         for rb in (self.cluster_radio, self.feature_score_radio, self.pca_based_radio):
             self.analysis_visualization_group.addButton(rb)
-            visualization_method_layout.addWidget(rb)
-        analysis_layout.addWidget(visualization_method_group)
+            row = QHBoxLayout()
+            row.addWidget(rb)
 
-        # Analyze Button
+            if rb == self.cluster_radio:
+                tooltip_text = (
+                    "Cluster Analysis (PCA + KMeans):\n\n"
+                    "1) PCA reduces the feature dimensionality to 10 principal components.\n"
+                    "2) K-Means clusters the data into 4 distinct groups in the PCA space.\n"
+                    "3) Computes cosine similarities in that PCA space.\n"
+                    "The visualization displays numbered clusters, highlighting the target recording with a star symbol and the top similar recordings with rectangle symbols."
+                )
+            elif rb == self.feature_score_radio:
+                tooltip_text = (
+                    "Feature Similarity Bars:\n\n"
+                    "Calculates cosine similarity based on the mean GEMAPS feature values extracted from each recording.\n"
+                    "Displays a bar chart showing the top most similar recordings to the target recording."
+                )
+            else:
+                tooltip_text = (
+                    "PCA-Based Similarity Bars:\n\n"
+                    "1) PCA reduces the feature dimensionality.\n"
+                    "2) Calculates cosine similarity in the reduced PCA space.\n"
+                    "Displays a bar chart showing the top most similar recordings to the target in the PCA-transformed feature space."
+                )
+
+            info_button = self.create_info_button_tooltip(tooltip_text)
+            row.addWidget(info_button)
+            method_box_layout.addLayout(row)
+
+        analysis_layout.addWidget(method_box)
+
         self.analyze_btn = QPushButton("Analyze Similarity", self)
         self.analyze_btn.clicked.connect(self.analyze_similarity)
         self.analyze_btn.setEnabled(False)
@@ -389,8 +428,8 @@ class MainWindow(QWidget):
         """
         Gather the user selections from the selection boxes:
           - recording_select_box
-          - item_select_box
-          - feature_select_box
+          - item_selection_box
+          - feature_selection_box
         """
         analysis_level = self.get_selected_analysis_level()
         selected_recordings = self.recording_select_box.get_selected_items()
@@ -855,3 +894,14 @@ class MainWindow(QWidget):
                     QMessageBox.critical(self, "Export Error", f"Failed to export JSON:\n{str(ex)}")
         else:
             QMessageBox.information(self, "No data to export", "No current DataFrame to export.")
+
+    def create_info_button_tooltip(self, tooltip_text):
+        """
+        Creates hover info button with tooltip.
+        """
+        info_button = QToolButton(self)
+        info_button.setToolTip(tooltip_text)
+        info_button.setIcon(self.style().standardIcon(QStyle.SP_MessageBoxInformation))
+        info_button.setIconSize(QSize(14, 14))
+        info_button.setStyleSheet("QToolButton { border: none; padding: 0px; }")
+        return info_button
