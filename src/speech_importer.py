@@ -4,21 +4,21 @@ import logging
 from src.textgrid_parser import TextGridParser
 from src.opensmile_features import OpenSmileFeatures
 from config import AUDIO_DIR
-from src.database import Database
 
-# Labels to exclude during processing
 EXCLUDED_LABELS = {"<sil>", "SIL", ".sil", ".noise", ""}
 
 logging.basicConfig(level=logging.DEBUG)
+
+PRECISION = 3
 
 
 class SpeechImporter:
     def __init__(self, db):
         super().__init__()
-        self.db = db  # Use the passed Database instance
+        self.db = db
         self.parser = TextGridParser()
         self.feature_extractor = OpenSmileFeatures()
-        self.audio_dir = AUDIO_DIR  # Ensure audio directory is set
+        self.audio_dir = AUDIO_DIR
 
     @staticmethod
     def clean_intervals(intervals):
@@ -42,9 +42,22 @@ class SpeechImporter:
             interval_data (pd.DataFrame): Frame-level data for an interval.
 
         Returns:
-            dict: Mean feature values.
+            dict: Mean feature values rounded to specified precision.
         """
-        return {key: round(value, 6) for key, value in interval_data.mean().to_dict().items()}
+        return {key: round(value, PRECISION) for key, value in interval_data.mean().to_dict().items()}
+
+    @staticmethod
+    def round_value(value):
+        """
+        Round a single float value to the specified precision.
+
+        Args:
+            value (float): The value to round.
+
+        Returns:
+            float: Rounded value.
+        """
+        return round(value, PRECISION)
 
     def process_single_recording(self, textgrid_path, audio_path=None):
         """
@@ -85,12 +98,13 @@ class SpeechImporter:
         """
         # Recording-level data
         recording_duration = max(word["end"] for word in words)
+        recording_duration = self.round_value(recording_duration)
         recording_mean = self.aggregate_features(features)
 
         # Prepare frame_values as lists
         frame_values = {
-            "timestamps": features.index.round(6).tolist(),
-            "values": features.round(6).values.tolist(),
+            "timestamps": [self.round_value(ts) for ts in features.index.tolist()],
+            "values": features.round(PRECISION).values.tolist(),
             "feature_names": features.columns.tolist()
         }
 
@@ -111,15 +125,18 @@ class SpeechImporter:
         # Word-level data
         word_docs = []
         for word in words:
-            word_features = features[(features.index >= word["start"]) & (features.index <= word["end"])]
+            word_start = self.round_value(word["start"])
+            word_end = self.round_value(word["end"])
+            word_duration = self.round_value(word_end - word_start)
+            word_features = features[(features.index >= word_start) & (features.index <= word_end)]
             if not word_features.empty:
                 word_doc = {
                     "recording_id": file_name,
                     "parent_id": None,
                     "text": word["text"],
-                    "start": word["start"],
-                    "end": word["end"],
-                    "duration": word["end"] - word["start"],
+                    "start": word_start,
+                    "end": word_end,
+                    "duration": word_duration,
                     "features": {
                         "mean": self.aggregate_features(word_features)
                         # No frame_values at word level
@@ -134,21 +151,24 @@ class SpeechImporter:
         # Phoneme-level data
         phoneme_docs = []
         for phoneme in phonemes:
-            phoneme_features = features[(features.index >= phoneme["start"]) & (features.index <= phoneme["end"])]
+            phoneme_start = self.round_value(phoneme["start"])
+            phoneme_end = self.round_value(phoneme["end"])
+            phoneme_duration = self.round_value(phoneme_end - phoneme_start)
+            phoneme_features = features[(features.index >= phoneme_start) & (features.index <= phoneme_end)]
             if not phoneme_features.empty:
                 parent_id, word_text = next(
                     ((word_doc["_id"], word_doc["text"]) for word_doc in word_docs if
-                     word_doc["start"] <= phoneme["start"] < word_doc["end"]),
+                     word_doc["start"] <= phoneme_start < word_doc["end"]),
                     (None, None)
                 )
                 phoneme_doc = {
                     "text": phoneme["text"],
                     "parent_id": parent_id,
                     "word_text": word_text,
-                    "start": phoneme["start"],
-                    "end": phoneme["end"],
+                    "start": phoneme_start,
+                    "end": phoneme_end,
                     "recording_id": file_name,
-                    "duration": phoneme["end"] - phoneme["start"],
+                    "duration": phoneme_duration,
                     "features": {
                         "mean": self.aggregate_features(phoneme_features)
                         # No frame_values at phoneme level
