@@ -3,7 +3,6 @@ from PyQt5.QtWidgets import (
     QListWidget, QLineEdit, QPushButton
 )
 from PyQt5.QtCore import pyqtSignal
-
 class SelectionBox(QGroupBox):
 
     selection_changed = pyqtSignal()
@@ -77,3 +76,7 @@ class SelectionBox(QGroupBox):
             self.toggle_btn.setText("Deselect All")
         else:
             self.toggle_btn.setText("Select All")
+
+    def clear_selection(self):
+        """Clears all selected items."""
+        self.list_widget.clearSelection()

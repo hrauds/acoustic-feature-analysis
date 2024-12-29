@@ -10,7 +10,6 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineDownloadItem
 from src.ui.selection_box import SelectionBox
 from src.ui.visualization import Visualization
 from src.speech_importer import SpeechImporter
-from src.visualization_data_exporter import VisualizationDataExporter
 from src.similarity_analyzer import SimilarityAnalyzer
 from src.ui.recording_manager_window import RecordingsManager
 from src.ui.audio_widget import AudioWidget
@@ -143,13 +142,21 @@ class MainWindow(QWidget):
         if self.visualize_radio.isChecked():
             self.visualize_action_controls.setVisible(True)
             self.analyze_action_controls.setVisible(False)
-            self.clear_visualisation()
-
         elif self.analyze_radio.isChecked():
             self.visualize_action_controls.setVisible(False)
             self.analyze_action_controls.setVisible(True)
-            self.clear_visualisation()
             self.analyze_btn.setEnabled(False)
+
+        if hasattr(self.recording_select_box, 'clear_selection'):
+            self.recording_select_box.clear_selection()
+        else:
+            self.recording_select_box.list_widget.clearSelection()
+
+        self.update_feature_list()
+        self.update_item_list()
+        self.update_visualization_buttons()
+
+        self.clear_visualisation()
 
     def create_analysis_level_selection(self):
         """Creates the Analysis Level Selection section."""
