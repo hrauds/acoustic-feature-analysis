@@ -1,4 +1,5 @@
 import os
+import sys
 import wave
 import logging
 import numpy as np
@@ -9,6 +10,13 @@ from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QComboBox, QMessageBox, QStyle
 )
 import pyqtgraph as pg
+
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 
 class AudioWidget(QWidget):
@@ -85,7 +93,7 @@ class AudioWidget(QWidget):
     def update_recording_list(self, recordings):
         """Update the recording selection combo box."""
         self.recording_combo.clear()
-        available = [r for r in recordings if os.path.exists(os.path.join('data', f"{r}.wav"))]
+        available = [r for r in recordings if os.path.exists(resource_path(os.path.join('data', f"{r}.wav")))]
         if available:
             self.recording_combo.addItems(available)
             self.load_audio_for_current_selection()
@@ -118,7 +126,7 @@ class AudioWidget(QWidget):
             self.clear()
             return
 
-        audio_path = os.path.join('data', f"{rec_id}.wav")
+        audio_path = resource_path(os.path.join('data', f"{rec_id}.wav"))
         if os.path.exists(audio_path):
             self.load_audio(audio_path)
         else:

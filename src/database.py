@@ -6,7 +6,7 @@ from collections import defaultdict
 
 from bson import ObjectId
 from bson.errors import InvalidId
-
+from bson.json_util import loads
 from config import MONGO_URI, USE_MONGO_MOCK
 
 logging.basicConfig(level=logging.INFO)
@@ -38,7 +38,6 @@ class Database:
         """
         Initialize the mock database with sample data.
         """
-        # Determine base path: use _MEIPASS if in PyInstaller mode
         try:
             base_path = sys._MEIPASS  # PyInstaller temp directory
         except AttributeError:
@@ -58,12 +57,13 @@ class Database:
 
             try:
                 with open(filepath, 'r', encoding='utf-8') as f:
-                    data = json.load(f)
+                    data = loads(f.read())
                     collection = getattr(self, f"{collection_name}_col")
                     collection.insert_many(data)
                     logging.info(f"Initialized '{collection_name}' collection with sample data from {filename}.")
             except Exception as e:
                 logging.error(f"Failed to initialize sample data for '{collection_name}': {e}")
+
 
     def insert_data(self, collection_name, data_list):
         """
@@ -107,10 +107,6 @@ class Database:
         """
         try:
             recording = self.recordings_col.find_one({"recording_id": recording_id})
-            if recording:
-                logging.info(f"Fetched recording with ID: {recording_id}")
-            else:
-                logging.warning(f"Recording with ID '{recording_id}' not found.")
             return recording
         except errors.PyMongoError as e:
             logging.error(f"Failed to fetch recording: {e}")
@@ -173,12 +169,34 @@ class Database:
                     for feature in features_list:
                         start, end = feature.get("start"), feature.get("end")
 
+                        # Validate 'start' and 'end'
+                        if not isinstance(start, (int, float)) or not isinstance(end, (int, float)):
+                            continue
+
                         # Slice the main frame_values
-                        sliced_frame_values = [
-                            (float(timestamp), [float(value) for value in values])
-                            for timestamp, values in zip(full_frame_values["timestamps"], full_frame_values["values"])
-                            if start <= timestamp <= end
-                        ]
+                        sliced_frame_values = []
+                        for timestamp, values in zip(full_frame_values["timestamps"], full_frame_values["values"]):
+
+                            if not isinstance(timestamp, (int, float)):
+                                continue
+
+                            if not isinstance(values, list):
+                                continue
+
+                            try:
+                                float_timestamp = float(timestamp)
+                            except (ValueError, TypeError) as e:
+                                logging.error(f"Cannot convert timestamp to float: {timestamp} - {e}")
+                                continue
+
+                            try:
+                                float_values = [float(value) for value in values]
+                            except (ValueError, TypeError) as e:
+                                logging.error(f"Cannot convert values to float: {values} - {e}")
+                                continue
+
+                            if start <= float_timestamp <= end:
+                                sliced_frame_values.append((float_timestamp, float_values))
 
                         # Downsample for certain levels
                         if analysis_level in ['recording', 'word']:
@@ -187,16 +205,24 @@ class Database:
 
                         word_text = feature.get("word_text", "")
 
+                        # Convert mean features to float
+                        mean_features = {}
+                        for k, v in feature.get("features", {}).get("mean", {}).items():
+                            if isinstance(v, (int, float, str)):
+                                try:
+                                    mean_features[k] = float(v)
+                                except (ValueError, TypeError) as e:
+                                    logging.error(f"Cannot convert mean feature '{k}' to float: {v} - {e}")
+                            else:
+                                logging.error(f"Mean feature '{k}' has invalid type: {type(v)}")
+
                         formatted_features.append({
                             "_id": str(feature.get("_id")),
                             "text": feature.get("text", ""),
                             "word_text": word_text,
                             "start": start,
                             "end": end,
-                            "mean": {
-                                k: float(v)
-                                for k, v in feature.get("features", {}).get("mean", {}).items()
-                            },
+                            "mean": mean_features,
                             "frame_values": sliced_frame_values
                         })
 

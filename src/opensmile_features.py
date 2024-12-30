@@ -1,4 +1,4 @@
-import opensmile
+import opensmile.core.smile
 import logging
 logging.basicConfig(level=logging.INFO)
 
