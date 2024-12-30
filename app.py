@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import atexit
 import sys
 import logging
@@ -8,6 +7,7 @@ from PyQt5.QtGui import QFont
 from src.ui.main_window import MainWindow
 from src.database import Database
 from config import USE_MONGO_MOCK
+from src.ui.styles import MAIN_WINDOW_STYLE
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
@@ -28,9 +28,7 @@ if __name__ == '__main__':
     global_font = QFont('Arial', 12)
     app.setFont(global_font)
 
-    with open('src/ui/styles.css', 'r') as f:
-        stylesheet = f.read()
-    app.setStyleSheet(stylesheet)
+    app.setStyleSheet(MAIN_WINDOW_STYLE)
 
     window = MainWindow(db)
     window.show()

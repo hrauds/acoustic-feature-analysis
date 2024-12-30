@@ -246,12 +246,12 @@ class MainWindow(QWidget):
         analysis_layout.addLayout(target_row)
 
         num_row = QHBoxLayout()
-        self.num_similar_label = QLabel("Number of similar items:", self)
+        self.num_similar_label = QLabel("Number of Similar Items:", self)
         self.num_similar_spinbox = QSpinBox(self)
         self.num_similar_spinbox.setRange(1, 100)
         self.num_similar_spinbox.setValue(5)
         info_button_num = self.create_info_button_tooltip(
-            "Number of similar items:\n\n"
+            "Number of Similar Items:\n\n"
             "How many of the top most similar recordings do you want to display?\n"
         )
         num_row.addWidget(self.num_similar_label)
@@ -311,14 +311,14 @@ class MainWindow(QWidget):
     def create_visualization_section(self):
         visualization_splitter = QSplitter(Qt.Vertical)
 
-        audio_widget_group = QGroupBox("Play Recordings")
+        audio_widget_group = QGroupBox("Recording Player")
         audio_widget_layout = QVBoxLayout(audio_widget_group)
         self.audio_widget = AudioWidget()
         self.audio_widget.setMinimumHeight(150)
         audio_widget_layout.addWidget(self.audio_widget)
         visualization_splitter.addWidget(audio_widget_group)
 
-        feature_visualization_group = QGroupBox("Feature Visualization")
+        feature_visualization_group = QGroupBox("Visualization View")
         feature_visualization_layout = QVBoxLayout(feature_visualization_group)
         self.plot_view = QWebEngineView(self)
         self.plot_view.setMinimumHeight(300)

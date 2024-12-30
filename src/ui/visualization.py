@@ -623,12 +623,12 @@ class Visualization:
             fig = go.Figure(data=[go.Table(
                 header=dict(
                     values=list(dataframe.columns),
-                    fill_color='paleturquoise',
+                    fill_color='lavender',
                     align='left'
                 ),
                 cells=dict(
                     values=[dataframe[col] for col in dataframe.columns],
-                    fill_color='lavender',
+                    fill_color='aliceblue',
                     align='left'
                 ),
                 columnwidth=col_widths
