@@ -602,7 +602,8 @@ class Visualization:
             title="Clusters with Closest Recordings Highlighted (PCA Cosine Measures)"
         )
         fig.update_traces(marker=dict(size=10), selector=dict(mode="markers", legendgroup="Target"))
-        return fig, df_plot
+        df_sorted = df_plot.sort_values(by="cosine_similarity", ascending=False)
+        return fig, df_sorted
 
     def create_plotly_table(self, dataframe):
         """

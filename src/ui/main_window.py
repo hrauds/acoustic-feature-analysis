@@ -301,10 +301,17 @@ class MainWindow(QWidget):
 
         analysis_layout.addWidget(method_box)
 
+        # Analyze Button
         self.analyze_btn = QPushButton("Analyze Similarity", self)
         self.analyze_btn.clicked.connect(self.analyze_similarity)
         self.analyze_btn.setEnabled(False)
         analysis_layout.addWidget(self.analyze_btn)
+
+        # Export Button (Uses the same function as Visualization Export)
+        self.export_analysis_btn = QPushButton("Export Analysis Data (JSON)", self)
+        self.export_analysis_btn.clicked.connect(self.export_visualization_data_as_json)
+        self.export_analysis_btn.setVisible(False)  # Initially hidden
+        analysis_layout.addWidget(self.export_analysis_btn)
 
         return analysis_widget
 
@@ -809,8 +816,8 @@ class MainWindow(QWidget):
 
         top_n = self.num_similar_spinbox.value()
 
-        if self.cluster_radio.isChecked():
-            try:
+        try:
+            if self.cluster_radio.isChecked():
                 (X_pca_vis, labels, rec_ids, target_rec_id,
                  similar_list, cos_sims, cos_dists) = self.similarity_analyzer.analyze_clusters(
                     target_rec, df, top_n
@@ -818,24 +825,22 @@ class MainWindow(QWidget):
                 fig, cluster_df = self.visualization.plot_clusters_with_distances(
                     X_pca_vis, labels, rec_ids, target_rec_id, similar_list, cos_sims, cos_dists
                 )
-                self.display_figure(fig, cluster_df)
-            except ValueError as ve:
-                QMessageBox.warning(self, "Error", str(ve))
 
-        elif self.feature_score_radio.isChecked():
-            try:
+                self.display_figure(fig, cluster_df)
+                self.current_data_df = cluster_df
+
+            elif self.feature_score_radio.isChecked():
                 target_rec_id, similar_list = self.similarity_analyzer.analyze_scores(
                     target_rec, df, top_n, method='cosine'
                 )
                 fig, sim_df = self.visualization.plot_similarity_bars(
                     target_rec_id, similar_list, measure_name="Feature Cosine Similarity"
                 )
-                self.display_figure(fig, sim_df)
-            except ValueError as ve:
-                QMessageBox.warning(self, "Error", str(ve))
 
-        elif self.pca_based_radio.isChecked():
-            try:
+                self.display_figure(fig, sim_df)
+                self.current_data_df = sim_df
+
+            elif self.pca_based_radio.isChecked():
                 target_rec_id, distance_list = self.similarity_analyzer.analyze_scores(
                     target_rec, df, top_n, method='pca_cosine_distance'
                 )
@@ -844,9 +849,13 @@ class MainWindow(QWidget):
                 fig, sim_df = self.visualization.plot_similarity_bars(
                     target_rec_id, similarity_list, measure_name="PCA Cosine Similarity"
                 )
+
                 self.display_figure(fig, sim_df)
-            except ValueError as ve:
-                QMessageBox.warning(self, "Error", str(ve))
+                self.current_data_df = sim_df
+
+            self.export_analysis_btn.setVisible(True)
+        except ValueError as ve:
+            QMessageBox.warning(self, "Error", str(ve))
 
     def clear_visualisation(self):
         self.plot_view.setHtml("<html><body></body></html>")
