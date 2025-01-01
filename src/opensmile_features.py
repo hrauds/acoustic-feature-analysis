@@ -1,5 +1,8 @@
 import opensmile.core.smile
 import logging
+
+import pandas as pd
+
 logging.basicConfig(level=logging.INFO)
 
 
