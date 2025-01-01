@@ -1,0 +1,72 @@
+a = Analysis(
+    ['app.py'],
+    pathex=['.'],
+    binaries=[],
+    datas=[
+        ('config.py', '.'),
+        ('data', 'data'),
+        ('data/speech_analysis.recordings.json', 'data'),
+        ('data/speech_analysis.words.json', 'data'),
+        ('data/speech_analysis.phonemes.json', 'data'),
+    ],
+    hiddenimports=[
+        'bson',
+        'pandas',
+        'numpy',
+        'sklearn',
+        'sklearn.neighbors',
+        'sklearn.tree',
+        'sklearn.tree._criterion',
+        'sklearn.tree._splitter',
+        'sklearn.tree._partitioner',
+        'opensmile',
+        'plotly',
+        'PyQt5',
+        'PyQt5.QtWebEngineWidgets',
+        'PyQt5.QtWebEngineCore',
+        'PyQt5.QtWebEngine',
+        'PyQt5.QtMultimedia',
+    ],
+    hookspath=['./hooks'],
+    hooksconfig={},
+    runtime_hooks=[],
+    excludes=[
+        'matplotlib',
+        'seaborn',
+        'kaleido',
+        'scipy.special._cdflib',
+        'pymongo',
+    ],
+    noarchive=False,
+    optimize=0,
+)
+
+pyz = PYZ(a.pure)
+
+exe = EXE(
+    pyz,
+    a.scripts,
+    [],
+    exclude_binaries=True,
+    name='speech_app',
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=True,
+    console=False,
+    disable_windowed_traceback=False,
+    argv_emulation=False,
+    target_arch=None,
+    codesign_identity=None,
+    entitlements_file=None,
+)
+
+coll = COLLECT(
+    exe,
+    a.binaries,
+    a.datas,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    name='speech_app',
+)
