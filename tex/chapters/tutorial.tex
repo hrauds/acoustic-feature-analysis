@@ -1,0 +1,64 @@
+Some basic ways to manipulate text are \textit{italics} and \textbf{bold}. One can reference Figures (see Figure \ref{fig:taltech} for an example) as well as cite references which are defined in the \textit{references.bib} file.\cite{spectre,example-reference} 
+
+The \textit{Bibliography}, \textit{List of Figures} and \textit{List of Tables} are all automatically generated and references will be updated automatically as well. This means that if you've defined a citation but are not referencing it, it will not appear in the \textit{Bibliography}. This also means that any Figure / Table / Citations numbers are automatically updated as well. Numbering is done by order-of-appearance.
+
+One can create an itemized list:
+\begin{itemize}
+    \item item a
+    \item item b
+    \item ...
+\end{itemize}
+
+Or enumerate them:
+\begin{enumerate}
+    \item item x
+    \item item y
+    \item ...
+\end{enumerate}
+
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.5\textwidth]{figures/taltech.jpg}
+    \caption{\textit{An image of the TalTech logo.}}
+    \label{fig:taltech}
+\end{figure}
+
+
+A table with three columns can be seen in Table \ref{tab:requirements}.
+\begin{longtable}{|p{0,5cm}|p{10cm}|p{3cm}|}
+	\caption{\it{A table with some requirements}}
+	\label{tab:requirements}\\ \hline
+	\textbf{Nr} &  \textbf{Requirement} & \textbf{Weight}  \\
+	\hline
+	\endfirsthead
+	\multicolumn{3}{l}%
+	{\tablename\ \thetable\ -- \textit{Continues...}} \\
+	\hline
+	\textbf{Nr} &  \textbf{Requirement} & \textbf{Importance}  \\
+	\hline
+	\endhead
+	\hline \multicolumn{3}{l}{\textit{Continues...}} \\
+	\endfoot
+	\hline
+	\endlastfoot
+1 & Price & High\\ \hline
+2 & Variety& Middle\\ \hline
+3 & Support& Low\\ \hline
+
+\end{longtable}
+
+We can use variables set in the \textit{main.tex} file to render values like our title (\doctitle) or supervisor names (\textbf{Supervisor}: \supervisor, \textbf{Co-supervisor}: \cosupervisor{}).
+
+This is the first real chapter of this thesis. Other chapters can be easily referenced, for example the introduction can be found as Chapter \ref{chapter:introduction}. Sections and/or subsections need to be labeled before one can reference them. See Section \ref{sec:second-section} for an example.
+
+\section{First Section of the First Chapter}
+Some text in the first section.
+\subsection{First Subsection}
+As well as some text in this subsection.
+\subsubsection{First Subsubsection}
+The Table of Contents only goes 3 layers deep (Chapter - Section - Subsection) so this subsubsection is not seen there.
+
+\section{Second Section of the First Chapter}\label{sec:second-section}
+
+One of the best resources for \LaTeX basics, and advanced constructs, is the \LaTeX wikibook\footnote{To be found at~\url{http://en.wikibooks.org/wiki/LaTeX/}}. Of course fellow students, colleagues and a good internet search using your favorite search engine can do wonders if you're stuck. 

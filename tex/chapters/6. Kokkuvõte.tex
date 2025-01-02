@@ -1,0 +1,10 @@
+Käesoleva bakalaureusetöö eesmärk oli luua kõneanalüüsi rakendus, mis võimaldab:
+GeMAPS (eGeMAPS) akustiliste tunnuste eraldamist helisalvestustest,
+tunnuste visualiseerimist mitmesugustel diagrammitüüpidel (ajatelje-, histogrammi-, karp-, radari- ja vokaalikaardi diagrammid),
+sarnaste salvestiste leidmist.
+
+Helifailidest eraldatati eGeMAPS madala taseme deskriptorid (LLD), kasutades OpenSMILE’i ning töödeldi TextGride märgendusinfo saamise jaoks. TUnnuste väärtused ja salvestiste andmed salvestati dokumentidena MongoDB-s.
+Rakenduse kasutajaliides loodi PyQt raamistikuga. Interaktiivsete diagrammide kuvamiseks (nt ajatelg, histogramm, karpdiagramm, radar ja vokaalikaart) kasutatati Plotly teeki.
+Sarnaste salvestiste leidmiseks rakendatakse klasterdamist (KMeans) ja koosinussarnasuse arvutamist nii PCA-ga vähendatud dimensiooniruumis kui ka mitte vähendatud dimensioonidega tunnuste arvutamist. Sarnasusanalüüsi tulemused visualiseeritakse nii tulp- kui hajuvdiagrammidel.
+
+Tulemustest selgus, et rakendus täitis kõiki algselt püstitatud funktsionaalseid nõudeid ning valmis töölauarakendus, mis koondab mõned peamised kõnekorpuste analüüsiks vajalikud sammud: GeMAPS tunnuste eraldamine, tunnuste visualiseerimine ja sarnasuste kõnelejate analüüs.

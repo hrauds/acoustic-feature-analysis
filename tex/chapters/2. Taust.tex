@@ -1,0 +1,56 @@
+\section{Olemasolevad kõneanalüüsi rakendused ja tööriistad}
+
+\textbf{Kõneveebi Audiofailide akustiliste omaduste võrdlus}
+
+Tegemist on veebipõhise rakendusega, mis kasutab OpenSMILE eGeMAPS tunnuste komplekti kõnesalvestiste akustiliseks analüüsiks. Rakenduse on kasutatav järgmisel veebilehel: https://koneveeb.ee/akustika
+
+Rakenduse võimalused:
+\begin{itemize}
+    \item .wav-formaadis pakendatud audiofailide üleslaadimine, maksimaalne lubatud failide suurus 900MB
+    \item Võimalik määrata klassifikaatoreid CSV-vormingus.
+    \item Visualiseeritakse valitud akustiliste tunnuste väärtuste jaotus joonidiagrammina
+    \item Arvutatud väärtused ja üleslaetud failid kustutatakse peale brauseri sulgemist.
+\end{itemize} \cite{kõneveeb}
+
+\textbf{Praat}
+Praat on üks tuntumatest ja enim kasutatavatest kõneanalüüsi rakendustest. Seda arendatakse Amsterdami Ülikoolis ning see on vabavaraline rakendus. Toetatud on operatsioonisüsteemid: Macintosh, Windows, Linux, Raspberry Pi, Chromebook
+
+Rakenduse võimalused:
+\begin{itemize}
+    \item Akustiline analüüs ja erinevate tunnuste arvutamine (F0, formandid, intensiivsus, jitter, shimmer jpm)
+    \item Visualiseerimisvõimalused: spektogrammid, põhitooni ja intensiivsuse graafikud ajateljel, formantide trajektoorid
+    \item Kõnesüntees: põhitooni ja formantide põhjal on võimalik luua modifitseeritud või sünteesitud kõnet
+    \item Skriptide loomise võimalus: Praatil on oma skriptikeel, mis teeb rakenduse väga paindlikuks, ning võimaldab automatiseerida korduvaid analüüse
+\end{itemize} \cite{praat}
+
+
+\textbf{Voicesauce}
+VoiceSauce on MATLAB-i keskkonnas arendatud kõneanalüüsi rakendus. Rakendus on mõeldud teaduslikuks kõneanalüüsiks. Toetatud on operatsioonisüsteemid Windows ja Mac.
+
+Rakendus võimalused:
+\begin{itemize}
+    \item Erinevate akustiliste hääle tunnuste visualiseerimine ja analüüs.
+\end{itemize}
+Dokumentatsioonis tuuakse esile piirangud:
+\begin{itemize}
+    \item Mõned parameetrid sõltuvad tugevalt arvutatud F0 väärtuset, mistõttu võib analüüs olla ebatäpne mürarikaste helide korral
+    \item Pikkade heliklippide analüüs või tekitada ressursipuudust, kuna MATLABi keskkond võib intensiivsel analüüsil väga suurt osa mälu tarbida.
+    \item Nõuab MATLABi kasutamist
+\end{itemize} \cite{voicesauce}
+
+\textbf{Wasp (Windows Tool for Speech Analysis)}
+WASP on tasuta kõneanalüüsi rakendus. Toetatud on operatsioonisüsteem Windows.
+
+Rakenduse võimalused:
+\begin{itemize}
+    \item Helifailide salvestamine ja esitamine, salvestatud faile on võimalik analüüsida
+    \item Võimaldab luua annotatsioone
+    \item Akustiliste tunnuste visualiseerimine
+    \item Lihtne ja kasutajasõbralik kasutajaliides ja veebiversioon rakendusega tutvumiseks
+\end{itemize} \cite{wasp}
+
+Kõik välja toodud rakendused (Praat, VoiceSauce, Wasp ja kõneveebi lahendus) on võimalised töötlema kõnesalvestusi ning pakkuvad akustiliste tunnuste arvutamist ja visualiseerimist. Neist kõige rohkem võimalusi ja funktsionaalsust on Praatil, kuid sellel ei ole automaatset lahendust GeMAPS tunnuste eraldamist. Samuti on erinevate visualisatsioonide ja analüüside jaoks tavaliselt vajalik skriptide kirjutamine.
+
+Selgelt erinev teistest on kõneveebi lahendus, sest see on veebipõhine ning mõeldud ainult eGeMAPS-tunnuste analüüsile. Seetõttu on selle funktsionaalsus üsna piiratud: rakenduses on küll võimalik akustilisi tunnuseid joondiagrammil visualiseerida, kuid puuduvad teised visualisatsiooni võimalused ning analüüsimeetodid nagu sarnasuse otsing. Lisaks esineb failisuuruse piirang ja tulemusi ei salvestata.
+
+Seega, ükski rakendus ei kata ühes keskkonnas kõiki käesolevas töös esile toodud analüüsiülesandeid: GeMAPS tunnuse arvutamine, erinevad visualisatsiooni võimalused ning sarnasuse analüüsi.

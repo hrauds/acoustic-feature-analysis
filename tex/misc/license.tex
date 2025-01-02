@@ -1,0 +1,27 @@
+% Generates the list of supervisors. Do not edit
+\newcommand{\supervisorList}[1]
+{
+  \ifthenelse{\equal{#1}{[Co-Supervisor's Name]}}{\mbox{\supervisor}}{\mbox{\supervisor}~and \mbox{\cosupervisor}}
+}
+
+% The license should be automatically filled, please double check that everything is fine before submitting
+Mina, \authorName
+
+\begin{enumerate}[label*=\arabic*.]
+    \item Annan Tallinna Tehnikaülikoolile tasuta loa (lihtlitsentsi) enda loodud teose ``\doctitle'', mille juhendaja on\supervisorList{\cosupervisor}
+    \begin{enumerate}[label*=\arabic*.]
+        \item reprodutseerimiseks lõputöö säilitamise ja elektroonse avaldamise eesmärgil, sh
+Tallinna Tehnikaülikooli raamatukogu digikogusse lisamise eesmärgil kuni
+autoriõiguse kehtivuse tähtaja lõppemiseni;
+        \item üldsusele kättesaadavaks tegemiseks Tallinna Tehnikaülikooli veebikeskkonna
+kaudu, sealhulgas Tallinna Tehnikaülikooli raamatukogu digikogu kaudu kuni
+autoriõiguse kehtivuse tähtaja lõppemiseni.
+    \end{enumerate}
+    \item Olen teadlik, et käesoleva lihtlitsentsi punktis 1 nimetatud õigused jäävad alles ka
+autorile.
+    \item Kinnitan, et lihtlitsentsi andmisega ei rikuta teiste isikute intellektuaalomandi ega
+isikuandmete kaitse seadusest ning muudest õigusaktidest tulenevaid õigusi
+\end{enumerate}
+
+% Defaults to current date. If you want a specific date, replace \signaturedate with hardcoded value
+\signatureDate

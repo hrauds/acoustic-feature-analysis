@@ -1,0 +1,37 @@
+\include{misc/titlepage}
+
+\setcounter{page}{0}
+\pagenumbering{arabic}   %from here on, start the 'real' page numbering, from 1, with normal digits
+
+\normalsize
+
+\chapter*{\centerline{Autorideklaratsioon}}\label{chapter:declaration}
+\input{misc/authordeclaration.tex}
+\pagebreak
+
+\chapter*{\centerline{Abstract}}\label{chapter:abstract}
+\input{misc/abstract}
+\pagebreak
+
+\chapter*{\begin{center}Annotatsioon\\\large\doctitleEst\end{center}}\label{chapter:abstract-eesti}
+\input{misc/abstract-eesti.tex}
+\pagebreak
+
+\chapter*{\centerline{Lühendite ja mõistete sõnastik}}\label{chapter:terms}
+\input{misc/terms_abbreviations.tex}
+\pagebreak
+
+\phantomsection
+\setcounter{tocdepth}{2}    % Sets maximum depth of Table Of Contents
+\renewcommand{\contentsname}{Sisukord}
+\tableofcontents
+
+\clearpage \phantomsection
+\renewcommand{\listfigurename}{Jooniste loetelu}
+\setcounter{figure}{0}
+% \addcontentsline{toc}{chapter}{\listfigurename}]
+\listoffigures
+
+\clearpage \phantomsection
+% \addcontentsline{toc}{chapter}{\listtablename}
+\listoftables
