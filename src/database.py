@@ -73,6 +73,9 @@ class Database:
             collection_name (str): Name of the collection ('recordings', 'words', 'phonemes').
             data_list (list): A list of documents to insert.
 
+        Returns:
+            list: A list of inserted ObjectIds.
+
         Raises:
             ValueError: If the collection name or data list is invalid.
         """
@@ -86,14 +89,20 @@ class Database:
         elif collection_name == 'phonemes':
             collection = self.db['phonemes']
         else:
-            raise ValueError(f"Invalid collection name: {collection_name}. Must be 'recordings', 'words', or 'phonemes'.")
+            raise ValueError(
+                f"Invalid collection name: {collection_name}. Must be 'recordings', 'words', or 'phonemes'.")
 
+        result = None
         try:
-            collection.insert_many(data_list, ordered=False)
+            result = collection.insert_many(data_list, ordered=False)
         except errors.BulkWriteError as bwe:
             logging.warning(f"Some documents were not inserted into '{collection_name}' collection: {bwe.details}")
         except errors.PyMongoError as e:
             logging.error(f"Failed to insert data into '{collection_name}' collection: {e}")
+
+        if result:
+            return result.inserted_ids
+        return []
 
     def get_recording_by_id(self, recording_id):
         """
@@ -150,87 +159,81 @@ class Database:
                 'recording': self.recordings_col,
                 'word': self.words_col,
                 'phoneme': self.phonemes_col
-            }.get(analysis_level)
+            }[analysis_level]
 
             for recording_id in recording_ids:
                 query = {"recording_id": recording_id}
-                cursor = collection.find(query)
-                features_list = list(cursor)
+                features_list = list(collection.find(query))
 
-                if features_list:
-                    formatted_features = []
-                    recording_doc = self.recordings_col.find_one({"recording_id": recording_id})
-                    if not recording_doc:
-                        logging.warning(f"Recording data not found for ID '{recording_id}'")
+                if not features_list:
+                    logging.warning(f"No features found for recording '{recording_id}' at level '{analysis_level}'.")
+                    continue
+
+                formatted_features = []
+
+                recording_doc = self.recordings_col.find_one({"recording_id": recording_id})
+                if not recording_doc:
+                    logging.warning(f"Recording data not found for ID '{recording_id}'")
+                    continue
+
+                full_frame_values = recording_doc["features"]["frame_values"]
+
+                for feature in features_list:
+                    start = feature.get("start")
+                    end = feature.get("end")
+
+                    if not isinstance(start, (int, float)) or not isinstance(end, (int, float)):
                         continue
 
-                    full_frame_values = recording_doc["features"]["frame_values"]
-
-                    for feature in features_list:
-                        start, end = feature.get("start"), feature.get("end")
-
-                        # Validate 'start' and 'end'
-                        if not isinstance(start, (int, float)) or not isinstance(end, (int, float)):
+                    sliced_frame_values = []
+                    for frame in full_frame_values:
+                        if not isinstance(frame, dict):
                             continue
 
-                        # Slice the main frame_values
-                        sliced_frame_values = []
-                        for timestamp, values in zip(full_frame_values["timestamps"], full_frame_values["values"]):
+                        ts = frame.get("time")
+                        vals = frame.get("vals")
 
-                            if not isinstance(timestamp, (int, float)):
-                                continue
+                        if not isinstance(ts, (int, float)):
+                            continue
+                        if not isinstance(vals, list):
+                            continue
 
-                            if not isinstance(values, list):
-                                continue
-
-                            try:
-                                float_timestamp = float(timestamp)
-                            except (ValueError, TypeError) as e:
-                                logging.error(f"Cannot convert timestamp to float: {timestamp} - {e}")
-                                continue
-
-                            try:
-                                float_values = [float(value) for value in values]
-                            except (ValueError, TypeError) as e:
-                                logging.error(f"Cannot convert values to float: {values} - {e}")
-                                continue
-
-                            if start <= float_timestamp <= end:
-                                sliced_frame_values.append((float_timestamp, float_values))
-
-                        # Downsample for certain levels
-                        if analysis_level in ['recording', 'word']:
-                            step = 10 if analysis_level == 'recording' else 2
-                            sliced_frame_values = sliced_frame_values[::step]
-
-                        word_text = feature.get("word_text", "")
-
-                        # Convert mean features to float
-                        mean_features = {}
-                        for k, v in feature.get("features", {}).get("mean", {}).items():
-                            if isinstance(v, (int, float, str)):
+                        if start <= ts <= end:
+                            float_values = []
+                            for v in vals:
                                 try:
-                                    mean_features[k] = float(v)
-                                except (ValueError, TypeError) as e:
-                                    logging.error(f"Cannot convert mean feature '{k}' to float: {v} - {e}")
-                            else:
-                                logging.error(f"Mean feature '{k}' has invalid type: {type(v)}")
+                                    float_values.append(float(v))
+                                except (ValueError, TypeError):
+                                    float_values.append(None)
 
-                        formatted_features.append({
-                            "_id": str(feature.get("_id")),
-                            "text": feature.get("text", ""),
-                            "word_text": word_text,
-                            "start": start,
-                            "end": end,
-                            "mean": mean_features,
-                            "frame_values": sliced_frame_values
-                        })
+                            sliced_frame_values.append((ts, float_values))
 
-                    features[recording_id] = formatted_features
-                else:
-                    logging.warning(f"No features found for recording '{recording_id}' at level '{analysis_level}'.")
+                    if analysis_level in ['recording', 'word']:
+                        step = 10 if analysis_level == 'recording' else 2
+                        sliced_frame_values = sliced_frame_values[::step]
+
+                    mean_features = {}
+                    raw_mean = feature.get("features", {}).get("mean", {})
+                    for k, v in raw_mean.items():
+                        try:
+                            mean_features[k] = float(v)
+                        except (ValueError, TypeError):
+                            mean_features[k] = None
+
+                    formatted_features.append({
+                        "_id": str(feature.get("_id")),
+                        "text": feature.get("text", ""),
+                        "word_text": feature.get("word_text", ""),
+                        "start": start,
+                        "end": end,
+                        "mean": mean_features,
+                        "frame_values": sliced_frame_values
+                    })
+
+                features[recording_id] = formatted_features
 
             return features
+
         except Exception as e:
             logging.error(f"Error fetching features for recordings {recording_ids} at level {analysis_level}: {e}")
             return {}

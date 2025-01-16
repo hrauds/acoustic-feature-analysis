@@ -101,26 +101,30 @@ class SpeechImporter:
         recording_duration = self.round_value(recording_duration)
         recording_mean = self.aggregate_features(features)
 
-        # Prepare frame_values as lists
-        frame_values = {
-            "timestamps": [self.round_value(ts) for ts in features.index.tolist()],
-            "values": features.round(PRECISION).values.tolist(),
-            "feature_names": features.columns.tolist()
-        }
+        frame_values = []
+        for time_idx, row in features.iterrows():
+            row_data = row.round(PRECISION).tolist()
+            frame_values.append({
+                "time": self.round_value(time_idx),
+                "vals": row_data
+            })
 
         recording_doc = {
             "recording_id": file_name,
-            "parent_id": None,
-            "text": "recording",
             "start": 0.0,
             "end": recording_duration,
             "duration": recording_duration,
             "features": {
                 "mean": recording_mean,
-                "frame_values": frame_values  # Store frame_values directly
+                "frame_values": frame_values
             }
         }
-        self.db.insert_data("recordings", [recording_doc])
+        inserted_recording_ids = self.db.insert_data("recordings", [recording_doc])
+        if inserted_recording_ids:
+            recording_doc_id = inserted_recording_ids[0]
+        else:
+            logging.warning(f"Failed to insert recording for '{file_name}'.")
+            return
 
         # Word-level data
         word_docs = []
@@ -129,10 +133,11 @@ class SpeechImporter:
             word_end = self.round_value(word["end"])
             word_duration = self.round_value(word_end - word_start)
             word_features = features[(features.index >= word_start) & (features.index <= word_end)]
+
             if not word_features.empty:
                 word_doc = {
                     "recording_id": file_name,
-                    "parent_id": None,
+                    "parent_id": recording_doc_id,
                     "text": word["text"],
                     "start": word_start,
                     "end": word_end,
@@ -146,7 +151,9 @@ class SpeechImporter:
             else:
                 logging.warning(f"No features found for word '{word['text']}' in recording '{file_name}'.")
 
-        self.db.insert_data("words", word_docs)
+        inserted_word_ids = self.db.insert_data("words", word_docs)
+        for word_doc, word_id in zip(word_docs, inserted_word_ids):
+            word_doc["_id"] = word_id
 
         # Phoneme-level data
         phoneme_docs = []
@@ -155,6 +162,7 @@ class SpeechImporter:
             phoneme_end = self.round_value(phoneme["end"])
             phoneme_duration = self.round_value(phoneme_end - phoneme_start)
             phoneme_features = features[(features.index >= phoneme_start) & (features.index <= phoneme_end)]
+
             if not phoneme_features.empty:
                 parent_id, word_text = next(
                     ((word_doc["_id"], word_doc["text"]) for word_doc in word_docs if
