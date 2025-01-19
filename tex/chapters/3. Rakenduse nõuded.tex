@@ -1,11 +1,13 @@
+Järgnevalt kirjeldatakse rakenduse funktsionaalsete nõuete määratlemise protsessi ja esitatakse nende põhjal koostatud kasutusjuhud.
+
 \section{Funktsionaalsed nõuded}
-Rakenduse arenduse alguses lepiti juhendaja kokku funktsionaalsed nõuded, et määratleda rakenduse fookus ja võimalused. 
+Rakenduse arenduse alguses lepiti juhendajaga kokku funktsionaalsed nõuded, et määratleda rakenduse fookus ja võimalused. 
 
 Funktsionaalsed nõuded:
 \begin{itemize}
     \item GeMAPS tunnuste eraldamine kõnefailidest. Rakendus peab suutma kõnefailidest eraldada GeMAPS akustilisi tunnuseid. Selleks tuleb töödelda salvestused ja nendega seotud TextGrid failid.
    
-    \item Tunnuste visualiseerimine erinevatel diagrammitüüpidel, nagu ajatelje joondiagramm, histogramm, radar diagramm, karpdiagramm, vokaalikaart.
+    \item Tunnuste visualiseerimine erinevatel diagrammitüüpidel, nagu ajatelje joondiagramm, histogramm, radardiagramm, karpdiagramm, vokaalikaart.
     
     \item Sarnaste kõnelejate leidmine kõnekorpusest.
 
@@ -13,12 +15,10 @@ Funktsionaalsed nõuded:
 \end{itemize}
 
 \section{Funktsionaalsete nõuete kasutusjuhud}
-Arenduse käigus koostati täpsemad nõuded, mida täpsustati pidevalt testimisel tekkinud mõtetest. Järgnevalt esitatakse kokkulepitud nõuded täpsemalt kasutusjuhtudena.
-
-Kasutusjuhud on kirjeldatud tabelites 1-7.
+Arenduse käigus koostati täpsemad nõuded, mida täiendati jooksvalt, kui juhendajaga koos rakenduse testides tekkis uusi ideid. Järgnevalt esitatakse kokkulepitud funktsionaalsed nõuded kasutusjuhtudena tabelites 1-7.
 
 \begin{longtable}{|p{2.5cm}|p{11cm}|}
-    \caption{Kasutusjuht GeMAPS tunnuste eraldamine kõnefailidest}
+    \caption{Kasutusjuht GeMAPS tunnuste eraldamine kõnefailidest.}
     \label{tab:kasutusjuht1}\\ \hline
     \textbf{Nimi} &  \textbf{GeMAPS tunnuste eraldamine kõnefailidest}  \\
     \hline
@@ -31,8 +31,8 @@ Kasutusjuhud on kirjeldatud tabelites 1-7.
     \endfoot
     \hline
     \endlastfoot
-    Kirjeldus & Kasutaja saab importida kõnesalvestised ja nendega seotud TextGrid failid, et eraldada ja salvestada GeMAPS akustilisi tunnuseid.\\ \hline
-    Eeltingimused & Kasutajal on .wav ja TextGrid-failid.\\ \hline
+    Kirjeldus & Kasutaja saab importida kõnesalvestused ja nendega seotud TextGrid failid, et eraldada ja salvestada GeMAPS akustilisi tunnuseid.\\ \hline
+    Eeltingimused & Kasutajal on kõnesalvestuste samanimelised .wav ja TextGrid failid.\\ \hline
     Põhiline sündmuste käik & 
     1. Kasutaja avab kõnefailide importimise akna.
     
@@ -40,7 +40,7 @@ Kasutusjuhud on kirjeldatud tabelites 1-7.
     
     3. Kasutaja valib kõnefailid ja vastavad TextGridid oma seadmest.
     
-    4. Kasutaja käivitab GeMAPS tunnuste eraldamise protsessi.
+    4. Süsteemis käivitub GeMAPS tunnuste eraldamise protsess
     
     5. Süsteem töötleb failid, eraldab GeMAPS tunnused ja salvestab andmed andmebaasi.
     
@@ -52,14 +52,14 @@ Kasutusjuhud on kirjeldatud tabelites 1-7.
     - Kui failide töötlemine ebaõnnestub, kuvatakse veateade ja protsess peatub.
     \\ \hline
     Lõpptulemused & 
-    - Edukas stsenaarium: GeMAPS tunnused salvestatakse andmebaasi edasiseks analüüsiks ja visualiseerimiseks.
+    - Eduka stsenaariumi korral GeMAPS tunnused salvestatakse andmebaasi edasiseks analüüsiks ja visualiseerimiseks.
     
-    - Ebaõnnestunud stsenaarium: töötlust ei sooritata, kasutajale kuvatakse teavitus.
+    - Ebaõnnestunud stsenaariumi korral töötlust ei sooritata ning kasutajale kuvatakse teavitus.
     \\ \hline
 \end{longtable}
 
 \begin{longtable}{|p{2.5cm}|p{11cm}|}
-    \caption{{Salvestuste ja töödeldud andmete kustutamine}}
+    \caption{{Salvestuste ja töödeldud andmete kustutamine.}}
     \label{tab:kasutusjuht2}\\ \hline
     \textbf{Nimi} &  \textbf{Salvestuste ja töödeldud andmete kustutamine}  \\
     \hline
@@ -78,7 +78,7 @@ Kasutusjuhud on kirjeldatud tabelites 1-7.
     
     2. Süsteem kuvab salvestuste nimekirja.
     
-    3. Kasutaja valib salvestuse(d), mida ta soovib kustutada.
+    3. Kasutaja valib salvestused, mida ta soovib kustutada.
     
     4. Süsteem kuvab dialoogi, milles küsitakse kustutamise kinnitust.
     
@@ -90,15 +90,15 @@ Kasutusjuhud on kirjeldatud tabelites 1-7.
     - Kui kasutaja tühistab kustutamise kinnituse, jäävad andmed muutmata.
     \\ \hline
     Lõpptulemused & 
-    - Edukas stsenaarium: valitud salvestuse andmed kustutatakse andmebaasist.
+    - Edukas stsenaariumi korral valitud salvestuse andmed kustutatakse andmebaasist.
     
-    - Ebaõnnestunud stsenaarium: andmed ei muutu, kuvatakse vastav teavitus.
+    - Ebaõnnestunud stsenaariumi korral andmed ei muutu, kuvatakse vastav teavitus.
     \\ \hline
 \end{longtable}
 
 
 \begin{longtable}{|p{2.5cm}|p{11cm}|}
-    \caption{{Tunnuste visualiseerimine}}
+    \caption{{Tunuste visualiseerimine.}}
     \label{tab:kasutusjuht3}\\ \hline
     \textbf{Nimi} &  \textbf{Tunnuste visualiseerimine}  \\
     \hline
@@ -110,7 +110,7 @@ Kasutusjuhud on kirjeldatud tabelites 1-7.
     \endfoot
     \hline
     \endlastfoot
-    Kirjeldus & Kasutaja saab visualiseerida GeMAPS tunnuseid erinevatel diagrammitüüpidel, sealhulgas ajateljel, radar diagrammil, histogrammil, karpdiagrammil ja vokaalikaardil.\\ \hline
+    Kirjeldus & Kasutaja saab visualiseerida GeMAPS tunnuseid erinevatel diagrammitüüpidel, sealhulgas ajateljel, radardiagrammil, histogrammil, karpdiagrammil ja vokaalikaardil.\\ \hline
     Eeltingimused & GeMAPS tunnused on eraldatud ja salvestatud andmebaasi.\\ \hline
     Põhiline sündmuste käik & 
     1. Kasutaja avab tunnuste visualiseerimise menüü.
@@ -119,23 +119,23 @@ Kasutusjuhud on kirjeldatud tabelites 1-7.
     
     3. Kasutaja valib salvestuse, tunnused ja graafikutüübi.
     
-    4. Kasutaja käivitab visualiseerimise.
+    4. Kasutaja vajutab visualiseerimise nupule.
     
-    5. Süsteem koostab ja kuvab valitud parameetrite alusel visualiseeringu.
+    5. Süsteem koostab ja kuvab valitud parameetrite alusel visualisatsiooni.
     \\ \hline
     Alternatiivne sündmuste käik & 
     - Kui valikud ei vasta nõuetele (nt pole valitud tunnuseid), kuvatakse veateade.
     \\ \hline
     Lõpptulemused & 
-    - Edukas stsenaarium: Kuvatakse valitud visualiseering. Kasutaja saab selle eksportida pildifailina või JSON-andmetena.
+    - Eduka stsenaariumi korral kuvatakse valitud visualisatsioon ning kasutaja saab selle eksportida pildifailina või JSON-andmetena.
     
-    - Ebaõnnestunud stsenaarium: Visualiseeringut ei looda, kuvatakse teavitus.
+    - Ebaõnnestunud stsenaariumi korral visualisatsiooni ei looda ning kuvatakse teavitus.
     \\ \hline
 \end{longtable}
 
 
 \begin{longtable}{|p{2.5cm}|p{11cm}|}
-    \caption{{Sarnaste kõnelejate leidmine}}
+    \caption{{Sarnaste kõnelejate leidmine.}}
     \label{tab:kasutusjuht4}\\ \hline
     \textbf{Nimi} &  \textbf{Sarnaste kõnelejate leidmine}  \\
     \hline
@@ -151,11 +151,11 @@ Kasutusjuhud on kirjeldatud tabelites 1-7.
     Kirjeldus & Kasutaja saab leida kõnekorpusest salvestused, mis on kõige sarnasemad valitud sihtsalvestusega\\ \hline
     Eeltingimused & GeMAPS tunnused on eraldatud ja salvestatud andmebaasi.\\ \hline
     Põhiline sündmuste käik & 
-    1. Kasutaja avab sarnasuse analüüsi menüü.
+    1. Kasutaja avab sarnasuse analüüsi valiku juhtpaneelis.
     
-    2. Süsteem kuvab sihtsalvestuse ja muude salvestuste valikuvõimalused.
+    2. Süsteem kuvab sihtsalvestuse ja teiste salvestuste valikuvõimalused.
     
-    3. Kasutaja valib sihtsalvestuse ja määrab sarnasuse arvutamise valikud (nt meetod, tagastavate salvestuste arv tulemuses).
+    3. Kasutaja valib sihtsalvestuse, millele sarnaseid otsitakse ja määrab sarnasuse arvutamise valikud (nt meetod, tagastavate salvestuste arv tulemuses).
     
     4. Süsteem arvutab valitud meetodil sarnasused ja kuvab tulemused graafikuna.
     \\ \hline
@@ -163,14 +163,14 @@ Kasutusjuhud on kirjeldatud tabelites 1-7.
     - Kui kasutaja ei määra sihtsalvestust, kuvatakse veateade.
     \\ \hline
     Lõpptulemused & 
-    - Edukas stsenaarium: Kuvatakse sarnaste salvestuste analüüs ja visualiseerimine.
+    - Eduka stsenaariumi korral kuvatakse sarnaste salvestuste analüüs ja visualisatsioon.
     
-    - Ebaõnnestunud stsenaarium: Analüüsi ei sooritata, kuvatakse teavitus.
+    - Ebaõnnestunud stsenaariumi korral analüüsi ei sooritata, kuvatakse teavitus.
     \\ \hline
 \end{longtable}
 
 \begin{longtable}{|p{2.5cm}|p{11cm}|}
-    \caption{{Helisalvestuse esitamine ja helilaine visualiseerimine}}
+    \caption{{Helisalvestuse esitamine ja helilaine visualiseerimine.}}
     \label{tab:kasutusjuht5}\\ \hline
     \textbf{Nimi} &  \textbf{Helisalvestuse esitamine ja helilaine visualiseerimine}  \\
     \hline
@@ -183,8 +183,8 @@ Kasutusjuhud on kirjeldatud tabelites 1-7.
     \endfoot
     \hline
     \endlastfoot
-    Kirjeldus & Kasutaja saab kuulata üles laaditud kõnesalvestust ning kuvatakse selle helilaine visualisatsioon.\\ \hline
-    Eeltingimused & Kasutaja on laadinud soovitud kõnesalvestuste failid rakenduse kausta nimega "data"\\ \hline
+    Kirjeldus & Kasutaja saab kuulata kõnesalvestusi ning kuvatakse helilaine visualisatsioon.\\ \hline
+    Eeltingimused & Kasutaja on lisanud soovitud kõnesalvestuste failid rakenduse kausta nimega \textit{data}\\ \hline
     Põhiline sündmuste käik & 
     1. Kasutaja avab rakenduse.
     
@@ -192,20 +192,20 @@ Kasutusjuhud on kirjeldatud tabelites 1-7.
     
     3. Kasutaja valib salvestuse ja käivitab selle esitamise.
     
-    4. Süsteem mängib helisalvestust ja kuvab samaaegselt helilaine visualiseerimise.
+    4. Süsteem esitab helisalvestuse ja kuvab helilaine visualisatsiooni.
     \\ \hline
     Alternatiivne sündmuste käik & 
     - Kui kasutaja valitud salvestus ei ole mingil põhjusel saadaval, kuvatakse veateade.
     \\ \hline
     Lõpptulemused & 
-    - Edukas stsenaarium: Salvestus mängitakse ja helilaine kuvatakse visuaalselt.
+    - Eduka stsenaariumi korral salvestus esitatakse ja helilaine kuvatakse visuaalselt.
     
-    - Ebaõnnestunud stsenaarium: Esitamist ei toimu, kuvatakse teavitus.
+    - Ebaõnnestunud stsenaariumi korral esitamist ei toimu ning kuvatakse teavitus.
     \\ \hline
 \end{longtable}
 
 \begin{longtable}{|p{2.5cm}|p{11cm}|}
-    \caption{{Andmete ja visualisatsioonide eksportimine}}
+    \caption{{Andmete ja visualisatsioonide eksportimine.}}
     \label{tab:kasutusjuht6}\\ \hline
     \textbf{Nimi} &  \textbf{Andmete ja visualisatsioonide eksportimine}  \\
     \hline
@@ -221,11 +221,9 @@ Kasutusjuhud on kirjeldatud tabelites 1-7.
     Kirjeldus & Kasutaja saab eksportida visualiseeritud andmeid ja graafikuid JSON- või pildifailidena.\\ \hline
     Eeltingimused & Visualiseerimine või sarnasuse analüüs on edukalt läbi viidud.\\ \hline
     Põhiline sündmuste käik & 
-    1. Kasutaja vajutab ekspordi nupule.
+    1. Kasutaja vajutab JSON faili ekspordi nupule juhtpaneelis või pildifaili ekspordi ikoonile visualisatsiooni vaate paremas nurgas.
     
-    2. Süsteem kuvab eksporditüüpide (JSON, pilt) valiku.
-    
-    3. Kasutaja valib failitüübi ja salvestuskoha ning kinnitab ekspordi.
+    2. Kasutaja valib failitüübi ja salvestuskoha ning kinnitab ekspordi.
     
     4. Süsteem salvestab valitud failid kasutaja määratud asukohta.
     \\ \hline
@@ -233,9 +231,9 @@ Kasutusjuhud on kirjeldatud tabelites 1-7.
     - Kui kasutaja ei määra salvestuskohta, ekspordi protsess katkestatakse ja kuvatakse teavitus.
     \\ \hline
     Lõpptulemused & 
-    - Edukas stsenaarium: Eksporditud fail salvestatakse määratud asukohta.
+    - Eduka stsenaariumi korral eksporditud fail salvestatakse määratud asukohta.
     
-    - Ebaõnnestunud stsenaarium: Ekspordi protsess katkeb ja kuvatakse teavitus.
+    - Ebaõnnestunud stsenaariumi korral ekspordi protsess katkestatakse ja kuvatakse teavitus.
     \\ \hline
 \end{longtable}
 

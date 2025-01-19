@@ -1,55 +1,19 @@
+Selles peatükis antakse ülevaade rakenduse arenduse protsessist, mille etapid olid: akustiliste tunnuste eraldamine ja TextGrid-failide töötlemine, andmete salvestamine, kasutajaliidese arendus, visualisatsioonide loomine, kõnesalvestuste sarnasuse analüüs ning rakenduse testimine.
+
 \section{Tunnuste eraldamine ja TextGridide töötlus}
-Järgnevalt kirjeldatakse akustiliste tunnuste helifailist eraldamise protsessi ja ktehnoloogiaid. Ning TextGridide töötlemiseprotsessi ja tehnoloogiaid
+Järgnevalt kirjeldatakse akustiliste tunnuste helifailidest eraldamise ning TextGridide töötlemise protsessi ja tehnoloogiaid.
 
 \subsection{OpenSMILE}
-Tunnuste eraldamise protsess: sisendiks on helifail -> opensmile töötleb -> väljund pandas DataFrame tunnustega, mis on eraldatud iga salvestuse 10ms ajahetke kohta.
-
-Konfiguratsioonis määratakse tunnuste komplekt - neid on mitmeid erinevaid. Rakenduses kasutatakse kõige väiksemat eGeMAPS v02 akustiliste tunnuste komplekti, kus on 88 tunnust, mis jagunevad:
-
-\begin{enumerate}
-    \item Madala taseme deskriptorid (LLD): otseselt helisignaalist tuletatud tunnused
-    \item Funktsionaalsed tunnused (functionals): statistilised näitajad, mis arvutatakse madala taseme tunnustest, näiteks keskmised väärtused ja standardhälve
-\end{enumerate}
-
-Valiti kõige väiksem tunnuste komplekt, et tunnuste hulk oleks hästi hoomatav ja mitte liiga suur, sest visualiseerimisel keskendutaks peamiselt üksikute tunnuste visualiseerimisele.
-
-Eraldatud tunnnused:
-\begin{itemize}
-    \item Loudness\_sma3
-    \item alphaRatio\_sma3
-    \item hammarbergIndex\_sma3
-    \item slope0-500\_sma3
-    \item slope500-1500\_sma3
-    \item spectralFlux\_sma3
-    \item mfcc1\_sma3
-    \item mfcc2\_sma3
-    \item mfcc3\_sma3
-    \item mfcc4\_sma3
-    \item F0semitoneFrom27.5Hz\_sma3nz
-    \item jitterLocal\_sma3nz
-    \item shimmerLocaldB\_sma3nz
-    \item HNRdBACF\_sma3nz
-    \item logRelF0-H1-H2\_sma3nz
-    \item logRelF0-H1-A3\_sma3nz
-    \item F1frequency\_sma3nz
-    \item F1bandwidth\_sma3nz
-    \item F1amplitudeLogRelF0\_sma3nz
-    \item F2frequency\_sma3nz
-    \item F2bandwidth\_sma3nz
-    \item F2amplitudeLogRelF0\_sma3nz
-    \item F3frequency\_sma3nz
-    \item F3bandwidth\_sma3nz
-    \item F3amplitudeLogRelF0\_sma3nz
-\end{itemize}
+Tunnuste eraldamiseks kasutati OpenSMILE \cite{opensmile} raamistikku, mille töötluse funktsioon võtab sisendiks helifaili ning annab väljundiks pandas DataFrame'i, kus iga rida akustilise tunnuse väärtus 10 millisekundilise ajaraami kohta.
 
 \begin{longtable}{|r|r|r|r|}
-    \caption{Näide helifailist eraldatud tunnuste DataFrame'ist}
+    \caption{Näide helifailist eraldatud tunnuste DataFrame'ist.} \label{table:example} \\
     \hline
     \textbf{Start (s)} & \textbf{Loudness\_sma3} & \textbf{alphaRatio\_sma3} & \textbf{slope0-500\_sma3} \\
     \hline
     \endfirsthead
     \hline
-    \textbf{Start (s)} & \textbf{Loudness\_sma3} & \textbf{alphaRatio\_sma3} &  \textbf{slope0-500\_sma3} \\
+    \textbf{Start (s)} & \textbf{Loudness\_sma3} & \textbf{alphaRatio\_sma3} & \textbf{slope0-500\_sma3} \\
     \hline
     \endhead
     \hline
@@ -61,150 +25,245 @@ Eraldatud tunnnused:
     0.02 & 0.103573 & -14.812015 & -0.051186 \\
     0.03 & 0.104770 & -16.948393 & -0.075717 \\
     0.04 & 0.105062 & -19.221598 & -0.086498 \\
-    \vdots & \vdots & \vdots & \vdots \\
-    9.68 & 0.107817 & -21.088533& -0.076632 \\
+    {\vdots} & {\vdots} & {\vdots} & {\vdots} \\
+    9.68 & 0.107817 & -21.088533 & -0.076632 \\
     9.69 & 0.110813 & -16.712238 & -0.043914 \\
     9.70 & 0.113438 & -17.034071 & -0.041286 \\
     9.71 & 0.112685 & -16.894552 & -0.032873 \\
     9.72 & 0.113219 & -18.397005 & -0.041675 \\
 \end{longtable}
 
-\subsection{TextGridide töötlemine}
-TextGrid on kõnesalvestise juurde käiv tekstifail, mida kasutatakse kõnesalvestuse märgendamiseks. Lastekõne korpusel näiteks on  märgendatud IntervalTiers: mis võivad olla HMM-words, HMM-phonemes, cv - konsonant või vokaal ja foot. nendes kihtides on andmed selle kohta, millal sõna või foneem algab ja lõppeb. Seda on vaja teada, et võimaldada kindlate sõnade ja foneemide visualiseerimist.
+OpenSMILE töötlemise funktsiooni parameetriks määratakse eraldatav tunnuste komplekt. Neid on mitmeid erinevaid, selles rakenduses kasutatakse kõige väiksemat eGeMAPS v02 akustiliste tunnuste komplekti, kus on 88 tunnust, mis jagunevad:
 
-Sõnade ja foneemide info töötlemiseks kasutatakse praatio teeki \cite{praatio}. Sellega on võimalik lihtsasti eraldada TextGridist kihtide infot. Praatio on Pythoni teek, mis lihtsustab TextGridide lugemist. Kihid, mida rakenduses töödeldakse on näiteks HMM-words ja HMM-phonemes. 
+\begin{enumerate}
+    \item Madala taseme deskriptorid (\textit{Low Level Descriptors}), mis on otse helisignaalist tuletatud tunnused.
+    \item Funktsionaalsed tunnused (\textit{functionals}): statistilised näitajad, mis arvutatakse madala taseme tunnustest, näiteks keskmised väärtused ja standardhälve.
+\end{enumerate}
+
+Nendest omakorda valiti ainult madala taseme deskriptorid (kokku 25 tunnust), et tunnuste hulk oleks kasutajale hoomatav, sest visualiseerimisel keskendutakse üksikute tunnuste visualiseerimisele. Eraldatud tunnuste loetelu on esitatud Lisas 2.
+
+\subsection{TextGridide töötlemine}
+TextGrid \cite{textgrid} on failiformaat, mida kasutatakse kõnesalvestuse märgendamiseks. Lastekõne korpuse puhul, mida rakenduse arenduses näidisandmetena kasutati, on iga salvestuse TextGridis märgendatud IntervalTiers kiht, mis võib jaguneda veel näiteks: HMM-words, HMM-phonemes, cv (konsonant või vokaal) ja foot. Kihid, mida rakenduses TextGridide töötlusel kasutati on HMM-words ja HMM-phonemes. Nendes kihtides on andmed selle kohta, millal sõna või foneem algab ja lõppeb. Need andmed tuli salvestada, et võimaldada kindlate sõnade ja foneemide visualiseerimine.
+
+Sõnade ja foneemide info töötlemiseks kasutatati praatio teeki \cite{praatio}. Sellega oli võimalik lihtsasti eraldada TextGridist kihtide infot. Praatio on Pythoni teek, mis lihtsustab TextGridide lugemist. 
 
 \section{Andmete salvestamine MongoDB andmebaasis}
-MongoDB on NoSQL andmebaas. Andmed salvestatakse BSON-formaadis dokumentidena. MongoDB on paidlik, sest see võimaldab ühes kollektsioonis hoida dokumente erinevate väljade ja andmetüüpidega. \cite{mongodb}
-
-Rakenduse andmebaasi valikul kaaluti võimalustest nii relatsioonilisi andmebaase kui ka dokumendipõhiseid lahendusi nagu MongoDB.
- MongoDB valiti rakenduse jaoks järgmiste omaduste tõttu:
- - Paindlik skeem: rakendust loodes ei olnud veel selge, kuidas ja milliseid andmeid on vaja hoida, seega paindlikkus tundus valikul väga oluline
- - Lihtne ja kiire seadistamine
+Rakenduse andmebaasi valikul kaaluti võimalustest relatsioonilisi andmebaase või dokumendipõhiseid lahendusi nagu MongoDB. MongoDB \cite{mongodb} on NoSQL andmebaas, kus andmed salvestatakse BSON-formaadis dokumentidena. MongoDB on paindlik, sest see võimaldab paindlikku andmebaasi skeemi ning ühes kollektsioonis hoida erinevate väljade ja andmetüüpidega dokumente \cite{mongodb_data_modeling}. Kuna rakenduse arenduse alguses ei olnud veel selge, kuidas ja milliseid andmeid on vaja salvestada, tundus see valikul oluline. Samuti oli MongoDB seadistamine lihtne ja kiire.
  
 Andmete salvestamise protsess:
-Peale tunnuste eraldamist ja  TextGridide töötlemist salvestatakse andmed kolme kollektsiooni: Recordings, Words, Phonemes.
+Peale tunnuste eraldamist ja  TextGridide töötlemist salvestatakse andmed kolme kollektsiooni: \textit{Recordings}, \textit{Words} ja \textit{Phonemes}.
+
+\begin{longtable}{|p{2.5cm}|p{3cm}|p{8cm}|}
+    \caption{Salvestuste kollektsiooni väljad, nende andmetüübid ja semantika.}
+    \label{tab:recordings}\\
+    \hline
+    \textbf{Välja nimi} & \textbf{Andmetüüp} & \textbf{Semantika}\\
+    \hline
+    \endfirsthead
+    \hline
+    \textbf{Välja nimi} & \textbf{Andmetüüp} & \textbf{Semantika}\\
+    \hline
+    \endhead
+    \endfoot
+    \hline
+    \endlastfoot
+
+    \_id &
+    ObjectId &
+    Unikaalne identifikaator, mille MongoDB genereerib automaatselt.\\ \hline
+  
+    recording\_id &
+    string &
+    Salvestuse nimi (nt 148\_10001148\_26).\\ \hline
+          
+    start &
+    double &
+    Salvestuse algusaeg sekundites.\\ \hline
+    
+    end &
+    double &
+    Salvestuse lõppaeg sekundites.\\ \hline
+    
+    duration &
+    double &
+    Salvestise kogukestus sekundites.\\ \hline
+
+    features &
+    Object &
+    Objekt, mis hoiab salvestise akustilisi tunnuseid. Sellel on kaks alamobjekti:
+    \begin{itemize}
+      \item mean – akustiliste tunnuste keskmised väärtused kujul tunnuse nimi: tunnuse keskmine väärtus (double).
+      \item frame\_values – massiiv 10\,ms ajaraamide tunnuste väärtustest (double).
+    \end{itemize}\\ \hline
+\end{longtable}
+
+Ka sõnade ja foneemide puhul salvestatakse iga sõna või foneemi dokument vastavasse kollektsiooni, kuid tunnuste puhul salvestatakse ainult keskmised väärtused sõna või foneemi ajavahemiku kohta. Enne salvestamist filtreeritakse välja mitte-kõne segmendid, nagu vaikused ja müra, mis on vastavate siltidega (nt .noise või sil) TextGridides märgistatud. Nende segmentide tunnuste väärtuseid ei ole vaja andmebaasi salvestada, sest neid ei ole vaja eraldi visualiseerida, kuna vajalik on segmentidest ainult kindlaid sõnu või foneeme visualiseerida.
+
+\begin{longtable}{|p{2.5cm}|p{3cm}|p{8cm}|}
+    \caption{Sõnade kollektsiooni väljad, nende andmetüübid ja semantika.}
+    \label{tab:words}\\
+    \hline
+    \textbf{Välja nimi} & \textbf{Andmetüüp} & \textbf{Semantika}\\
+    \hline
+    \endfirsthead
+    \hline
+    \textbf{Välja nimi} & \textbf{Andmetüüp} & \textbf{Semantika}\\
+    \hline
+    \endhead
+    \endfoot
+    \hline
+    \endlastfoot
+
+    \_id &
+    ObjectId &
+    Unikaalne identifikaator, mille MongoDB genereerib automaatselt.\\ \hline
+
+    duration &
+    double &
+    Sõna kestus sekundites.\\ \hline
+
+    start &
+    double &
+    Sõna algamise ajahetk sekundites.\\ \hline
+
+    end &
+    double &
+    Sõna lõppemise ajahetk sekundites.\\ \hline
+
+    text &
+    string &
+    Sõna esitus tekstina (nt linna+tulede).\\ \hline
+
+    recording\_id &
+    string &
+    Salvestuse nimi (nt 148\_10001148\_26).\\ \hline
+
+    parent\_id &
+    ObjectId &
+    Salvestuse dokumendi ID, millesse sõna kuulub.\\ \hline
+    
+    features &
+    Object &
+    Objekt, mis hoiab sõna akustilisi tunnuseid:
+    \begin{itemize}
+      \item mean – alamdokumendis on erinevate tunnuste keskmised väärtused kujul tunnuse nimi: double.
+    \end{itemize}\\ \hline
+
+\end{longtable}
 
 
-Recordings kollektsiooni struktuur:
-\begin{itemize}
-    \item \_id
-    \item recording\_id
-    \item text
-    \item start
-    \item end
-    \item duration
-    \item features
-    \item mean
-        \item frame\_values
-        \item timestamps
-        \item values
-\end{itemize}
+\begin{longtable}{|p{2.5cm}|p{3cm}|p{8cm}|}
+    \caption{Foneemide kollektsiooni väljad, nende andmetüübid ja semantika.}
+    \label{tab:phonemes}\\
+    \hline
+    \textbf{Välja nimi} & \textbf{Andmetüüp} & \textbf{Semantika}\\
+    \hline
+    \endfirsthead
+    \hline
+    \textbf{Välja nimi} & \textbf{Andmetüüp} & \textbf{Semantika}\\
+    \hline
+    \endhead
+    \endfoot
+    \hline
+    \endlastfoot
 
-Kõik eraldatud ajaraamide tunnused väärtused lähevad frame\_values timestamps ja values alla.
+    \_id &
+    ObjectId &
+    Unikaalne identifikaator, mille MongoDB genereerib automaatselt.\\ \hline
 
-Sõnade ja foneemide puhul salvestatakse iga sõna/foneemi kohta vastavasse kollektsiooni dokument. Salvestatakse ainult keskmised väärtused sõna või foneemi ajavahemiku kohta. Enne salvestamist filtreeritakse välja ka mittekõne segmendid, nagu vaikused ja müra, mis on vastavate siltidega .noise ja sil jm. Neid silte ei ole  vaja andmebaasi salvestada, sest neid ei ole vaja visualiseerida kuna eesmärk on segmentidest ainult kindlate sõnade või foneemide visualiseerimine võimaldada.
+    duration &
+    double &
+    Foneemi kestus sekundites.\\ \hline
 
-Words kollektsiooni struktuur:
-\begin{itemize}
-    \item \_id
-    \item recording\_id
-    \item parent\_id
-    \item text
-    \item start
-    \item end
-    \item duration
-    \item features
-        \item mean
-\end{itemize}
+    start &
+    double &
+    Foneemi alguse ajahetk sekundites.\\ \hline
 
+    end &
+    double &
+    Foneemi lõppemise ajahetk sekundites.\\ \hline
 
-Phonemes kollektsioon
-\begin{itemize}
-    \item \_id
-    \item text
-    \item parent\_id
-    \item word\_text
-    \item start
-    \item end
-    \item duration
-    \item features
-        \item mean
-\end{itemize}
+    text &
+    string &
+    Foneemi esitus tekstina (nt "t").\\ \hline
+
+    parent\_id &
+    ObjectId &
+    Viide selle sõna dokumendi ID-le, millesse foneem kuulub.\\ \hline
+    
+    word\_text &
+    string &
+    Sõna tekst, millesse foneem kuulub (nt linna+tulede).\\ \hline
+
+    recording\_id &
+    string &
+    Salvestuse nimi (nt 148\_10001148\_26).\\ \hline
+
+    features &
+    Object &
+    Objekt, mis hoiab foneemi akustilisi tunnuseid:
+    \begin{itemize}
+      \item mean – alamdokumendis on erinevate tunnuste keskmised väärtused kujul tunnuse nimi: double.
+    \end{itemize}\\ \hline
+\end{longtable}
 
 \section{Kasutajaliidese loomine PyQt raamistikuga}
-PyQt on Pythoni graafiliste kasutajaliideste arendamise raamistik. Selles on erinevad valmiskomponentid nagu erineva widgetid: nupud, aknad, menüüd otsingud ja muu, mida on väga lihtne kasutada. Pyqt raamistik toetab Windows, macOs ja Linux operatsioonisüsteme. \cite{pyqt5}
+PyQt \cite{pyqt5} on Pythoni graafiliste kasutajaliideste arendamise raamistik. Selles on erinevad valmiskomponentid, näiteks nupud, aknad, menüüd ja otsingukastid. PyQt raamistik toetab Windows, macOs ja Linux operatsioonisüsteeme.
 
-Peale PyQt kaaluti veel teisi GUI loomise raamistikke nagu:
-
-Tkinter, mis on samuti Pythoni raamistik. \cite{tkinter}. Tuuakse esile, et seda on lihtne kasutada, kuid selle funktsionaalsus on piiratud võrreldes PyQt-ga ning valmiskomponentide valik väiksem ja kujundamisvõimaluse piiratumad.
+Peale PyQt kaaluti veel teisi GUI loomise raamistikke nagu Tkinter \cite{tkinter}, mis on samuti Pythoni raamistik. Kuid selle funktsionaalsus on piiratud võrreldes PyQt-ga ning valmiskomponentide valik väiksem \cite{pyqt_tkinter}.
 
 \section{Visualisatsioonide loomine}
 
-Tunnuste visualiseerimise funktsionaalsuse eesmärk on võimaldada kasutajal kuvada akustilisi tunnuseid mitmel erineval moel interaktiivsetel graafikud, et andmeid oleks mugav uurida.
+Tunnuste visualiseerimise funktsionaalsuse eesmärk oli võimaldada kasutajal kuvada akustilisi tunnuseid mitmel erineval moel interaktiivsetel graafikutel, et andmeid oleks mugav uurida.
 
-Esialgses rakenduse prototüübis loodi graafikute visuaalid \textit{matplotlib} teegiga, mis on tuntud ja usaldusväärne teek andmete visualiseerimiseks, kuid kuna see pakub vaikimisi vaid staatilisi jooniseid, siis hakati otsima teisi võimalusi, mis pakuksid rohkem valmis võimalusi graafikute interaktiivsuse ja disaini poolest. 
+Rakenduse varasemates versioonides loodi graafikute visuaalid Matplotlib \cite{matplotlib} teegiga, mis on tuntud ja usaldusväärne teek andmete visualiseerimiseks, kuid kuna see pakub vaikimisi vaid staatilisi jooniseid, siis hakati otsima teisi võimalusi, mis pakuksid rohkem valmis võimalusi graafikute interaktiivsuse ja disaini poolest. 
 
- Katsetati ka \textit{PyQt} enda graafiku loomise komponente, kuid need olid väga sarnased matplotlib'i graaifikutele, interaktiivsust seadistada oli keerulisem ning need ei pakkunud piisavalt sisseehitatud valmis funktsionaalsust.
+ Katsetati ka PyQt enda graafiku loomise komponente, kuid need olid väga sarnased Matplotlibi graafikutele, interaktiivsust seadistada oli keerulisem ning need ei pakkunud piisavalt sisseehitatud funktsionaalsust.
 
-Lõpuks valiti graafikute loomise tehnoloogiaks Plotly, sest sellega on graafikud vaikimisi interaktiivsed: on võimalik suumimine, kerimine, andmepunktide (tooltip) lisainformatsiooni kuvamine, pildifaili eksport ja muu). Samuti olid need kaasaegsema ja eesteetilisema kujunudusega.
+Lõpuks valiti graafikute loomise tehnoloogiaks Plotly \cite{plotly}, sest sellega on graafikud vaikimisi interaktiivsed, näiteks on võimalik suumimine, kerimine, andmepunktide (\textit{tooltip}) lisainformatsiooni kuvamine ja pildifailide eksport.
 
-Igale graafikutüübile tehti eraldi meetod, mis loob pandas DataFrame'ist \textit{Plotly} graafikuobjekti. Graafikuobjekt teisendatakse HTML koodiks, mille PyQt \textit{QWebEngineView} komponent rakenduse põhivaate aknas renderdab. Kõigile meetoditele konfigureeriti ühtne graafiku legend, teljed värvid ja muu.
+Igale graafikutüübile tehti eraldi meetod, mis loob pandas DataFrame'ist Plotly graafikuobjekti. Graafikuobjekt teisendatakse HTML koodiks, mille PyQt QWebEngineView komponent rakenduse põhivaate aknas renderdab. Kõigile graafikutele konfigureeriti ühtne legendi, telgede ja värvide stiil. Visualiseerimise graafikutüüpidest valiti realiseerimiseks:
 
-Visualiseerimise graafikutüüpidest valiti realiseerimiseks:
+\begin{itemize}
+    \item \textbf{Ajatelje diagramm}, mis kuvab valitud tunnuste väärtused ajas. Võimalik on nii terve salvestuse kui ka eraldi sõna ja foneemi visualiseerimine, näiteks saab visualiseerida, kuidas F0 põhisagedus läbi kahe erineva valitud sõna muutub.
+    
+    \item \textbf{Histogramm} võimaldab visualiseerida, kuidas üksiku tunnuse väärtused valitud salvestuses, sõnas või foneemis väärtuste vahemikes jaotuvad. Väärtuste vahemike tulpade arv leitakse Sturgesi valemiga.
 
-\textbf{Ajatelje diagramm}
+    \item \textbf{Karpdiagramm} võimaldab visualiseerida valitud tunnuste põhilisi statistilisi näitajaid nagu: miinimum, maksimum, mediaan ja kvartiilid.
 
-Kuvab valitud tunnuste väärtused ajas: võimalik nii terve savestuse kui ka eraldis õna ja foneemi võrdlemine. Näiteks saab vaadata, kuidas F0 põhisagedus läbi kahe erineva valitud sõna muutub.
+    \item \textbf{Radardiagramm} võimaldab mitme salvestuse, sõna või foneemi valitud tunnuste võrdlemise. Tunnused normaliseeritakse enne kuvamist min-max meetodiga (tunnuste väärtused viiakse vahemikku 0-1).
 
-\textbf{Histogramm}
+    \item \textbf{Vokaalikaart} kujutab vokaalide paiknemist F1 ja F2 sagedusruumis. Rakendatakse Lobanovi normaliseerimist, mis teisendab F1 ja F2 väärtused z-skoorideks, et erinevate kõnelejate vokaalid oleksid paremini võrreldavad \cite{norm_vowel_normalization}. Graafikul kuvatakse iga vokaalipunkt koos häälikumärgiga.
 
-Histogramm võimaldab visualiseerida, kuidas üksiku tunnuse väärtused valitud salvestuses, sõnas või foneemis väärtuste vahemikes jaotuvad. Väärtuste vahemike tulpade arv leitakse Sturgesi valemiga.
+    \item \textbf{Salvestuste klastrid ja koosinuskaugus hajuvusdiagrammil} on sarnasuse analüüsi esimene visualiseerimismeetod, mis kuvab valitud salvestused eri värvi klastritena PC1 ja PC2 tasandil hajuvusdiagrammil. Eraldi sümbolitega on klastrites märgitud salvestus, millele sarnaseid otsiti ning sellele leitud kõige sarnasemad salvestused.
 
-\textbf{Karpdiagramm}
+    \item \textbf{Salvestuste koosinussarnasused tulpdiagrammil} visualiseerib valitud salvestuste arvutatud koosinussarnasuse väärtused tulpadena.
 
-Võimaldab visualiseerida valitud tunnuste põhilisi statistilisi näitajaid nagu: miinimum, maksimum, mediaan ja kvartiilid.
-
-\textbf{Radardiagramm}: võimaldab mitme salvestuse, sõna või foneemi valitud tunnuste võrdlemise. Tunnused normaliseeritakse enne kuvamist min-max meetodiga (tunnusete väärtused viiakse vahemikku 0-1).
-
-\textbf{Vokaalikaart}: kujutab vokaalide paiknemist F1 ja F2 sagedusruumis. Rakendatakse Lobanovi normaliseerimist, mis teisendab F1 ja F2 väärtused z-skoorideks, et erinevae kõnelejate vokaalid oleksid paremnini võrreldavamad. Graafikul kuvatakse iga vokaalipunkt koos häälikumärgiga.
-
-\textbf{Salvestuste klastrid ja koosinuskaugus hajuvusdiagrammil}: sarnasuse analüüsi esimene visualiseerimismeetod on kuvada valitud salvestused eri värvi klastritena PC1 ja PC2 tasandil hajuvusdiagrammil. Eraldi sümbolitega on klastrites märgitud salvestus, millele sarnaseid otsiti ning sellele leitud kõige sarnasemad salvestused.
-
-\textbf{Salvestuste koosinussarnasused tulpdiagrammil}: valitud salvestuste arvutatud koosinussarnasuse väärtused kuvatakse tulpadena.
-
-\textbf{Andmete visualiseerimine tabelites}: lisaks graafiliste kujutistele on rakenduses võimalus kuvada visualisatsioonide DataFrame tabelina, mis kuvatakse visualisatsioonide all.
+    \item \textbf{Andmete visualiseerimine tabelites}: lisaks graafiliste kujutistele on rakenduses võimalus kuvada iga visualisatsiooni DataFrame tabelina, mis kuvatakse visualisatsiooni all.
+\end{itemize}
 
 \section{Sarnasuse analüüs}
-Sarnasuse analüüs võimaldab kasutajal leida, millise salvestised on kõige sarnasemad, ning esitada arvutatud tulemusi loeteluna tulpades ja klastrite visualisatsioonina hajuvdiagrammil. Ehkki allpool kirjeldatud meetodid ei ole valideeritud ning ei pruugi olla kõige sobivamad sarnasuse leidmiseks, oli nende katsetamine osa arendusprotsessist.
-
-Järgneval kirjeldatakse kolme peamist meetodit, mida rakenduse arenduses kasutatati sarnasuse hindamiseks. 
-
-Enne sarnasuse arvutamist koostatakse pandas DataFrame kõigi tunnuste salvestuste keskmiste väärtustega. See oli sisendiks kõigi rakendavate meetodite puhul.
+Sarnasuse analüüs võimaldab kasutajal tunnuste põhjal leida, millised salvestused on kõige sarnasemad, ning esitada arvutatud tulemusi loeteluna tulpades või klastrite visualisatsioonina hajuvusdiagrammil. Järgnevalt kirjeldatakse meetodeid, mida rakenduse arenduses kasutati sarnasuse hindamiseks: klasterdamine ning koosinussarnasuse arvutamine. Enne sarnasuse arvutamist koostatati pandas DataFrame kõigi tunnuste salvestuste keskmiste väärtustega. See oli sisendiks kõigi rakendavate meetodite puhul.
 
 \subsection{Klasterdamine}
-Sisendiks on kõikide salvestiste eraldatud tunnuste keskmised väärtused. Iga tunnuse veerud skaleeritakse StandardScaleri abil, mille tulemusena on nende keskmine 0 ja standardhälve 1.
+Sisendiks on kõikide salvestiste eraldatud tunnuste keskmised väärtused. Iga tunnuse veerud skaleeritakse Scikit-learn StandardScaleri \cite{scikit_standardscaler} abil, mille tulemusena on nende keskmine väärtus 0 ja standardhälve 1.
 Skaleeritud tunnuste hulk teisendatakse PCA meetodil vähendatud dimensioonidega ruumi.
-Saadud PCA ruumis jagatakse salvestused nelja klastrisse, kasutades scikit-learn KMeans algoritmi. Nelja klastrit kasutatakse siinses töös näitejuhuna, tegelikkuses peaks kasutama optimaalse klastrite arvu leidmiseks kindlaid meetodeid.
+Saadud PCA ruumis jagatakse salvestused nelja klastrisse, kasutades Scikit-learn KMeans algoritmi. Nelja klastrit kasutatakse siinses töös näitejuhuna, tegelikkuses peaks kasutama optimaalse klastrite arvu leidmiseks kindlaid meetodeid.
 
 \subsection{Koosinussarnasuse arvutamine}
-Tunnused skaleeritakse StandardScaleriga samal viisil nagu klasterdamise puhul.
-
-Peale skaleerimist arvutatakse koosinuskaugus kõigile valitud salvestustele sihtsalvestise suhtes. Koosinuskaugus valiti, sest see peaks kõnefailide ja nende tunnnsute puhul hästi sobima. Plaan oli realiseerida ka teiste kauguste arvutamise kasutamine, nagu Manhattani, Eukleidese kaugus, kuid need jäid tegemata.
-
-Lõpuks valitakse kasutaja poolt määratud arv kõige sarnasemaid salvestusi ja visualiseeritakse tulpadena
+Tunnused skaleeritakse StandardScaleriga samal viisil nagu klasterdamise puhul. Peale skaleerimist arvutatakse koosinuskaugus kõigile valitud salvestustele sihtsalvestuse suhtes. Koosinuskaugus valiti, sest see sobib kõnefailide analüüsiks. Plaan oli realiseerida ka teiste kauguste arvutamise kasutamine, nagu Manhattani, Eukleidese kaugus, kuid need jäid tegemata. Lõpuks valitakse kasutaja poolt määratud arv kõige sarnasemaid salvestusi ja visualiseeritakse tulpadena
 
 \subsection{Koosinussarnasuse arvutamine PCA-ga}
-Seda meetodit kasutatakse kahe visualisatsiooni koostamisel:
-hajuvdiagrammil sarnaste punktide märkimisal
+Koosinussarnasuse arvutamist koos põhikomponentide analüüsiga kasutatatakse kahe visualisatsiooni koostamisel:
+hajuvusdiagrammil sarnaste punktide märkimisel
 tulpdiagrammil sarnasuse väärtuste visualiseerimisel.
 
-Peale tunnuste skaleerimist StandardScaleriga arvutatakse iga salvestise vahel koosinussarnasus pca ruumis - sarnasust hinnatakase PCA-komponentide telgedel. PCA jätab kõrvale tunnused, mille varieeruvus on väike, seega kui on palju tunnuseid ja osa neist ei kanna kasulikku infot, siis need eemaldatakse.
+Peale tunnuste skaleerimist StandardScaleriga arvutatakse iga salvestise vahel koosinussarnasus PCA ruumis - sarnasust hinnatakse PCA-komponentide telgedel. PCA jätab kõrvale tunnused, mille varieeruvus on väike. Seega, kui on palju tunnuseid ja osa neist ei kanna kasulikku infot, siis need eemaldatakse.
 
-Lõpus valitakse kasutaja määratud arv kõige väiksema koosinus kaugusega salvestusi ja kuvatakse nende koosinussarnasus tulpdiagrammil või hajuvusdiagrammil eraldi märgetena.
+Lõpuks valitakse kasutaja määratud arv kõige väiksema koosinuskaugusega ehk kõige sarnasemad salvestused ja kuvatakse nende koosinussarnasus tulpdiagrammil või hajuvusdiagrammil eraldi sümbolitega.
 
 \section{Testimine}
-Rakendust testiti enne igat juhendajaga koosolekut. Ning mitmel korral koosolekul juhendajaga. Rakenduse arenduse lõppedes tehti üks põhjalikum testimine, mille jaoks defineeriti eraldi testjuhud, kontrolliti iga testjuhu kohta, kas oodatav tulemus vastab tegelikule tulemusele.
+Rakendust testiti mitmetel kordadel koos juhendajaga. Rakenduse arenduse lõppedes tehti üks põhjalikum testimine kasutades rakenduse funktsionaalsuse kasutusjuhte.
 Testimise eesmärgid olid:
 \begin{itemize}
     \item Kasutatavuse kontrollimine
@@ -212,18 +271,5 @@ Testimise eesmärgid olid:
     \item Tehniliste probleemide avastamine
 \end{itemize}
 
-\subsection{Testjuhud}
-
-\subsection{Testrakendus}
-Tagaside küsimiseks ning kasutajatele testimiseks loodi rakendusest PyInstalleriga pakendatud käivitatav versioon. Kuna andmebaasi ei seadistatud serverisse, siis oleksid kasutajad pidanud rakenduse kasutamiseks oma arvutis MongoDB andmebaasi seadistama. Selle seadistuse vaeva vähendamiseks kasutab pakendatud versioon MongoMock-teeki, mis on mälu-põhine andmebaasiteek ja ei vaja eraldi paigaldust. MongoMock simuleerib MongoDB päringuid ja töötab näidisandmetega, mis testrakendusele lisati. See võimaldab kasutada kõiki rakenduse funktsioone sama moodi nagu päris MongoDB andmebaasiga. Ainuke erinevus on, et kui uusi andmeid importida, siis need on ajutised ja kaovad kui programm lõpetatakse. Testrakendusele lisati kaasa JSON formaadis nädisandmed ja .wav failid näidis helisalvestistega.
-
-Viimasel juhendajaga testimisel esinenud puudused ja lisafunktsionaalsuse soovid:
-\begin{itemize}
-    \item Kui valida kõik salvestused ja Analyze ning siis Visualize, ei lae tunnuste nimekiri vahel ära ja rakendus võib muutuda väga aeglaseks.
-    \item Peale käivitatavaks zip failiks kokku pakkimist, sõna ja foneemi tasemel hetkel vokaalikaart ei tööta
-    \item Lisada .wav failide kuulamise funktsionaalsus
-    \item Kuvada helisignaali visualisatsioon salvestuse mängimisel
-    \item Töödeldud salvestuste haldamine kasutajaliidese kaudu
-    \item Teha tunnuste valiku indikaator arusaadavamaks
-    \item Võimaldada normaliseeritud ja normaliseerimata vokaalikaart valik (praegu ainult normaliseeritud)
-\end{itemize}
+\subsection{Testitav rakendus}
+Tagasiside küsimiseks ning kasutajatele testimiseks loodi rakendusest PyInstalleriga \cite{pyinstaller_manual} pakendatud ja käivitatav versioon. Kuna andmebaasi ei seadistatud serverisse, siis oleksid kasutajad pidanud rakenduse kasutamiseks oma arvutis MongoDB andmebaasi seadistama. Seadistamis vaeva vähendamiseks kasutab pakendatud versioon MongoMock \cite{mongomock} tööriista, mis on mälu-põhine andmebaasiteek ja ei vaja eraldi paigaldust. MongoMock simuleerib MongoDB päringuid ja töötab näidisandmetega, mis testrakendusele lisati. See võimaldab kasutada kõiki rakenduse funktsioone samamoodi nagu päris MongoDB andmebaasiga. Ainuke erinevus on, et kui uusi andmeid importida, siis need on ajutised ja kaovad kui programm lõpetatakse. Testrakendusele lisati kaasa JSON formaadis näidisandmed ja .wav failid koos näidis helisalvestustega.

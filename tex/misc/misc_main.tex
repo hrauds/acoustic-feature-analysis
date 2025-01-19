@@ -1,7 +1,11 @@
+\renewcommand{\cftchapfont}{\normalfont}       % Non-bold chapter titles
+\renewcommand{\cftchappagefont}{\normalfont}  % Non-bold page numbers
+
+
 \include{misc/titlepage}
 
-\setcounter{page}{0}
-\pagenumbering{arabic}   %from here on, start the 'real' page numbering, from 1, with normal digits
+\pagenumbering{arabic}
+\setcounter{page}{2}
 
 \normalsize
 
@@ -9,12 +13,12 @@
 \input{misc/authordeclaration.tex}
 \pagebreak
 
-\chapter*{\centerline{Abstract}}\label{chapter:abstract}
-\input{misc/abstract}
-\pagebreak
-
 \chapter*{\begin{center}Annotatsioon\\\large\doctitleEst\end{center}}\label{chapter:abstract-eesti}
 \input{misc/abstract-eesti.tex}
+\pagebreak
+
+\chapter*{\begin{center}Abstract\\\large\doctitle\end{center}}\label{chapter:abstract}
+\input{misc/abstract}
 \pagebreak
 
 \chapter*{\centerline{Lühendite ja mõistete sõnastik}}\label{chapter:terms}
@@ -24,14 +28,23 @@
 \phantomsection
 \setcounter{tocdepth}{2}    % Sets maximum depth of Table Of Contents
 \renewcommand{\contentsname}{Sisukord}
+
+\begin{spacing}{1.5}
 \tableofcontents
+\end{spacing}
 
 \clearpage \phantomsection
 \renewcommand{\listfigurename}{Jooniste loetelu}
 \setcounter{figure}{0}
 % \addcontentsline{toc}{chapter}{\listfigurename}]
+\begin{spacing}{1.5}
 \listoffigures
+\end{spacing}
 
 \clearpage \phantomsection
 % \addcontentsline{toc}{chapter}{\listtablename}
+\renewcommand{\listtablename}{Tabelite loetelu}
+
+\begin{spacing}{1.5}
 \listoftables
+\end{spacing}
