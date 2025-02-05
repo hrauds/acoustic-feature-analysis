@@ -68,3 +68,8 @@ A desktop application for analyzing acoustic features using the OpenSMILE GeMAPS
    ```
    python app.py
    ```
+### Screenshots
+<img src="view1.png" alt="View 1">
+<img src="view2.png" alt="View 2">
+<img src="view3.png" alt="View 3">
+
